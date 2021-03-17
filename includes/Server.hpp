@@ -10,18 +10,31 @@
 class Server
 {
 	public:
-		Server();
+		Server(std::string pass = NULL);
 		Message	check_request(std::queue<std::string> input);
 		void	display_users(std::string mode = "all");//display users ['all' || 'connected' || 'disconnected']
 		void	display_user(size_t id);
 		void	display_chans();
 		void	display_chan(size_t id);
-		void	add_user(User neo);
-		void	add_channel(Channel neo);
+
+		//setters
+
+		void	add_user(User neo);//will check if user is in dsc_lst or usr_lst, if it is in neither, will create new user, if in dst_lst will swap to usr_lst
+		void	add_channel(Channel neo);//will check if channel is in chan_lst, if it is not, will create new channel
+
+		//getters
+		
+		User				*get_user(std::string nick);
+		std::list<User>		&get_users();// make it return a reference rather than a pointer so that when the list of connected users is updated, it is updated in the place where it is referenced as well
+		Channel				*get_chan(std::string);
+		std::list<Channel>	&get_channels();// same as for the get_users function
+
 		~Server();
+
 	private:
+		std::string			pass; //can be set as we start the server, but is not mandatory, if set, before the creation of a User object, the server needs to get a PASS command with the correct password
 		std::list<User>		usr_lst;
-		std::list<User>		dsc_lst;//disconnected users list	
+		std::list<User>		dsc_lst;//disconnected users list
 		std::list<Channel>	chan_lst;
 };
 

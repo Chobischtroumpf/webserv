@@ -11,7 +11,7 @@ class Message
 		~Message();
 	private:
 		size_t				id;
-		size_t				user_id;
+		size_t				user_id;	//ce serait pas plus simple de stocker le nick ?
 		size_t				channel_id;
 		size_t				target_id;
 		std::string			content;
