@@ -1,40 +1,54 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
-# include <list>
+# include <map>
 # include <queue>
 # include "User.hpp"
 # include "Channel.hpp"
 # include "Message.hpp"
 
+// #define USER_ID 0100000
+
+// if id_t & USER_ID
+// 	Userlst[id_t - USER_ID]
 
 class Server
 {
 	public:
 		Server(std::string pass = NULL);
 		Message	check_request(std::queue<std::string> input);
+		Message	*check_time_out(std::map<size_t, User>);
+		
+//displays
+
 		void	display_users(std::string mode = "all");//display users ['all' || 'connected' || 'disconnected']
 		void	display_user(size_t id);
 		void	display_chans();
 		void	display_chan(size_t id);
 
-		//setters
+//setters
 
-		void	add_user(User neo);//will check if user is in dsc_lst or usr_lst, if it is in neither, will create new user, if in dst_lst will swap to usr_lst
+		void	add_user(User neo);
 		void	add_channel(Channel neo);//will check if channel is in chan_lst, if it is not, will create new channel
 
-		//getters
+//unsetters
+
+		void	delete_user(size_t id);
+		void	delete_channel(size_t id);
 		
-		User				*get_user(std::string nick);
-		std::list<User>		*get_users();
-		Channel				*get_chan(std::string);
-		std::list<Channel>	*get_channels();
+//getters
+		
+		User						*get_user(std::string nick);
+		std::map<size_t, User>		*get_users();
+		Channel						*get_chan(std::string);
+		std::map<size_t, Channel>	*get_channels();
+		std::string					get_pass();
+	
 		~Server();
 
 	private:
-		std::string			pass; //can be set as we start the server, but is not mandatory, if set, before the creation of a User object, the server needs to get a PASS command with the correct password
-		std::list<User>		usr_lst;
-		std::list<User>		dsc_lst;//disconnected users list
-		std::list<Channel>	chan_lst;
+		std::string					pass; //can be set as we start the server, but is not mandatory, if set, before the creation of a User object, the server needs to get a PASS command with the correct password
+		std::map<size_t, User>		usr_lst;
+		std::map<size_t, Channel>	chan_lst;
 };
 
 #endif

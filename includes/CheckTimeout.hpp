@@ -6,10 +6,10 @@
 class CheckTimeout
 {
 	public:
-	CheckTimeout(Server server);
+		CheckTimeout(std::map<size_t, User> *lst_usrs);
 	private:
-	Server	server;
-	Message	timeout_msg;
+		std::map<size_t, User>	*lst_usrs;
+		const Message			timeout_msg;
 };
 
 #endif
