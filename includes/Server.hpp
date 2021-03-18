@@ -25,10 +25,9 @@ class Server
 		//getters
 		
 		User				*get_user(std::string nick);
-		std::list<User>		&get_users();// make it return a reference rather than a pointer so that when the list of connected users is updated, it is updated in the place where it is referenced as well
+		std::list<User>		*get_users();
 		Channel				*get_chan(std::string);
-		std::list<Channel>	&get_channels();// same as for the get_users function
-
+		std::list<Channel>	*get_channels();
 		~Server();
 
 	private:

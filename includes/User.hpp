@@ -4,6 +4,7 @@
 # include <string>
 # include <ctime>
 # include "Message.hpp"
+# include "Channel.hpp"
 
 
 class User
@@ -23,9 +24,10 @@ class User
 	private:
 		size_t				id;
 		std::string 		nickname;
-		size_t				mode;
+		std::string			real_name;
 		size_t				hopcount;
-		std::list<size_t>	channel_id;
+		size_t				mode;
+		std::list<Channel>	channel;
 		std::string			ip_address;
 		time_t				time_at_logon;
 		bool				connected;
