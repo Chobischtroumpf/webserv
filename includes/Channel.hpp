@@ -3,6 +3,7 @@
 # include <map>
 # include <string>
 # include <ctime>
+# include <iostream>
 # include "Message.hpp"
 # include "User.hpp"
 
