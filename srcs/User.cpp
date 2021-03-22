@@ -63,11 +63,11 @@ size_t						User::get_mode()
 
 Channel						*User::get_channel(size_t chan_id)
 {
-	return (this->channel[chan_id]);
+	return (&this->channel[chan_id]);
 }
 std::map<size_t, Channel>	*User::get_channels()
 {
-	return (this->channel);
+	return (&this->channel);
 }
 
 std::string					User::get_ip_address()
@@ -92,12 +92,18 @@ void	User::set_real_name(std::string new_name)
 	this->real_name = new_name;
 }
 
-void	User::set_mode(size_t mode, bool add)
+void	User::set_mode(std::string mode)
 {
-	if (add && !(this->mode & mode))
-		this->mode += mode;
-	else
+	bool	remove = true;
+	size_t	
 
+	if (mode.find("+", 0))
+		remove = false;
+	mode.erase(0, 1);
+	if (this->mode.find(mode))
+	{
+		
+	}
 }
 
 void	User::set_channel(Channel *channel)
