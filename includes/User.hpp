@@ -20,14 +20,13 @@ class User
 
 //core
 				
-		void						sudo(bool state);//assigne la valeur state a admin
 		Message						send(std::string content, size_t dest_id, bool cmd);
 		int							connect(Channel channel, std::string pass = "");
 
 //displays
 
 		void						display();//display information
-		void						display(User other);//display nickname && connected if admin show all
+		void						display(User other);//display nickname if admin show all
 		void						display(Channel chan);//display name && mode si mode non privatif show users if admin show all
 		void						display(Message message);//work if user concer by message or admin
 

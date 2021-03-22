@@ -29,10 +29,9 @@ void	User::display()
 {
 	//faudra remplacer cout par le fd du socket
 	std::cout << "Nick: " << this->nickname << " Real Name: " << this->real_name
-		<< " hopcount: " << this->hopcount << " Ip Address: " << this->ip_address << std::endl;
+		<< " hopcount: " << this->hopcount << " Ip Address: " << this->ip_address
+		<< "mode: " << this->mode << std::endl;
 }
-
-
 
 //getters
 
@@ -95,14 +94,26 @@ void	User::set_real_name(std::string new_name)
 void	User::set_mode(std::string mode)
 {
 	bool	remove = true;
-	size_t	
+	size_t	position;
+	int		i = 1;
 
-	if (mode.find("+", 0))
+	if (mode[0] == '+')
 		remove = false;
-	mode.erase(0, 1);
-	if (this->mode.find(mode))
+	if (remove == false && (position = mode.find('o')) != std::string::npos)
+		mode.erase(mode.begin() + position);
+	while (mode[i])
 	{
-		
+		if (remove)
+		{
+			if ((position = this->mode.find(mode[i])) != std::string::npos)
+				this->mode.erase(this->mode.begin() + position);
+		}
+		else
+		{
+			if (this->mode.find(mode[i]) == std::string::npos)
+				this->mode += mode[i];
+		}
+		i++
 	}
 }
 
