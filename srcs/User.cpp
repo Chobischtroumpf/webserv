@@ -104,3 +104,5 @@ void	User::set_channel(Channel *channel)
 {
 	this->channel[channel->get_id()] = *channel;
 }
+
+User::~User(){}
