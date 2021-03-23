@@ -8,10 +8,10 @@
 # include "Channel.hpp"
 # include "Message.hpp"
 
-# define INVISIBLE_MODE 00000000000001000l
-# define SERVER_NOTICE_MODE 00000000000000100l
-# define WALLOP_MODE 00000000000000010l
-# define OPERATOR_MODE 00000000000000001l
+# define INVISIBLE_MODE "i"
+# define SERVER_NOTICE_MODE "s"
+# define WALLOP_MODE "w"
+# define OPERATOR_MODE "o"
 
 class User
 {
@@ -20,14 +20,13 @@ class User
 
 //core
 				
-		void						sudo(bool state);//assigne la valeur state a admin
 		Message						send(std::string content, size_t dest_id, bool cmd);
 		int							connect(Channel channel, std::string pass = "");
 
 //displays
 
 		void						display();//display information
-		void						display(User other);//display nickname && connected if admin show all
+		void						display(User other);//display nickname if admin show all
 		void						display(Channel chan);//display name && mode si mode non privatif show users if admin show all
 		void						display(Message message);//work if user concer by message or admin
 
@@ -47,7 +46,7 @@ class User
 
 		void						set_nickname(std::string new_nick);
 		void						set_real_name(std::string new_name);
-		void						set_mode(size_t mode, bool add);
+		void						set_mode(std::string mode);
 		void						set_channel(Channel *channel);
 
 		~User();
@@ -56,7 +55,7 @@ class User
 		std::string 				nickname;
 		std::string					real_name;
 		size_t						hopcount;
-		size_t						mode;
+		std::string					mode;
 		std::map<size_t, Channel>	channel;
 		std::string					ip_address;
 

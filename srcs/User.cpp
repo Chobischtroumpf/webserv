@@ -29,10 +29,9 @@ void	User::display()
 {
 	//faudra remplacer cout par le fd du socket
 	std::cout << "Nick: " << this->nickname << " Real Name: " << this->real_name
-		<< " hopcount: " << this->hopcount << " Ip Address: " << this->ip_address << std::endl;
+		<< " hopcount: " << this->hopcount << " Ip Address: " << this->ip_address
+		<< "mode: " << this->mode << std::endl;
 }
-
-
 
 //getters
 
@@ -63,11 +62,11 @@ size_t						User::get_mode()
 
 Channel						*User::get_channel(size_t chan_id)
 {
-	return (this->channel[chan_id]);
+	return (&this->channel[chan_id]);
 }
 std::map<size_t, Channel>	*User::get_channels()
 {
-	return (this->channel);
+	return (&this->channel);
 }
 
 std::string					User::get_ip_address()
@@ -92,12 +91,30 @@ void	User::set_real_name(std::string new_name)
 	this->real_name = new_name;
 }
 
-void	User::set_mode(size_t mode, bool add)
+void	User::set_mode(std::string mode)
 {
-	if (add && !(this->mode & mode))
-		this->mode += mode;
-	else
+	bool	remove = true;
+	size_t	position;
+	int		i = 1;
 
+	if (mode[0] == '+')
+		remove = false;
+	if (remove == false && (position = mode.find('o')) != std::string::npos)
+		mode.erase(mode.begin() + position);
+	while (mode[i])
+	{
+		if (remove)
+		{
+			if ((position = this->mode.find(mode[i])) != std::string::npos)
+				this->mode.erase(this->mode.begin() + position);
+		}
+		else
+		{
+			if (this->mode.find(mode[i]) == std::string::npos)
+				this->mode += mode[i];
+		}
+		i++
+	}
 }
 
 void	User::set_channel(Channel *channel)
