@@ -3,6 +3,7 @@
 # include <map>
 # include <string>
 # include <ctime>
+# include <iostream>
 # include "Message.hpp"
 # include "User.hpp"
 
@@ -22,7 +23,7 @@
 class Channel
 {
 	public:
-		Channel(size_t id, std::string name, size_t mode, std::string pass = "");
+		Channel(size_t id, std::string name, std::string mode, std::string pass = "");
 
 //displays
 		
@@ -34,7 +35,7 @@ class Channel
 		std::string				get_name();
 		std::string				get_topic();
 		std::string				get_pass();
-		size_t					get_mode();
+		std::string				get_mode();
 		size_t					get_user_limit();
 		time_t					get_creation_time();
 		std::map<size_t, User>	*get_connected_usrs();
@@ -44,7 +45,7 @@ class Channel
 
 		void					set_topic(std::string topic);
 		void					set_pass(std::string pass);
-		void					set_mode(size_t mode);
+		void					set_mode(std::string mode);
 		void					set_new_user(User new_user);
 
 		~Channel();
@@ -53,7 +54,7 @@ class Channel
 		std::string				name;
 		std::string				topic;
 		std::string				pass;
-		size_t					mode;
+		std::string				mode;
 		size_t					user_limit;
 		time_t					creation_time;
 		std::map<size_t, User>	connected_usrs;
