@@ -3,8 +3,15 @@
 # include <map>
 # include <string>
 # include <ctime>
-# include "Message.hpp"
+# include <iostream>
+# include "Server.hpp"
 # include "Channel.hpp"
+# include "Message.hpp"
+
+# define INVISIBLE_MODE "i"
+# define SERVER_NOTICE_MODE "s"
+# define WALLOP_MODE "w"
+# define OPERATOR_MODE "o"
 
 class User
 {
@@ -13,34 +20,34 @@ class User
 
 //core
 				
-		void			sudo(bool state);//assigne la valeur state a admin
-		Message 		send(std::string content, size_t dest_id, bool cmd);
-		bool			connect(Channel channel, std::string pass = "");
+		Message						send(std::string content, size_t dest_id, bool cmd);
+		int							connect(Channel channel, std::string pass = "");
 
 //displays
 
-		void			display();//display information
-		void			display(User other);//display nickname && connected if admin show all
-		void			display(Channel chan);//display name && mode si mode non privatif show users if admin show all
-		void			display(Message message);//work if user concer by message or admin
+		void						display();//display information
+		void						display(User other);//display nickname if admin show all
+		void						display(Channel chan);//display name && mode si mode non privatif show users if admin show all
+		void						display(Message message);//work if user concer by message or admin
 
 //getters
 
-		size_t			get_id();
-		std::string 	get_nickname();
-		std::string		get_real_name();
-		size_t			get_hopcount();
-		size_t			get_mode();
-		Channel			get_channel();
-		std::string		get_ip_address();
-		time_t			get_time_at_logon();
+		size_t						get_id();
+		std::string					get_nickname();
+		std::string					get_real_name();
+		size_t						get_hopcount();
+		size_t						get_mode();
+		Channel						*get_channel(size_t chan_id);
+		std::map<size_t, Channel>	*get_channels();
+		std::string					get_ip_address();
+		time_t						get_time_at_logon();
 
 //setters
 
-		void			set_nickname(std::string new_nick);
-		void			set_real_name(std::string new_name);
-		void			set_mode(size_t mode);
-		void			set_channel(Channel *channel);
+		void						set_nickname(std::string new_nick);
+		void						set_real_name(std::string new_name);
+		void						set_mode(std::string mode);
+		void						set_channel(Channel *channel);
 
 		~User();
 	private:
@@ -48,10 +55,10 @@ class User
 		std::string 				nickname;
 		std::string					real_name;
 		size_t						hopcount;
-		size_t						mode;
-		Channel						*channel;
+		std::string					mode;
+		std::map<size_t, Channel>	channel;
 		std::string					ip_address;
 
-		time_t						time_at_logon;
+		// time_t						time_at_logon;
 };
 #endif

@@ -7,6 +7,19 @@
 # include "Message.hpp"
 # include "User.hpp"
 
+
+# define BAN_MASK				01000000000000000l
+# define PASSW_SET_MODE			00100000000000000l
+# define VERBOSE_MODE			00010000000000000l
+# define MODERATED_MODE			00001000000000000l
+# define PRIVATE_MODE			00000100000000000l
+# define TOPIC_SETTABLE_MODE	00000010000000000l
+# define INVITE_ONLY_MODE		00000001000000000l
+# define SECRET_MODE			00000000100000000l
+# define PRIVATE_MODE			00000000010000000l
+# define OPERATOR_MODE			00000000000000001l
+
+
 class Channel
 {
 	public:
@@ -23,8 +36,10 @@ class Channel
 		std::string				get_topic();
 		std::string				get_pass();
 		size_t					get_mode();
+		size_t					get_user_limit();
 		time_t					get_creation_time();
-		std::map<size_t, User>	get_connected_usrs();
+		std::map<size_t, User>	*get_connected_usrs();
+		std::map<size_t, User>	*get_banned_usrs();
 
 //setters
 
@@ -40,8 +55,11 @@ class Channel
 		std::string				topic;
 		std::string				pass;
 		size_t					mode;
+		size_t					user_limit;
 		time_t					creation_time;
 		std::map<size_t, User>	connected_usrs;
+		std::map<size_t, User>	banned_usrs;
+
 };
 
 #endif
