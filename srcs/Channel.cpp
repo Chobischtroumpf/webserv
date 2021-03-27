@@ -65,15 +65,22 @@ void					Channel::set_pass(std::string pass)
 
 void					Channel::set_mode(std::string mode)
 {
-	bool	remove = (mode[0] == '-');
+	bool	remove;
 	size_t	position;
 
+	remove = (mode[0] == '-');
 	for (size_t i = 1; mode[i]; i++)
+	{
 		if (((position = this->mode.find(mode[i])) != std::string::npos) && remove)
+		{
 			this->mode.erase(this->mode.begin() + position);
+		}
 		else
+		{
 			if (!remove && position == std::string::npos)
 				this->mode += mode[i];
+		}
+	}
 }
 
 void					Channel::set_new_user(User new_user)

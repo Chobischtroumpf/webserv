@@ -2,6 +2,10 @@
 # define SERVER_HPP
 # include <map>
 # include <queue>
+# include <sys/socket.h>
+# include <netinet/ip.h>
+# include <cstdlib>
+# include <fcntl.h>
 # include "User.hpp"
 # include "Channel.hpp"
 # include "Message.hpp"
@@ -16,7 +20,7 @@
 class Server
 {
 	public:
-		Server(std::string pass = NULL);
+		Server(int port, std::string pass = NULL);
 		Message	check_request(std::queue<std::string> input);
 		Message	*check_time_out(std::map<size_t, User>);
 		
@@ -39,15 +43,17 @@ class Server
 		
 //getters
 		
-		User						*get_user(std::string nick);
+		User						*get_user(size_t id);
 		std::map<size_t, User>		*get_users();
-		Channel						*get_chan(std::string);
+		Channel						*get_chan(size_t id);
 		std::map<size_t, Channel>	*get_channels();
 		std::string					get_pass();
 	
 		~Server();
 
 	private:
+		int							fd;
+		struct sockaddr_in			address;
 		std::string					pass; //can be set as we start the server, but is not mandatory, if set, before the creation of a User object, the server needs to get a PASS command with the correct password
 		std::map<size_t, User>		usr_lst;
 		std::map<size_t, Channel>	chan_lst;
