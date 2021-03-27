@@ -21,7 +21,10 @@ int	User::connect(Channel channel, std::string pass = "")
 		//renvoyer RPL_TOPIC au client via le socket
 	}
 	else
+	{
+		return (1);
 		//renvoyer ERR_BADCHANNELKEY au client via le socket
+	}
 
 }
 
@@ -55,7 +58,7 @@ size_t						User::get_hopcount()
 	return (this->hopcount);
 }
 
-size_t						User::get_mode()
+std::string					User::get_mode()
 {
 	return (this->mode);
 }

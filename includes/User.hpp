@@ -36,7 +36,7 @@ class User
 		std::string					get_nickname();
 		std::string					get_real_name();
 		size_t						get_hopcount();
-		size_t						get_mode();
+		std::string					get_mode();
 		Channel						*get_channel(size_t chan_id);
 		std::map<size_t, Channel>	*get_channels();
 		std::string					get_ip_address();
