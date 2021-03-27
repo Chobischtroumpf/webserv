@@ -91,30 +91,20 @@ void	User::set_real_name(std::string new_name)
 	this->real_name = new_name;
 }
 
-void	User::set_mode(std::string mode)
+void    User::set_mode(std::string mode)
 {
 	bool	remove = true;
 	size_t	position;
-	int		i = 1;
+	int		i = 0;
 
-	if (mode[0] == '+')
+	if (mode[i] == '+')
 		remove = false;
-	if (remove == false && (position = mode.find('o')) != std::string::npos)
-		mode.erase(mode.begin() + position);
-	while (mode[i])
-	{
-		if (remove)
-		{
-			if ((position = this->mode.find(mode[i])) != std::string::npos)
-				this->mode.erase(this->mode.begin() + position);
-		}
+	while (mode[++i])
+		if (((position = this->mode.find(mode[i])) != std::string::npos) && remove)
+			this->mode.erase(this->mode.begin() + position);
 		else
-		{
-			if (this->mode.find(mode[i]) == std::string::npos)
+			if (!remove && position == std::string::npos)
 				this->mode += mode[i];
-		}
-		i++
-	}
 }
 
 void	User::set_channel(Channel *channel)
