@@ -6,6 +6,8 @@
 # include "Channel.hpp"
 # include "Message.hpp"
 
+# define CHANNEL_ID	0x100000000l
+# define USER_ID	0x010000000l
 // #define USER_ID 0100000
 
 // if id_t & USER_ID
