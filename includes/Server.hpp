@@ -20,7 +20,8 @@
 class Server
 {
 	public:
-		Server(int port, std::string pass = NULL);
+		Server(int port, std::string pass);
+		void	check_connections(); 
 		Message	check_request(std::queue<std::string> input);
 		Message	*check_time_out(std::map<size_t, User>);
 		
@@ -52,7 +53,7 @@ class Server
 		~Server();
 
 	private:
-		int							fd;
+		int							sock_fd;
 		struct sockaddr_in			address;
 		std::string					pass; //can be set as we start the server, but is not mandatory, if set, before the creation of a User object, the server needs to get a PASS command with the correct password
 		std::map<size_t, User>		usr_lst;

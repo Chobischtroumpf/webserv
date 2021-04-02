@@ -51,7 +51,7 @@ class User
 
 		~User();
 	private:
-		size_t						id;
+		int							sock_fd_id;
 		std::string 				nickname;
 		std::string					real_name;
 		size_t						hopcount;

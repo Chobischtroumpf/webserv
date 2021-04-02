@@ -1,25 +1,31 @@
 #include "Server.hpp"
 
-Server::Server(int port, std::string pass = NULL): pass(pass)
+Server::Server(int port, std::string pass): pass(pass)
 {
 	int opt = 0;
 
 	this->address.sin_family = AF_INET6;
 	this->address.sin_addr.s_addr = INADDR_ANY;
 	this->address.sin_port = htons(port);
-	if (this->fd = socket(AF_INET6, SOCK_STREAM, 0) == -1)
+	if (this->sock_fd = socket(AF_INET6, SOCK_STREAM, 0) == -1)
 		exit(-1);
-	fcntl(this->fd, F_SETFL, O_NONBLOCK);
-	if (setsockopt(this->fd, SOL_SOCKET, IPV6_V6ONLY, &opt, sizeof(opt)))
+	fcntl(this->sock_fd, F_SETFL, O_NONBLOCK);
+	if (setsockopt(this->sock_fd, SOL_SOCKET, IPV6_V6ONLY, &opt, sizeof(opt)))
 		exit(-1);
 	opt = 1;
-	if (setsockopt(this->fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
+	if (setsockopt(this->sock_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
 		exit(-1);
-	if (bind(this->fd, (struct sockaddr *)&this->address,
+	if (bind(this->sock_fd, (struct sockaddr *)&this->address,
 		sizeof(this->address))<0)
+		exit(-1);
+	if (listen(this->sock_fd, 128) < 0)
 		exit(-1);
 }
 
+void	Server::check_connections()
+{
+	
+}
 // Message					Server::check_request(std::queue<std::string> input)
 // {
 
