@@ -1,13 +1,20 @@
 #include "User.hpp"
 
-User::User(size_t id, std::string nickname, size_t hopcount, std::string ip):
-	id(id), nickname(nickname), hopcount(hopcount), ip_address(ip)
+User::User(size_t id, std::string ip):
+	sock_fd_id(id), ip_address(ip)
 {
+	this->logged = false;
+}
+
+User::User(size_t id, std::string nickname, size_t hopcount, std::string ip):
+	sock_fd_id(id), nickname(nickname), hopcount(hopcount), ip_address(ip)
+{
+	this->logged = false;
 }
 
 Message	User::send(std::string content, size_t dest_id, bool cmd)
 {
-	Message	message(content, this->id, dest_id, cmd);
+	Message	message(content, this->sock_fd_id, dest_id, cmd);
 }
 
 int	User::connect(Channel channel, std::string pass = "")
@@ -38,9 +45,9 @@ void	User::display()
 
 //getters
 
-size_t		User::get_id()
+int							User::get_sock_fd_id()
 {
-	return (this->id);
+	return (this->sock_fd_id);
 }
 
 std::string					User::get_nickname()

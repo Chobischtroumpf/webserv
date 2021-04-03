@@ -2,7 +2,10 @@
 # define SERVER_HPP
 # include <map>
 # include <queue>
+# include <string>
+# include <list>
 # include <sys/socket.h>
+# include <arpa/inet.h>
 # include <netinet/ip.h>
 # include <cstdlib>
 # include <fcntl.h>
@@ -20,6 +23,7 @@
 class Server
 {
 	public:
+
 		Server(int port, std::string pass);
 		void	check_connections(); 
 		Message	check_request(std::queue<std::string> input);
@@ -44,6 +48,9 @@ class Server
 		
 //getters
 		
+		fd_set						get_readfds();
+		int							get_sock_fd();
+		sockaddr_in					Server::get_addr();
 		User						*get_user(size_t id);
 		std::map<size_t, User>		*get_users();
 		Channel						*get_chan(size_t id);
@@ -53,6 +60,7 @@ class Server
 		~Server();
 
 	private:
+		fd_set						readfds;
 		int							sock_fd;
 		struct sockaddr_in			address;
 		std::string					pass; //can be set as we start the server, but is not mandatory, if set, before the creation of a User object, the server needs to get a PASS command with the correct password

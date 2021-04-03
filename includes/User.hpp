@@ -17,7 +17,7 @@ class User
 {
 	public:
 		User(size_t id, std::string nickname, size_t hopcount, std::string ip);
-
+		User(size_t id, std::string ip);
 //core
 				
 		Message						send(std::string content, size_t dest_id, bool cmd);
@@ -32,7 +32,7 @@ class User
 
 //getters
 
-		size_t						get_id();
+		int							get_sock_fd_id();
 		std::string					get_nickname();
 		std::string					get_real_name();
 		size_t						get_hopcount();
@@ -51,6 +51,7 @@ class User
 
 		~User();
 	private:
+		bool						logged;
 		int							sock_fd_id;
 		std::string 				nickname;
 		std::string					real_name;

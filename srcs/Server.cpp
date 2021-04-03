@@ -22,10 +22,6 @@ Server::Server(int port, std::string pass): pass(pass)
 		exit(-1);
 }
 
-void	Server::check_connections()
-{
-	
-}
 // Message					Server::check_request(std::queue<std::string> input)
 // {
 
@@ -58,7 +54,7 @@ void	Server::check_connections()
 
 void						Server::add_user(User neo)
 {	
-	this->usr_lst[neo.get_id()] = neo;	
+	this->usr_lst[neo.get_sock_fd_id()] = neo;	
 }
 
 void						Server::add_channel(Channel neo)
@@ -74,6 +70,21 @@ void						Server::delete_user(size_t id)
 void						Server::delete_channel(size_t id)
 {
 	this->chan_lst.erase(id);
+}
+
+fd_set						Server::get_readfds()
+{
+	return(this->readfds);
+}
+
+sockaddr_in						Server::get_addr()
+{
+	return(this->address);
+}
+
+int							Server::get_sock_fd()
+{
+	return(this->sock_fd);
 }
 
 User						*Server::get_user(size_t id)
