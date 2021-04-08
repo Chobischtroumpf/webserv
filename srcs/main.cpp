@@ -23,12 +23,12 @@ int	main(int ac, char **av)
 				for (std::map<size_t, User>::iterator user = (*usr_lst).begin(); user != (*usr_lst).end(); user++)
 				{
 					// user == pas bon
-					if (user->second.get_sock_fd_id() == 0)
-					{
-						std::map<size_t, User>::iterator tmp = user;
-						usr_lst->erase(tmp);
-						continue;
-					}
+					// if (user->second.get_sock_fd_id() == 0)
+					// {
+					// 	std::map<size_t, User>::iterator tmp = user;
+					// 	usr_lst->erase(tmp);
+					// 	continue;
+					// }
 					if (user->second.get_sock_fd_id() > 0)
 						FD_SET(user->second.get_sock_fd_id(), &serv.get_readfds());
 					if (user->second.get_sock_fd_id() > max_sd)
@@ -63,9 +63,23 @@ int	main(int ac, char **av)
 				{
 					if (FD_ISSET(user->second.get_sock_fd_id(), &serv.get_readfds()))
 					{
+						int retval;
+						char	buf[512];
 						// check if user est encore co
 						// si non, close socket, set a 0
+						if ((retval = recv(user->second.get_sock_fd_id() , buf, 512, NULL)) == 0)
+						{
+							std::string content = user->second.get_nickname() + "!" + user->second.get_ip_address() + " QUIT :user disconnected";
+							user->second.send(content, (size_t)0, true);
+						}
+						else
+						{
+							buf[retval] = '\0';
+							Message message = message_parse(buf);
+							user->second.send();
+						}
 					}
+
 				}
 			}//return message
 		}
