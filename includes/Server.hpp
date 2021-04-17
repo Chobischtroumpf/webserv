@@ -9,6 +9,7 @@
 # include <netinet/ip.h>
 # include <cstdlib>
 # include <fcntl.h>
+# include <sys/select.h>
 # include "User.hpp"
 # include "Channel.hpp"
 # include "Message.hpp"

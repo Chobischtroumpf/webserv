@@ -1,4 +1,4 @@
-#include "../includes/Message.hpp"
+#include "Message.hpp"
 
 Message::Message(std::string content, size_t from, size_t to, bool command = false)
 {

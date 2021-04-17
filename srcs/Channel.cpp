@@ -1,4 +1,4 @@
-#include "../includes/Channel.hpp"
+#include "Channel.hpp"
 
 Channel::Channel(size_t id, std::string name, std::string mode, std::string pass = "")
 {

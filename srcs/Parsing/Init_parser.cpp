@@ -1,4 +1,4 @@
-#include "../../includes/General.hpp"
+#include "General.hpp"
 
 std::list<std::string>		parse_optionnal_arg(std::string con_info)
 {

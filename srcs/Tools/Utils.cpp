@@ -1,4 +1,4 @@
-#include "../../includes/General.hpp"
+#include "General.hpp"
 
 bool	is_ip(std::string ip)
 {
