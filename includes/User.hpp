@@ -3,6 +3,7 @@
 # include <map>
 # include <string>
 # include <ctime>
+# include <sys/time.h>
 # include <iostream>
 # include "Server.hpp"
 # include "Channel.hpp"
@@ -11,11 +12,16 @@
 # define INVISIBLE_MODE "i"
 # define SERVER_NOTICE_MODE "s"
 # define WALLOP_MODE "w"
-# define OPERATOR_MODE "o"
+# ifndef OPERATOR_MODE
+#  define OPERATOR_MODE "o"
+# endif
+
+class Channel;
 
 class User
 {
 	public:
+		User(){};
 		User(size_t id, std::string nickname, size_t hopcount, std::string ip);
 		User(size_t id, std::string ip);
 //core
@@ -40,7 +46,7 @@ class User
 		Channel						*get_channel(size_t chan_id);
 		std::map<size_t, Channel>	*get_channels();
 		std::string					get_ip_address();
-		time_t						get_time_at_logon();
+		tm							*get_time_at_logon();
 
 //setters
 
@@ -59,7 +65,6 @@ class User
 		std::string					mode;
 		std::map<size_t, Channel>	channel;
 		std::string					ip_address;
-
-		// time_t						time_at_logon;
+		tm							*time_at_logon;
 };
 #endif

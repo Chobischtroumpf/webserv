@@ -7,7 +7,7 @@ Server::Server(int port, std::string pass): pass(pass)
 	this->address.sin_family = AF_INET6;
 	this->address.sin_addr.s_addr = INADDR_ANY;
 	this->address.sin_port = htons(port);
-	if (this->sock_fd = socket(AF_INET6, SOCK_STREAM, 0) == -1)
+	if ((this->sock_fd = socket(AF_INET6, SOCK_STREAM, 0)) == -1)
 		exit(-1);
 	fcntl(this->sock_fd, F_SETFL, O_NONBLOCK);
 	if (setsockopt(this->sock_fd, SOL_SOCKET, IPV6_V6ONLY, &opt, sizeof(opt)))

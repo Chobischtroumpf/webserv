@@ -1,6 +1,7 @@
 #ifndef GENERAL_HPP
 # define GENERAL_HPP
 # include "Server.hpp"
+#include <sys/time.h>
 
 // Tools/utils.cpp:
 

@@ -20,6 +20,9 @@
 
 // if id_t & USER_ID
 // 	Userlst[id_t - USER_ID]
+class User;
+class Channel;
+class Message;
 
 class Server
 {
@@ -51,7 +54,7 @@ class Server
 		
 		fd_set						get_readfds();
 		int							get_sock_fd();
-		sockaddr_in					Server::get_addr();
+		sockaddr_in					get_addr();
 		User						*get_user(size_t id);
 		std::map<size_t, User>		*get_users();
 		Channel						*get_chan(size_t id);

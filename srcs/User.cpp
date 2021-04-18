@@ -1,26 +1,34 @@
 #include "User.hpp"
 
+
 User::User(size_t id, std::string ip):
 	sock_fd_id(id), ip_address(ip)
 {
+	struct timeval t;
+	gettimeofday(&t, NULL);
 	this->logged = false;
+	this->time_at_logon = gmtime(&(t.tv_sec));
 }
 
 User::User(size_t id, std::string nickname, size_t hopcount, std::string ip):
 	sock_fd_id(id), nickname(nickname), hopcount(hopcount), ip_address(ip)
 {
+	struct timeval t;
+	gettimeofday(&t, NULL);
 	this->logged = false;
+	this->time_at_logon = gmtime(&(t.tv_sec));
 }
 
 Message	User::send(std::string content, size_t dest_id, bool cmd)
 {
 	Message	message(content, this->sock_fd_id, dest_id, cmd);
+	return (message);
 }
 
-int	User::connect(Channel channel, std::string pass = "")
+int	User::connect(Channel channel, std::string pass)
 {
-	std::map<size_t, User>	*users_connected = channel.get_connected_usrs();
-	std::map<size_t, User>	*users_banned = channel.get_banned_usrs();
+	// std::map<size_t, User>	*users_connected = channel.get_connected_usrs();
+	// std::map<size_t, User>	*users_banned = channel.get_banned_usrs();
 	if(pass == channel.get_pass())
 	{
 		this->channel[channel.get_id()] = channel;
@@ -29,10 +37,10 @@ int	User::connect(Channel channel, std::string pass = "")
 	}
 	else
 	{
-		return (1);
+		return (0);
 		//renvoyer ERR_BADCHANNELKEY au client via le socket
 	}
-
+	return (1);
 }
 
 void	User::display()
@@ -84,9 +92,9 @@ std::string					User::get_ip_address()
 	return (this->ip_address);
 }
 
-time_t						User::get_time_at_logon()
+tm							*User::get_time_at_logon()
 {
-	return (this->get_time_at_logon());
+	return (this->time_at_logon);
 }
 
 //setters

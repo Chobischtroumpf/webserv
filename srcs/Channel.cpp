@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(size_t id, std::string name, std::string mode, std::string pass = "")
+Channel::Channel(size_t id, std::string name, std::string mode, std::string pass)
 {
 	this->id = id;
 	this->name = name;
@@ -85,7 +85,7 @@ void					Channel::set_mode(std::string mode)
 
 void					Channel::set_new_user(User new_user)
 {
-	this->connected_usrs[new_user.get_id()] = new_user;
+	this->connected_usrs[new_user.get_sock_fd_id()] = new_user;
 }
 
 Channel::~Channel(){}

@@ -1,6 +1,6 @@
 #include "Message.hpp"
 
-Message::Message(std::string content, size_t from, size_t to, bool command = false)
+Message::Message(std::string content, size_t from, size_t to, bool command)
 {
 	this->content = content;
 	this->from_id = from;
