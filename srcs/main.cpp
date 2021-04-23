@@ -61,8 +61,7 @@ int	message_received(Server serv)
 			else
 			{
 				buf[retval] = '\0';
-				// Message message = message_parse(buf);
-				// user->second.send();
+				send(user->second.get_sock_fd_id(), "hey sir", 7, 0);
 			}
 		}
 	
