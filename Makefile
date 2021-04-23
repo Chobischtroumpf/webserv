@@ -5,14 +5,14 @@ CY	= \033[36;1m #	Cyan
 SCY	= \033[36m #	Small Cyan
 RC	= \033[0m #	Reset Colors
 
-NAME = ft_irc
+NAME = ircserv
 CP = clang++
 SRCDIR = ./srcs/
 SRC = main.cpp Message.cpp Server.cpp User.cpp Channel.cpp \
 		Tools/Utils.cpp Parsing/Init_parser.cpp
 
 SRC := $(addprefix $(SRCDIR), $(SRC))
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -std=c++98 -I ./includes/
+CFLAGS = -Wall -Wextra -Werror -std=c++98 -I ./includes/ #-fsanitize=address
 RM = /bin/rm -f
 
 $(NAME): $(SRC)

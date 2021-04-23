@@ -7,6 +7,7 @@
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <netinet/ip.h>
+# include <netdb.h>
 # include <cstdlib>
 # include <fcntl.h>
 # include <sys/select.h>

@@ -48,6 +48,7 @@ int	message_received(Server serv)
 	{
 		if (FD_ISSET(user->second.get_sock_fd_id(), &tmp_readfds))
 		{
+			std::cout << "into FD_ISSET" << std::endl;
 			int retval;
 			char	buf[512];
 			// check if user est encore co
@@ -76,8 +77,6 @@ int	main(int ac, char **av)
 	std::string		con_info(av[1]);
 	std::list<std::string> 	optional = parse_optionnal_arg(con_info);
 	int 			i = optional.empty() ? 1 : 2;
-	
-	//adapte le constructeur au besoin du pdf
 	Server serv(atoi(av[i]), av[i+1]); //hardcodé car on s'occupera plus tard des connection inter serveur
 	while(true)
 	{
