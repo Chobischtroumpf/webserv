@@ -11,7 +11,7 @@ SRCDIR = ./srcs/
 SRC = main.cpp Parsing/Init_parser.cpp Tools/Utils.cpp Config.cpp
 
 SRC := $(addprefix $(SRCDIR), $(SRC))
-CFLAGS = -Wall -Wextra -Werror -std=c++98 -I ./includes/ #-fsanitize=address
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -std=c++98 -I ./includes/ #-fsanitize=address
 RM = /bin/rm -f
 
 $(NAME): $(SRC)

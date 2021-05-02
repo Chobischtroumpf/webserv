@@ -25,4 +25,5 @@
 // Parsing/InitParser.cpp:
 	void		parse_env(char **env);
 	std::string skip_comment(std::string file);
+	std::string	reverse_str(std::string str);
 #endif

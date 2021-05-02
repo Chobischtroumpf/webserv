@@ -81,6 +81,7 @@ int	main(int ac, char **av, char **env)
 	try
 	{
 		parse_env(env);
+		// log_env();
 		Config config(av[1]);
 	}
 	catch(const std::exception& e)

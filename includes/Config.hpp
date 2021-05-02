@@ -23,17 +23,18 @@ class Config
 		};
 		struct server
 		{
+			std::list<std::string> names;
 			std::string host;
 			std::string root;
-			std::list<location> locations;
+			std::map<int, std::string> error_pages;
+			std::map<std::string, location> locations;
 			size_t port;
 		};
 	private:
-		std::list<server> servers;
-
+		std::map<std::string, server> servers;
 	public:
 		Config(std::string file);
-		void bracket_management(std::string file);
+		std::vector<size_t>	bracket_management(std::string files);
 
 };
 

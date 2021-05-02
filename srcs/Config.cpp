@@ -3,26 +3,100 @@
 Config::Config(std::string file)
 {
 	std::string file_content = skip_comment(readFile(file));
+	// size_t	after_server;
+	std::vector<size_t> pos(2, 0);
 	// si je trouve server alors bracket_management
-	// if (file_content.find("server"))
-	log_file(file_content);
+	while(file_content.find("server", pos[1]) != std::string::npos)
+	{
+		// after_server = file_content.find("server", *(pos.end())) + 7;
+		pos = bracket_management(file_content);
+		// on fait notre
+	}
+	// log_file(file_content);
 }
 
-void Config::bracket_management(std::string file)
+size_t	skip_whitespaces(std::string str)
 {
-	// this->servers || this->server->location = what you want
-	size_t first;
+	int i = -1;
+	while (str[++i])
+		if (!isspace(str[i]))
+			break;
+	return (i);
+}
+
+std::vector<size_t> 	Config::bracket_management(std::string file)
+{
+	static size_t first;
+	size_t pos_open;
+	size_t pos_close = 0;
+	std::vector<size_t> pos(2, 0);
+
 	if ((first = file.find("{")) != std::string::npos)
 	{
-		size_t pos_open = file.find("{", first);
-		size_t pos_close = file.find("}", first);
+		pos_open = file.find("{", first + 1);
+		pos_close = file.find("}", first);
 		if (pos_close == std::string::npos)
 			throw ParsingException(0, "error in config file : unmatched bracket");
 		if (pos_open != std::string::npos && pos_open < pos_close)
-			this->bracket_management(std::string(file.c_str() + first));
+			pos_close += bracket_management(std::string(file.c_str() + pos_close))[1];
 	}
+	// pos_close = file.find("}", pos_close);
+	if (pos_close == std::string::npos)
+		throw ParsingException(0, "error in config file : unmatched bracket");
+	pos[0] = file.find("{");
+	pos[1] = pos_close;
+	for (std::vector<size_t>::iterator i = pos.begin(); i != pos.end(); i++)
+		std::cout << *i << std::endl;
+	return (pos);
 }
 
+// if (server)
+// 		{
+// 			// std::string content = file.substr(first, pos_open < pos_close ? pos_open : pos_close);
+// 			{
+// 				Config::server fields;
+// 				size_t end_tmp;
+// 				//host port root && location
+// 				for (size_t pos = first; (end_tmp = file.find(";", pos)); pos = file.find(";", pos) + 1)
+// 				{
+// 					if (file.find("location", pos) < end_tmp)
+// 						pos = this->bracket_management(std::string(file.c_str() + pos_open), false);
+// 					std::string part = file.substr(pos, end_tmp - 1);
+// 					pos = skip_whitespaces(part);
+// 					end_tmp = skip_whitespaces(reverse_str(part));
+// 					part = part.substr(pos, end_tmp);
+// 					if (part.find(" ") == std::string::npos)
+// 						throw ParsingException(0, "config file badly formatted");
+// 					fields[part.substr(pos, part.find(" "))] = part.substr(part.find(" "), end_tmp);
+// 				}
+// 				return (fields);
+// 			}
+// 		}
+// 		else//location
+// 		{
+// 			std::map<std::string, Config::location> fields_location;
+// 		}
+
+// serv1 : 
+// 	- 1
+// 	- 2
+// 	- 3
+// 	- location:
+// 		- 1
+// 		- 2
+// 		- 3	
+// 	- location2:
+//		- 1
+//		- 2
+//		- 3
+// serv2 :
+// 	- 1
+// 	- 2
+// 	- 3
+// 	location:
+// 		- 1
+// 		- 2
+// 		- 3
 
 // serv {
 //	location /bla/ {}

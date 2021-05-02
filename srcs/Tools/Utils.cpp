@@ -47,3 +47,12 @@ void throwError(const std::exception& ex)
 {
 	std::cerr << "\033[1m\033[31mERROR \033[0m: " << ex.what() << '\n';
 }
+
+std::string	reverse_str(std::string str)
+{
+    int n = str.length();
+  
+    for (int i = 0; i < n / 2; i++)
+        std::swap(str[i], str[n - i - 1]);
+	return (str);
+}
