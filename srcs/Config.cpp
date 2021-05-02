@@ -10,6 +10,8 @@ Config::Config(std::string file)
 	{
 		// after_server = file_content.find("server", *(pos.end())) + 7;
 		pos = bracket_management(file_content);
+		for (std::vector<size_t>::iterator i = pos.begin(); i != pos.end(); i++)
+			std::cout << *i << std::endl;
 		// on fait notre
 	}
 	// log_file(file_content);
@@ -45,8 +47,6 @@ std::vector<size_t> 	Config::bracket_management(std::string file)
 		throw ParsingException(0, "error in config file : unmatched bracket");
 	pos[0] = file.find("{");
 	pos[1] = pos_close;
-	for (std::vector<size_t>::iterator i = pos.begin(); i != pos.end(); i++)
-		std::cout << *i << std::endl;
 	return (pos);
 }
 
