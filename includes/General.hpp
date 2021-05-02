@@ -1,14 +1,28 @@
 #ifndef GENERAL_HPP
-# define GENERAL_HPP
-# include "Server.hpp"
-#include <sys/time.h>
+# define GENERAL_HPP 1
+
+# include "WebServ.hpp"
+# include "ParsingException.hpp"
+# include "Config.hpp"
+# include <sys/time.h>
+# include <map>
+# include <string>
+# include <iostream>
+# include <sstream>
+# include <unistd.h>
+# include <list>
+# define BUFFER_SIZE 256
 
 // Tools/utils.cpp:
 
-bool	is_ip(std::string ip);
+// logger: pattern : void log_<what_you_are_logging>();
+	void	log_env();
+	void	log_file(std::string file);
+
+// checker: pattern : bool is_<what_you_are_checking>();
+	bool	is_ip(std::string ip);
 
 // Parsing/InitParser.cpp:
-
-std::list<std::string>		parse_optionnal_arg(std::string con_info);
-
+	void		parse_env(char **env);
+	std::string skip_comment(std::string file);
 #endif
