@@ -1,0 +1,10 @@
+connection crée :
+recoi une requete, on repond avec un header, qui commence avec un code : (200 301 400 401 403 404 500 502 etc...)
+et le message adequat en fonction de la valeur renvoyée
+il est ensuite constitué de valeur arrangée comme un dict en python
+HTTP Field Name: Field Content
+ex: 
+Content-type: text/html\r\n\r\n
+
+info interessantes par rapport au projet:
+https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm

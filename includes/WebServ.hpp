@@ -1,5 +1,5 @@
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#ifndef WEBSERV_HPP
+# define WEBSERV_HPP
 # include <map>
 # include <queue>
 # include <string>
@@ -11,12 +11,7 @@
 # include <cstdlib>
 # include <fcntl.h>
 # include <sys/select.h>
-# include "User.hpp"
-# include "Channel.hpp"
-# include "Message.hpp"
 
-# define CHANNEL_ID	0x100000000l
-# define USER_ID	0x010000000l
 // #define USER_ID 0100000
 
 // if id_t & USER_ID

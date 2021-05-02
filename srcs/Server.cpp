@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server(int port, std::string pass): pass(pass)
+Server::Server(std::string file)
 {
 	int opt = 0;
 	struct protoent *protocol = NULL;
