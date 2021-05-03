@@ -11,20 +11,20 @@ Config::Config(std::string file)
 	{
 		// after_server = file_content.find("server", *(pos.end())) + 7;
 		pos = bracket_management(file_content, starting_pos);
-		std::cout << pos[0] << " " << pos[1] << std::endl;
-		// on fait notre
+		// std::cout << pos[0] << " " << pos[1] << std::endl;
+		std::string server = file_content.substr(pos[0] + 1, pos[1] - pos[0] - 1);
+		{
+			
+		}
+		// begin = skip_whitespaces(part);
+		// end_tmp = skip_whitespaces(reverse_str(part));
+		// part = part.substr(pos, end_tmp);
+		std::cout << server << std::endl << std::endl;
+
 	}
 	// log_file(file_content);
 }
 
-size_t	skip_whitespaces(std::string str)
-{
-	int i = -1;
-	while (str[++i])
-		if (!isspace(str[i]))
-			break;
-	return (i);
-}
 
 std::vector<size_t> 	Config::bracket_management(std::string file, size_t starting_pos)
 {
@@ -45,6 +45,14 @@ std::vector<size_t> 	Config::bracket_management(std::string file, size_t startin
 	return (pos);
 }
 
+size_t	skip_whitespaces(std::string str)
+{
+	int i = -1;
+	while (str[++i])
+		if (!isspace(str[i]))
+			break;
+	return (i);
+}
 // if (server)
 // 		{
 // 			// std::string content = file.substr(first, pos_open < pos_close ? pos_open : pos_close);

@@ -1,30 +1,107 @@
-GR	= \033[32;1m #	Green
-RE	= \033[31;1m #	Red
-YE	= \033[33;1m #	Yellow
-CY	= \033[36;1m #	Cyan
-SCY	= \033[36m #	Small Cyan
-RC	= \033[0m #	Reset Colors
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: alessandro <alessandro@student.42.fr>      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2020/04/10 13:37:24 by lorenuar          #+#    #+#              #
+#    Updated: 2021/05/03 17:24:55 by alessandro       ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-NAME = webserv
-CP = clang++
-SRCDIR = ./srcs/
-SRC = main.cpp Parsing/Init_parser.cpp Tools/Utils.cpp Config.cpp
+# ================================ VARIABLES ================================= #
 
-SRC := $(addprefix $(SRCDIR), $(SRC))
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -std=c++98 -I ./includes/ #-fsanitize=address
-RM = /bin/rm -f
+# The name of your executable
+NAME	= webserv
 
-$(NAME): $(SRC)
-	$(CP) $(CFLAGS) $? -o $(NAME)
+# Compiler and compiling flags
+CC	= clang++
+CFLAGS	= -Wall -Werror -Wextra
 
-all: $(NAME)
+# Debug, use with`make DEBUG=1`
+ifeq ($(DEBUG),1)
+CFLAGS	+= -g3 -fsanitize=address
+endif
 
-clean:
-	$(RM) $(NAME)
+# Folder name
+SRCDIR	= srcs/
+INCDIR	= includes/
+OBJDIR	= bin/
 
-fclean:
-	$(RM) $(NAME)
+# Add include folder
+CFLAGS	+= -I $(INCDIR)
 
-re: fclean all
+# Linking stage flags
+LDFLAGS =
 
-.PHONY: all clean fclean re
+###▼▼▼<src-updater-do-not-edit-or-remove>▼▼▼
+# **************************************************************************** #
+# **   Generated with https://github.com/lorenuars19/makefile-src-updater   ** #
+# **************************************************************************** #
+
+SRCS =\
+	./srcs/Tools/Utils.cpp\
+	./srcs/Config.cpp\
+	./srcs/Parsing/Init_parser.cpp\
+	./srcs/main.cpp\
+	./srcs/Server.cpp\
+
+HEADERS =\
+	./includes/ParsingException.hpp\
+	./includes/Config.hpp\
+	./includes/WebServ.hpp\
+	./includes/General.hpp\
+
+###▲▲▲<src-updater-do-not-edit-or-remove>▲▲▲
+
+# String manipulation magic
+SRC		:= $(notdir $(SRCS))
+OBJ		:= $(SRC:.cpp=.o)
+OBJS	:= $(addprefix $(OBJDIR), $(OBJ))
+
+# Colors
+GR	= \033[32;1m
+RE	= \033[31;1m
+YE	= \033[33;1m
+CY	= \033[36;1m
+RC	= \033[0m
+
+# Implicit rules
+VPATH := $(SRCDIR) $(OBJDIR) $(shell find $(SRCDIR) -type d)
+
+# ================================== RULES =================================== #
+
+all : $(NAME)
+
+# Compiling
+$(OBJDIR)%.o : %.cpp
+	@mkdir -p $(OBJDIR)
+	@printf "$(GR)+$(RC)"
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+# Linking
+$(NAME)	: $(SRCS) $(HEADERS) $(OBJS)
+	@printf "\n$(GR)=== Compiled [$(CC) $(CFLAGS)] ===\n--- $(SRC)$(RC)\n"
+	@$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $(NAME)
+	@printf "$(YE)&&& Linked [$(CC) $(LDFLAGS)] &&&\n--- $(NAME)$(RC)\n"
+
+# Cleaning
+clean :
+	@printf "$(RE)--- Removing $(OBJDIR)$(RC)"
+	@rm -rf $(OBJDIR)
+
+fclean : clean
+	@printf "$(RE)--- Removing $(NAME)$(RC)"
+	@rm -f $(NAME)
+
+# Special rule to force to remake everything
+re : fclean all
+
+# This runs the program
+run : $(NAME)
+	@printf "$(CY)>>> Running $(NAME)$(RC)"
+	./$(NAME)
+
+# This specifies the rules that does not correspond to any filename
+.PHONY	= all run clean fclean re
