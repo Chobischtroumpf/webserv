@@ -3,15 +3,15 @@
 Config::Config(std::string file)
 {
 	std::string file_content = skip_comment(readFile(file));
+	size_t starting_pos;
 	// size_t	after_server;
 	std::vector<size_t> pos(2, 0);
 	// si je trouve server alors bracket_management
-	while(file_content.find("server", pos[1]) != std::string::npos)
+	while((starting_pos = file_content.find("server", pos[1])) != std::string::npos)
 	{
 		// after_server = file_content.find("server", *(pos.end())) + 7;
-		pos = bracket_management(file_content);
-		for (std::vector<size_t>::iterator i = pos.begin(); i != pos.end(); i++)
-			std::cout << *i << std::endl;
+		pos = bracket_management(file_content, starting_pos);
+		std::cout << pos[0] << " " << pos[1] << std::endl;
 		// on fait notre
 	}
 	// log_file(file_content);
@@ -26,26 +26,21 @@ size_t	skip_whitespaces(std::string str)
 	return (i);
 }
 
-std::vector<size_t> 	Config::bracket_management(std::string file)
+std::vector<size_t> 	Config::bracket_management(std::string file, size_t starting_pos)
 {
-	static size_t first;
 	size_t pos_open;
 	size_t pos_close = 0;
 	std::vector<size_t> pos(2, 0);
 
-	if ((first = file.find("{")) != std::string::npos)
-	{
-		pos_open = file.find("{", first + 1);
-		pos_close = file.find("}", first);
-		if (pos_close == std::string::npos)
-			throw ParsingException(0, "error in config file : unmatched bracket");
-		if (pos_open != std::string::npos && pos_open < pos_close)
-			pos_close += bracket_management(std::string(file.c_str() + pos_close))[1];
-	}
-	// pos_close = file.find("}", pos_close);
+	pos_open = file.find("{", starting_pos);
+	pos_close = file.find("}", starting_pos);
 	if (pos_close == std::string::npos)
 		throw ParsingException(0, "error in config file : unmatched bracket");
-	pos[0] = file.find("{");
+	if (pos_open != std::string::npos && pos_open < pos_close)
+		pos_close = bracket_management(file, pos_close + 1)[1];
+	if (pos_close == std::string::npos)
+		throw ParsingException(0, "error in config file : unmatched bracket");
+	pos[0] = pos_open;
 	pos[1] = pos_close;
 	return (pos);
 }

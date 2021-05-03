@@ -34,7 +34,7 @@ class Config
 		std::map<std::string, server> servers;
 	public:
 		Config(std::string file);
-		std::vector<size_t>	bracket_management(std::string files);
+		std::vector<size_t>	bracket_management(std::string files, size_t starting_pos);
 
 };
 
