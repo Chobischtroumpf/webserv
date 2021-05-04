@@ -6,15 +6,21 @@ Config::Config(std::string file)
 	size_t starting_pos;
 	// size_t	after_server;
 	std::vector<size_t> pos(2, 0);
-	// si je trouve server alors bracket_management
+
+	if(count_char('{', file_content) != count_char('}', file_content))
+		throw ParsingException(0, "error in config file : unmatched bracket");
+	// si je trouve server alors offset_cut_scope
 	while((starting_pos = file_content.find("server", pos[1])) != std::string::npos)
 	{
 		// after_server = file_content.find("server", *(pos.end())) + 7;
-		pos = bracket_management(file_content, starting_pos);
-		// std::cout << pos[0] << " " << pos[1] << std::endl;
-		std::string server = file_content.substr(pos[0] + 1, pos[1] - pos[0] - 1);
+		pos = offset_cut_scope(file_content, starting_pos);
+		if ((file_content.find("}", pos[1] + 1) < file_content.find("{", pos[1] + 1)))
+			throw ParsingException(0, "error in config file : closing bracket unmatched");
 		{
-			
+			std::string server = file_content.substr(pos[0] + 1, pos[1] - pos[0] - 1);
+			{
+				
+			}
 		}
 		// begin = skip_whitespaces(part);
 		// end_tmp = skip_whitespaces(reverse_str(part));
@@ -25,23 +31,14 @@ Config::Config(std::string file)
 	// log_file(file_content);
 }
 
-
-std::vector<size_t> 	Config::bracket_management(std::string file, size_t starting_pos)
+std::vector<size_t> 	Config::offset_cut_scope(std::string file, size_t starting_pos)
 {
-	size_t pos_open;
-	size_t pos_close = 0;
 	std::vector<size_t> pos(2, 0);
 
-	pos_open = file.find("{", starting_pos);
-	pos_close = file.find("}", starting_pos);
-	if (pos_close == std::string::npos)
-		throw ParsingException(0, "error in config file : unmatched bracket");
-	if (pos_open != std::string::npos && pos_open < pos_close)
-		pos_close = bracket_management(file, pos_close + 1)[1];
-	if (pos_close == std::string::npos)
-		throw ParsingException(0, "error in config file : unmatched bracket");
-	pos[0] = pos_open;
-	pos[1] = pos_close;
+	pos[0] = file.find("{", starting_pos);
+	pos[1] = file.find("}", starting_pos);
+	if (pos[0] != std::string::npos && pos[0] < pos[1])
+		pos = offset_cut_scope(file, pos[1] + 1);
 	return (pos);
 }
 
@@ -63,7 +60,7 @@ size_t	skip_whitespaces(std::string str)
 // 				for (size_t pos = first; (end_tmp = file.find(";", pos)); pos = file.find(";", pos) + 1)
 // 				{
 // 					if (file.find("location", pos) < end_tmp)
-// 						pos = this->bracket_management(std::string(file.c_str() + pos_open), false);
+// 						pos = this->offset_cut_scope(std::string(file.c_str() + pos_open), false);
 // 					std::string part = file.substr(pos, end_tmp - 1);
 // 					pos = skip_whitespaces(part);
 // 					end_tmp = skip_whitespaces(reverse_str(part));

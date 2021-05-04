@@ -56,3 +56,13 @@ std::string	reverse_str(std::string str)
         std::swap(str[i], str[n - i - 1]);
 	return (str);
 }
+
+size_t	count_char(char c, std::string str)
+{
+	size_t count = 0;
+
+	for (std::string::iterator i = str.begin(); i != str.end(); i++)
+		if (*i == c)
+			count++;
+	return (count);
+}

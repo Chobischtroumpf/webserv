@@ -26,4 +26,5 @@
 	void		parse_env(char **env);
 	std::string skip_comment(std::string file);
 	std::string	reverse_str(std::string str);
+	size_t		count_char(char c, std::string str);
 #endif
