@@ -26,6 +26,7 @@ size_t	Config::offset_cut_scope(std::string file, size_t starting_pos)
 		if ((pos[1] = file.find("}", pos[1] + 1)) != std::string::npos)
 			closing_brace++;
 	}
+
 	return (pos[1]);
 }
 
@@ -42,10 +43,17 @@ void	Config::parse_server(std::string server_scope)
 	}
 }
 
-void	Config::parse_location(std::string location_scope)
+Config::location	Config::parse_location(std::string location_scope)
 {
-	std::cerr << location_scope << std::endl;
-	std::list<std::string>	elements;
+	Config::location retval;
+	std::string element;
+	size_t pos = 0;
+
+	element = location_scope.substr(pos, location_scope.find("{") - 1);
+	// retval.name = element.substr()
+	std::cerr << element << std::endl;
+	
+	return (retval);
 }
 
 size_t	skip_whitespaces(std::string str)
@@ -54,6 +62,14 @@ size_t	skip_whitespaces(std::string str)
 	while (str[++i])
 		if (!isspace(str[i]))
 			break;
+	return (i);
+}
+
+size_t	skip_brackets(std::string str)
+{
+	int i = -1;
+	while (str[i] == '[' || str[i] == ']' || str[i] =='{' || str[i] == '}' || str[i] == '(' || str[i] == ')')
+		i++;
 	return (i);
 }
 
