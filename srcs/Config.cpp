@@ -4,42 +4,48 @@ Config::Config(std::string file)
 {
 	std::string file_content = skip_comment(readFile(file));
 	size_t starting_pos;
-	// size_t	after_server;
-	std::vector<size_t> pos(2, 0);
-
+	size_t pos = 0;
 	if(count_char('{', file_content) != count_char('}', file_content))
 		throw ParsingException(0, "error in config file : unmatched bracket");
-	// si je trouve server alors offset_cut_scope
-	while((starting_pos = file_content.find("server", pos[1])) != std::string::npos)
+	while ((starting_pos = file_content.find("server", pos)) != std::string::npos)
 	{
-		// after_server = file_content.find("server", *(pos.end())) + 7;
-		pos = offset_cut_scope(file_content, starting_pos);
-		if ((file_content.find("}", pos[1] + 1) < file_content.find("{", pos[1] + 1)))
-			throw ParsingException(0, "error in config file : closing bracket unmatched");
-		{
-			std::string server = file_content.substr(pos[0] + 1, pos[1] - pos[0] - 1);
-			{
-				
-			}
-		}
-		// begin = skip_whitespaces(part);
-		// end_tmp = skip_whitespaces(reverse_str(part));
-		// part = part.substr(pos, end_tmp);
-		std::cout << server << std::endl << std::endl;
-
+		pos = offset_cut_scope(file_content, file_content.find("{", starting_pos));
+		parse_server(file_content.substr(starting_pos, pos));
 	}
-	// log_file(file_content);
 }
 
-std::vector<size_t> 	Config::offset_cut_scope(std::string file, size_t starting_pos)
+size_t	Config::offset_cut_scope(std::string file, size_t starting_pos)
 {
-	std::vector<size_t> pos(2, 0);
+	std::vector<size_t> pos(2, starting_pos);
+	int opening_brace = 1;
+	int	closing_brace = 0;
+	while (opening_brace != closing_brace && pos[0] <= pos[1])
+	{
+		if ((pos[0] = file.find("{", pos[0] + 1)) != std::string::npos)
+			opening_brace++;
+		if ((pos[1] = file.find("}", pos[1] + 1)) != std::string::npos)
+			closing_brace++;
+	}
+	return (pos[1]);
+}
 
-	pos[0] = file.find("{", starting_pos);
-	pos[1] = file.find("}", starting_pos);
-	if (pos[0] != std::string::npos && pos[0] < pos[1])
-		pos = offset_cut_scope(file, pos[1] + 1);
-	return (pos);
+
+void	Config::parse_server(std::string server_scope)
+{
+	size_t	starting_pos = 0;
+	size_t	closing_brace;
+	while ((starting_pos = server_scope.find("location", starting_pos)) != std::string::npos)
+	{
+		closing_brace = offset_cut_scope(server_scope, server_scope.find("{", starting_pos));
+		parse_location(server_scope.substr(starting_pos, closing_brace - starting_pos + 1));
+		server_scope.replace(starting_pos, closing_brace - starting_pos + 1, "");
+	}
+}
+
+void	Config::parse_location(std::string location_scope)
+{
+	std::cerr << location_scope << std::endl;
+	std::list<std::string>	elements;
 }
 
 size_t	skip_whitespaces(std::string str)
@@ -50,6 +56,7 @@ size_t	skip_whitespaces(std::string str)
 			break;
 	return (i);
 }
+
 // if (server)
 // 		{
 // 			// std::string content = file.substr(first, pos_open < pos_close ? pos_open : pos_close);
@@ -76,6 +83,9 @@ size_t	skip_whitespaces(std::string str)
 // 		{
 // 			std::map<std::string, Config::location> fields_location;
 // 		}
+		// begin = skip_whitespaces(part);
+		// end_tmp = skip_whitespaces(reverse_str(part));
+		// part = part.substr(pos, end_tmp);
 
 // serv1 : 
 // 	- 1

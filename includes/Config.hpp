@@ -34,7 +34,9 @@ class Config
 		std::map<std::string, server> servers;
 	public:
 		Config(std::string file);
-		std::vector<size_t>	offset_cut_scope(std::string files, size_t starting_pos);
+		void	parse_location(std::string location_scope);
+		void	parse_server(std::string server_scope);
+		size_t	offset_cut_scope(std::string files, size_t starting_pos);
 
 };
 
