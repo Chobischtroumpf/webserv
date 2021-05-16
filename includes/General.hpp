@@ -14,6 +14,7 @@
 # define BUFFER_SIZE 256
 
 // Tools/utils.cpp:
+	std::list<std::string> split_string(std::string str, std::string sep);
 
 // logger: pattern : void log_<what_you_are_logging>();
 	void	log_env();
@@ -25,6 +26,8 @@
 // Parsing/InitParser.cpp:
 	void		parse_env(char **env);
 	std::string skip_comment(std::string file);
+	size_t	skip_brackets(std::string str);
 	std::string	reverse_str(std::string str);
+	size_t	skip_whitespaces(std::string str);
 	size_t		count_char(char c, std::string str);
 #endif

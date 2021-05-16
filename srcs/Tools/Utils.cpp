@@ -50,10 +50,10 @@ void throwError(const std::exception& ex)
 
 std::string	reverse_str(std::string str)
 {
-    int n = str.length();
-  
-    for (int i = 0; i < n / 2; i++)
-        std::swap(str[i], str[n - i - 1]);
+	int n = str.length();
+
+	for (int i = 0; i < n / 2; i++)
+		std::swap(str[i], str[n - i - 1]);
 	return (str);
 }
 
@@ -65,4 +65,38 @@ size_t	count_char(char c, std::string str)
 		if (*i == c)
 			count++;
 	return (count);
+}
+
+//sep has to be one char long
+std::list<std::string> split_string(std::string str, std::string sep)
+{
+	std::list<std::string> ret;
+	size_t start = 0;
+	size_t end = 0;
+	while((end = str.find(sep, start)) != std::string::npos)
+	{
+		if (end - start != 0)
+			ret.push_back(str.substr(start, end - start));
+		start = end + 1;
+	}
+	if (end - start != 0)
+			ret.push_back(str.substr(start, end - start));
+	return ret;
+}
+
+size_t	skip_whitespaces(std::string str)
+{
+	int i = -1;
+	while (str[++i])
+		if (!isspace(str[i]))
+			break;
+	return (i);
+}
+
+size_t	skip_brackets(std::string str)
+{
+	int i = -1;
+	while (str[i] == '[' || str[i] == ']' || str[i] =='{' || str[i] == '}' || str[i] == '(' || str[i] == ')')
+		i++;
+	return (i);
 }
