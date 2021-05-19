@@ -1,9 +1,7 @@
 #ifndef WEBSERV_HPP
 # define WEBSERV_HPP
-# include <map>
+# include "General.hpp"
 # include <queue>
-# include <string>
-# include <list>
 # include <sys/socket.h>
 # include <arpa/inet.h>
 # include <netinet/ip.h>

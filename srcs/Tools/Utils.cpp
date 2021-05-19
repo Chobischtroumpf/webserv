@@ -7,12 +7,25 @@ extern std::map<std::string, std::string>	g_env;
 void	log_env()
 {
 	for (std::map<std::string, std::string>::iterator i = g_env.begin(); i != g_env.end(); i++)
-		std::clog << "\033[34;1m[" << i->first << "]\033[0m = \033[32;1m[" << i->second << "]\033[0m" << std::endl;
+		std::clog << "\033[0;34m[" << i->first << "]\033[0m = \033[0;32m[" << i->second << "]\033[0m" << std::endl;
 }
 
 void	log_file(std::string file)
 {
 	std::clog << file << std::endl;
+}
+
+void	log_serv_config(Config::server config)
+{
+	std::clog << "\033[0;34m[server_names]\033[0m = \033[0;32m[";
+	for (std::list<std::string>::iterator it = config.names.begin(); it != config.names.end(); it++)
+		std::clog << *it + ", ";
+	std::clog << "]\033[0m" << std::endl;
+	std::clog << "\033[0;34m[server_host]\033[0m = \033[0;32m[" << config.host << "]\033[0m" << std::endl;
+	std::clog << "\033[0;34m[server_root]\033[0m = \033[0;32m[" << config.root << "]\033[0m" << std::endl;
+	for (std::map<int, std::string>::iterator it = config.error_pages.begin(); it != config.error_pages.end(); it++)
+		std::clog << "\033[0;34m[" << it->first << "]\033[0m = \033[0;32m[" << it->second << "]\033[0m" << std::endl;
+	std::clog << "\033[0;34m[server_port]\033[0m = \033[0;32m[" << config.port << "]\033[0m" << std::endl;
 }
 
 //Checker:  pattern : bool ft::is_<what_you_are_checking>();
@@ -99,4 +112,11 @@ size_t	skip_brackets(std::string str)
 	while (str[i] == '[' || str[i] == ']' || str[i] =='{' || str[i] == '}' || str[i] == '(' || str[i] == ')')
 		i++;
 	return (i);
+}
+
+bool is_number(const std::string& s)
+{
+	std::string::const_iterator it = s.begin();
+	while (it != s.end() && std::isdigit(*it++));
+	return !s.empty() && it == s.end();
 }

@@ -1,10 +1,14 @@
 #ifndef CONFIG_HPP
 # define CONFIG_HPP
 
+# include <map>
 # include <string>
 # include <iostream>
 # include <sstream>
-# include "General.hpp"
+# include <unistd.h>
+# include <list>
+# include <algorithm>
+
 std::string readFile(std::string file);
 
 class Config
@@ -19,7 +23,7 @@ class Config
 		// 	std::string					upload_path;
 		// 	bool						is_autoindex;
 		// 	bool						is_upload_enable;
-		// 	std::vector<std::string>	cgi_extension;
+		// 	std::list<std::string>		cgi_extension;
 		// 	std::string					cgi_path;
 		// };
 		struct server
@@ -31,15 +35,19 @@ class Config
 			std::map<std::string, std::map<std::string, std::list<std::string> > > locations;
 			size_t port;
 		};
+		
 	private:
+		std::list<std::string> location_values;
 		std::list<server> servers;
 	public:
 		Config(std::string file);
-		location	parse_location(std::string location_scope);
-		server	parse_server(std::string server_scope);
-		size_t	offset_cut_scope(std::string files, size_t starting_pos);
-		
+		location				parse_location(std::string location_scope);
+		server					parse_server(std::string server_scope);
+		size_t					offset_cut_scope(std::string files, size_t starting_pos);
+		void					check_location(location retval);
+		void					check_server(Config::server *retval);
+		std::list<std::string>	populate_location_value();
 };
 
-
+# include "General.hpp"
 #endif
