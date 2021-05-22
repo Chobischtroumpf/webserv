@@ -181,13 +181,13 @@ void	Config::check_server(Config::server *retval)
 			throw ParsingException(0, "Host has no port.");
 	if (retval->root.empty())
 		retval->root = "./default/default.html";
-	int error_code[14] = {400, 403, 404, 405, 406, 408, 411, 413, 500, 501, 502, 503, 504, 505};
-	for (size_t i = 0; i < 14; i++)
+	int error_code[13] = {400, 403, 404, 405, 406, 411, 413, 500, 501, 502, 503, 504, 505};
+	for (size_t i = 0; i < 13; i++)
 	{
 		std::ostringstream ss;
 		ss << error_code[i];
 		if (retval->error_pages[error_code[i]].empty())
-			retval->error_pages[error_code[i]] = "./default/error_" + ss.str() + ".html";
+			retval->error_pages[error_code[i]] = "./default/error_pages/error_" + ss.str() + ".html";
 	}
 }
 
