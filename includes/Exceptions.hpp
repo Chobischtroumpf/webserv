@@ -1,5 +1,5 @@
-#ifndef PARSINGEXCEPTION_HPP
-# define PARSINGEXCEPTION_HPP
+#ifndef EXCEPTIONS_HPP
+# define EXCEPTIONS_HPP
 
 void throwError(const std::exception& ex);
 std::string uIntegerToString(size_t n);
@@ -13,6 +13,22 @@ class ParsingException : public std::exception
 		: _msg("Line: " + uIntegerToString(line + 1) + ": " + msg)
 		{};
 		~ParsingException() throw()
+		{};
+		const char *what () const throw ()
+		{
+			return (_msg.c_str());
+		};
+};
+
+class ServerException : public std::exception
+{
+	private:
+		std::string _msg;
+	public:
+		ServerException(std::string msg = "the server met an unrecoverable error.")
+		: _msg(msg)
+		{};
+		~ServerException() throw()
 		{};
 		const char *what () const throw ()
 		{

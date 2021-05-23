@@ -75,7 +75,7 @@ int	main(int ac, char **av, char **env)
 {
 	if (ac != 2)
 	{
-		std::clog << "[Webserv error] :\n\tusage: ./webserv path" << std::endl;
+		std::clog << "[Webserv error] :" << std::endl << "	usage: ./webserv [path]" << std::endl;
 		return (1);
 	}
 	try
@@ -83,19 +83,16 @@ int	main(int ac, char **av, char **env)
 		parse_env(env);
 		// log_env();
 		Config config(av[1]);
+		Server serv(config);
+		while(true)
+		{
+			init_listen(serv)
+		}
 	}
 	catch(const std::exception& e)
 	{
 		throwError(e);
 	}
 
-	// Server serv(av[1]);
-	// while(true)
-	// {
-	// 	if (init_listen(serv) < 0)
-	// 		exit(-1);
-	// 	incoming_connection(serv);
-	// 	message_received(serv);
-	// }
 	return (0);
 }

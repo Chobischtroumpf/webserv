@@ -1,18 +1,39 @@
 #ifndef GENERAL_HPP
 # define GENERAL_HPP 1
 
-# include <sys/time.h>
-# include <map>
-# include <string>
-# include <iostream>
-# include <sstream>
+# include <stdlib.h>
 # include <unistd.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+# include <sys/wait.h>
+# include <sys/time.h>
+# include <sys/resource.h>
+# include <signal.h>
+# include <dirent.h>
+# include <string.h>
+# include <errno.h>
+# include <time.h>
+# include <sys/select.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+
+# include <iostream>
+# include <string>
+# include <vector>
 # include <list>
+# include <queue>
+# include <stack>
+# include <map>
 # include <algorithm>
-# include <cstdlib>
-# include "WebServ.hpp"
-# include "ParsingException.hpp"
+# include <iterator>
+
+# include "Server.hpp"
+# include "Exceptions.hpp"
 # include "Config.hpp"
+
+
 # define BUFFER_SIZE 256
 
 // Tools/utils.cpp:

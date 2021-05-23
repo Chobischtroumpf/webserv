@@ -19,6 +19,8 @@ std::list<std::string> Config::populate_location_value()
 
 Config::Config(std::string file)
 {std::cout << "\033[0;35m\e[1mConfig\e[0m\033[0m" << std::endl;
+	if (file.compare(file.size() - 5, 5, ".conf") != 0)
+		throw ParsingException(0, "Config file needs .conf extention");
 	std::string file_content = skip_comment(readFile(file));
 	size_t starting_pos, pos = 0;
 	Config::server serveur;
