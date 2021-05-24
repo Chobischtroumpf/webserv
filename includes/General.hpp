@@ -1,5 +1,5 @@
 #ifndef GENERAL_HPP
-# define GENERAL_HPP 1
+# define GENERAL_HPP
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -29,9 +29,10 @@
 # include <algorithm>
 # include <iterator>
 
-# include "Server.hpp"
 # include "Exceptions.hpp"
 # include "Config.hpp"
+// # include "Socket.hpp"
+# include "Server.hpp"
 
 
 # define BUFFER_SIZE 256

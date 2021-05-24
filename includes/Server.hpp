@@ -3,13 +3,26 @@
 
 # include "General.hpp"
 
-// #define USER_ID 0100000
+class Socket
+{
+	private:
+		int					sock_des;
+		int					option_buffer;
+		struct sockaddr_in	address;
+		struct Config::server	server_conf;
+	public:
+		Socket(Config::server serv);
+		int				getSD();
+		sockaddr_in		getAddress();
+		Config::server	getConf();
+		void			createSD(void);
+		void			setSockOption();
+		void			setSocketNonBlock();
+		void			initAddress(int port);
 
-// if id_t & USER_ID
-// 	Userlst[id_t - USER_ID]
-// class User;
-// class Channel;
-// class Message;
+		~Socket();
+};
+
 
 class Server
 {
@@ -17,13 +30,10 @@ class Server
 
 		fd_set			readfds;
 		fd_set			writefds;
-		
-		std::set<int>	activeFileDes;
 
-		Server();
+		std::list<Socket>	sub_serv;
+		Server(Config config);
 		void	check_connections(); 
-		Message	check_request(std::queue<std::string> input);
-		Message	*check_time_out(std::map<size_t, User>);
 		
 //displays
 
@@ -33,9 +43,6 @@ class Server
 		void	display_chan(size_t id);
 
 //setters
-
-		void	add_user(User neo);
-		void	add_channel(Channel neo);//will check if channel is in chan_lst, if it is not, will create new channel
 
 //unsetters
 
@@ -47,10 +54,6 @@ class Server
 		fd_set						get_readfds();
 		int							get_sock_fd();
 		sockaddr_in					get_addr();
-		User						*get_user(size_t id);
-		std::map<size_t, User>		*get_users();
-		Channel						*get_chan(size_t id);
-		std::map<size_t, Channel>	*get_channels();
 		std::string					get_pass();
 	
 		~Server();

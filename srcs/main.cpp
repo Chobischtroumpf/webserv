@@ -86,7 +86,7 @@ int	main(int ac, char **av, char **env)
 		Server serv(config);
 		while(true)
 		{
-			init_listen(serv)
+			// init_listen(serv)
 		}
 	}
 	catch(const std::exception& e)

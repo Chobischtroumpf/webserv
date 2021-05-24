@@ -6,7 +6,7 @@
 #    By: adorigo <adorigo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/04/10 13:37:24 by lorenuar          #+#    #+#              #
-#    Updated: 2021/05/23 10:55:35 by adorigo          ###   ########.fr        #
+#    Updated: 2021/05/24 16:51:42 by adorigo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ NAME	= webserv
 
 # Compiler and compiling flags
 CC	= clang++
-CFLAGS	= -Wall -Werror -Wextra
+CFLAGS	= -Wall -Werror -Wextra -std=c++98
 
 # Debug, use with`make DEBUG=1`
 ifeq ($(DEBUG),1)
@@ -46,12 +46,14 @@ SRCS =\
 	./srcs/Parsing/Init_parser.cpp\
 	./srcs/main.cpp\
 	./srcs/Server.cpp\
+	./srcs/Socket.cpp\
 
 HEADERS =\
-	./includes/ParsingException.hpp\
+	./includes/Exceptions.hpp\
 	./includes/Config.hpp\
-	./includes/WebServ.hpp\
+	./includes/Server.hpp\
 	./includes/General.hpp\
+	# ./includes/Socket.hpp\
 
 ###▲▲▲<src-updater-do-not-edit-or-remove>▲▲▲
 

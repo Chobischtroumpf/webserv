@@ -36,4 +36,21 @@ class ServerException : public std::exception
 		};
 };
 
+class SocketException : public std::exception
+{
+	private:
+		std::string _msg;
+	public:
+		SocketException(std::string msg = "the Socket met an unrecoverable error.")
+		: _msg(msg)
+		{};
+		~SocketException() throw()
+		{};
+		const char *what () const throw ()
+		{
+			return (_msg.c_str());
+		};
+};
+
+
 #endif

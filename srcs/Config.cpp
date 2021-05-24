@@ -59,7 +59,7 @@ bool	check_listen(std::list<std::string> element, Config::server *ret_serv)
 		if (element.size() != 3)
 			throw ParsingException(0, "wrong amount of arguments to listen");
 		element.pop_front();
-		if (!(is_number(element.front()) && (ret_serv->port = std::stoi(element.front())) >=0))
+		if (!(is_number(element.front()) && (ret_serv->port = std::atoi(element.front().c_str())) >=0))
 			throw ParsingException(0, element.front() + " is not a valid port");
 		element.pop_front();
 		ret_serv->host = element.front();
@@ -90,7 +90,7 @@ bool	check_error_page(std::list<std::string> element, Config::server *ret_serv)
 			throw ParsingException(0, "wrong amount of arguments to error_page");
 		tmp_err = -1;
 		element.pop_front();
-		if (!(is_number(element.front()) && (tmp_err = std::stoi(element.front())) >=0))
+		if (!(is_number(element.front()) && (tmp_err = std::atoi(element.front().c_str())) >=0))
 			throw ParsingException(0, element.front() + " is not a numeric value.");
 		element.pop_front();
 		ret_serv->error_pages[tmp_err] = element.front();
@@ -198,4 +198,28 @@ void	Config::check_location(Config::location retval)
 	for (Config::location::iterator i = retval.begin(); i != retval.end(); i++)
 		if (std::find(location_values.begin(), location_values.end(), i->first) == location_values.end())
 			throw ParsingException(0, i->first + " not a valid element");
+}
+
+std::list<Config::server>		Config::getServers()
+{
+	return (this->servers);
+}
+
+Config::~Config()
+{
+	std::map<std::string, location > locations;
+
+	location_values.clear();
+	for (std::list<server>::iterator it = servers.begin(); it != servers.end(); it++)
+	{
+		it->error_pages.clear();
+		for (std::map<std::string, Config::location >::iterator it1 = it->locations.begin();
+			it1 != it->locations.end(); it1++)
+		{
+			for (Config::location::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+				it2->second.clear();
+			it1->second.clear();
+		}
+	}
+	servers.clear();
 }
