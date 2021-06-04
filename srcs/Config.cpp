@@ -200,13 +200,13 @@ void	Config::check_location(Config::location retval)
 			throw ParsingException(0, i->first + " not a valid element");
 }
 
-std::list<Config::server>		Config::getServers()
+std::list<Config::server>		&Config::getServers()
 {
 	return (this->servers);
 }
 
 Config::~Config()
-{
+{std::cout << "\033[0;35m\e[1mconfig destructor\e[0m\033[0m" << std::endl;
 	std::map<std::string, location > locations;
 
 	location_values.clear();

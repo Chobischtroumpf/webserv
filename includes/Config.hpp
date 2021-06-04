@@ -47,7 +47,7 @@ class Config
 		void					check_location(location retval);
 		void					check_server(Config::server *retval);
 		std::list<std::string>	populate_location_value();
-		std::list<server>		getServers();
+		std::list<server>		&getServers();
 		~Config();
 };
 

@@ -132,3 +132,14 @@ bool is_number(const std::string& s)
 	while (it != s.end() && std::isdigit(*it++));
 	return !s.empty() && it == s.end();
 }
+
+std::string ipbytes_to_ipv4(struct in_addr in)
+{
+	std::stringstream buffer;
+
+	unsigned char *bytes = (unsigned char *) &in;
+	for (int cur_bytes = 0; cur_bytes < 4; cur_bytes++)
+		buffer << (int)bytes[cur_bytes] << '.';
+	buffer.str().pop_back();
+	return (buffer.str());
+}

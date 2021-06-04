@@ -3,59 +3,74 @@
 
 # include "General.hpp"
 
-class Socket
-{
-	private:
-		int					sock_des;
-		int					option_buffer;
-		struct sockaddr_in	address;
-		struct Config::server	server_conf;
-	public:
-		Socket(Config::server serv);
-		int				getSD();
-		sockaddr_in		getAddress();
-		Config::server	getConf();
-		void			createSD(void);
-		void			setSockOption();
-		void			setSocketNonBlock();
-		void			initAddress(int port);
+class Server;
 
-		~Socket();
+class Client
+{
+	public:
+	Client(int sd, std::string address);
+	Client &operator=(const Client& Other);
+	~Client();
+	int		getSD();
+	private:
+		int				socket;
+		std::string		client_address;
+		int				option_buffer;
+		std::string		request;
 };
 
+class SubServ
+{
+	private:
+		Server				&main_serv;
+		int					sock_des;
+		int					option_buffer;
+		struct sockaddr_in	srv_address;
+		struct Config::server	server_conf;
+		std::list<Client>	client_list;
+	public:
+		SubServ(Config::server serv, Server *main_serv);
+		int					getSD();
+		sockaddr_in			getAddress();
+		Config::server		getConf();
+		std::list<Client>	getClientList();
+
+		Server			getMainServer();
+		void			setClientList(Client client);
+		void			createSD();
+		void			setSockOption();
+		void			setSubServNonBlock();
+		void			initAddress(int port);
+		void			bindSubServ();
+		void			socketListener();
+
+		SubServ &operator=(const SubServ& Other);
+		~SubServ();
+};
 
 class Server
 {
 	public:
 
-		fd_set			readfds;
-		fd_set			writefds;
+		fd_set				readfds;
+		fd_set				writefds;
+		int					max_sd;
+		std::list<SubServ>	sub_serv;
 
-		std::list<Socket>	sub_serv;
 		Server(Config config);
-		void	check_connections(); 
+		Server(Server& other);
+
+		void	listen_it();
+		void	check_connections();
+		void	accept_connection(SubServ &s_srv);
+		void	UpAndDownLoad(SubServ &s_srv);
 		
 //displays
-
-		void	display_users(std::string mode = "all");//display users ['all' || 'connected' || 'disconnected']
-		void	display_user(size_t id);
-		void	display_chans();
-		void	display_chan(size_t id);
-
-//setters
-
-//unsetters
-
-		void	delete_user(size_t id);
-		void	delete_channel(size_t id);
-		
-//getters
-		
 		fd_set						get_readfds();
-		int							get_sock_fd();
 		sockaddr_in					get_addr();
 		std::string					get_pass();
 	
+		Server &operator=(const Server& Other);
 		~Server();
 
 };

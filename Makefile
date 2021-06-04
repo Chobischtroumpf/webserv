@@ -6,7 +6,7 @@
 #    By: adorigo <adorigo@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/04/10 13:37:24 by lorenuar          #+#    #+#              #
-#    Updated: 2021/05/24 16:51:42 by adorigo          ###   ########.fr        #
+#    Updated: 2021/06/04 22:39:28 by adorigo          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,8 @@ SRCS =\
 	./srcs/Parsing/Init_parser.cpp\
 	./srcs/main.cpp\
 	./srcs/Server.cpp\
-	./srcs/Socket.cpp\
+	./srcs/SubServ.cpp\
+	./srcs/Client.cpp\
 
 HEADERS =\
 	./includes/Exceptions.hpp\

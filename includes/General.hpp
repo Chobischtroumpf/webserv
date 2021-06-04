@@ -39,6 +39,7 @@
 
 // Tools/utils.cpp:
 	std::list<std::string> split_string(std::string str, std::string sep);
+	std::string ipbytes_to_ipv4(struct in_addr in);
 	class Config;
 // logger: pattern : void log_<what_you_are_logging>();
 	void	log_env();

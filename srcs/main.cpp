@@ -84,10 +84,7 @@ int	main(int ac, char **av, char **env)
 		// log_env();
 		Config config(av[1]);
 		Server serv(config);
-		while(true)
-		{
-			// init_listen(serv)
-		}
+		serv.listen_it();
 	}
 	catch(const std::exception& e)
 	{
