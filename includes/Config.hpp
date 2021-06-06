@@ -15,7 +15,7 @@ class Config
 {
 	typedef	std::map<std::string, std::list<std::string> > location;
 	public:
-		// {
+		//struct location {
 		// 	std::string					name;
 		// 	std::string					root;
 		// 	std::list<std::string>		method;
@@ -41,12 +41,12 @@ class Config
 		std::list<server> servers;
 	public:
 		Config(std::string file);
-		location				parse_location(std::string location_scope);
-		server					parse_server(std::string server_scope);
-		size_t					offset_cut_scope(std::string files, size_t starting_pos);
-		void					check_location(location retval);
-		void					check_server(Config::server *retval);
-		std::list<std::string>	populate_location_value();
+		location				parseLocation(std::string location_scope);
+		server					parseServer(std::string server_scope);
+		size_t					offsetCutScope(std::string files, size_t starting_pos);
+		void					checkLocation(location retval);
+		void					checkServer(Config::server *retval);
+		std::list<std::string>	populateLocationValue();
 		std::list<server>		&getServers();
 		~Config();
 };

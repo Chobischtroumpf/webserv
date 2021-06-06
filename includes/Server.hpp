@@ -9,14 +9,18 @@ class Client
 {
 	public:
 	Client(int sd, std::string address);
+	int		getSD(void);
+	bool	requestReceived(void);
+	int		receiveRequest(void);
+
 	Client &operator=(const Client& Other);
 	~Client();
-	int		getSD();
 	private:
 		int				socket;
 		std::string		client_address;
 		int				option_buffer;
 		std::string		request;
+		bool			request_received;
 };
 
 class SubServ
@@ -33,9 +37,10 @@ class SubServ
 		int					getSD();
 		sockaddr_in			getAddress();
 		Config::server		getConf();
-		std::list<Client>	getClientList();
+		std::list<Client>	&getClientList();
 
 		Server			getMainServer();
+		int				receiveRequest(int sd, Client client);
 		void			setClientList(Client client);
 		void			createSD();
 		void			setSockOption();
@@ -60,15 +65,15 @@ class Server
 		Server(Config config);
 		Server(Server& other);
 
-		void	listen_it();
-		void	check_connections();
-		void	accept_connection(SubServ &s_srv);
-		void	UpAndDownLoad(SubServ &s_srv);
+		void	listenIt();
+		void	checkConnections();
+		void	acceptConnection(SubServ &s_srv);
+		void	upAndDownLoad(SubServ &s_srv);
 		
 //displays
-		fd_set						get_readfds();
-		sockaddr_in					get_addr();
-		std::string					get_pass();
+		fd_set						getReadfds();
+		sockaddr_in					getAddr();
+		std::string					getPass();
 	
 		Server &operator=(const Server& Other);
 		~Server();
