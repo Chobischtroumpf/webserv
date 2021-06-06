@@ -2,14 +2,14 @@
 
 extern std::map<std::string, std::string>	g_env;
 
-void		parse_env(char **env)
+void		parseEnv(char **env)
 {
 	for (size_t i = 0; env[i]; i++)
 	{
 		std::string temp = std::string(env[i]);
 		g_env[temp.substr(0, temp.find("="))] = temp.substr(temp.find("=") + 1, temp.size());
 	}
-	// ft::log_env();
+	// ft::logEnv();
 }
 
 std::string readFile(std::string file)

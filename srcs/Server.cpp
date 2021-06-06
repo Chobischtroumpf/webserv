@@ -8,15 +8,15 @@ Server::Server(Config config)
 }
 
 Server::Server(Server &Other)
-{
+{std::cout << "\033[0;35m\e[1mServer copy constructor\e[0m\033[0m" << std::endl;
 	this->readfds = Other.readfds;
 	this->writefds = Other.writefds;
 	this->sub_serv = Other.sub_serv;
 	this->max_sd = Other.max_sd;
 }
 
-void Server::accept_connection(SubServ &s_srv)
-{
+void Server::acceptConnection(SubServ &s_srv)
+{std::cout << "\033[0;35m\e[1macceptConnection\e[0m\033[0m" << std::endl;
 	sockaddr_in client;
 	socklen_t size = sizeof(client);
 	int new_sd;
@@ -26,35 +26,48 @@ void Server::accept_connection(SubServ &s_srv)
 			throw ServerException("Accept Failed");
 		return ;
 	}
-	s_srv.setClientList(Client(new_sd, ipbytes_to_ipv4(client.sin_addr)));
+	Client c = Client(new_sd, ipBytesToIpv4(client.sin_addr));
+	s_srv.setClientList(dynamic_cast<Client&>(c));
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
 }
 
-void Server::UpAndDownLoad(SubServ &s_srv)
-{	
+void Server::upAndDownLoad(SubServ &s_srv)
+{std::cout << "\033[0;35m\e[1mupAndDownLoad\e[0m\033[0m" << std::endl;	
 	//si FD_ISSET(sd_serv, read_fd) = true
 	// accepter connection, add socket a liste des scokets des clients
 	if (FD_ISSET(s_srv.getSD(), &readfds))
-		accept_connection(s_srv);
+		acceptConnection(s_srv);
 	//on recup la liste de sd des clients et on itere dessus
 	//si FD_ISSET(sd_client, writefds)
-	for (std::list<Client>::iterator i = s_srv.getClientList().begin(); i != s_srv.getClientList().end(); i++)
+	for (std::list<Client>::iterator client = s_srv.getClientList().begin(); client != s_srv.getClientList().end(); client++)
 	{
-		if (FD_ISSET((*i).getSD(), &writefds))
-			;
-			// read ce que le client a envoyer tant que != \r\n
-			// traiter la requete
+		if (FD_ISSET((*client).getSD(), &writefds) && (*client).requestReceived() == true)
+		{
+			//parsing header
+		}
+		//recup ce que le client a envoyer
+		if (FD_ISSET((*client).getSD(), &readfds))
+		{
+			int ret_val;
+			if ((ret_val = (*client).receiveRequest()) < 0)
+			{//si on recoit -1 > pop le client de la liste, il n'est plus connecter au serveur
+				close((*client).getSD());
+				client = s_srv.getClientList().erase(client);
+			}
+			else if (ret_val == 0)//indiquer qu'on a recu qqchose
+				(*client).setReceived(true);
+		}
 	}
 }
 
 static void getUpAndDownLoad(SubServ &s_srv)
 {
-	s_srv.getMainServer().UpAndDownLoad(s_srv);
+	s_srv.getMainServer().upAndDownLoad(s_srv);
 }
 
-void	Server::listen_it()
-{
+void	Server::listenIt()
+{std::cout << "\033[0;35m\e[1mlistenIt\e[0m\033[0m" << std::endl;
 	fd_set	server_read_fd;
 	 //biggest fd in the set
 
@@ -64,9 +77,9 @@ void	Server::listen_it()
 		FD_SET((*i).getSD(), &server_read_fd);
 		max_sd = (*i).getSD();
 	}
+	readfds = server_read_fd;
 	for (;"ever";)
 	{//boucle infinie
-		readfds = server_read_fd;
 		FD_ZERO(&writefds);
 		try
 		{
@@ -83,7 +96,7 @@ void	Server::listen_it()
 }
 
 Server &Server::operator=(const Server& Other)
-{
+{std::cout << "\033[0;35m\e[1mServer =\e[0m\033[0m" << std::endl;
 	this->readfds = Other.readfds;
 	this->writefds = Other.writefds;
 	this->sub_serv = Other.sub_serv;

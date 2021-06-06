@@ -4,18 +4,18 @@ extern std::map<std::string, std::string>	g_env;
 
 //logger: pattern : void ft::log_<what_you_are_logging>();
 
-void	log_env()
+void	logEnv()
 {
 	for (std::map<std::string, std::string>::iterator i = g_env.begin(); i != g_env.end(); i++)
 		std::clog << "\033[0;34m[" << i->first << "]\033[0m = \033[0;32m[" << i->second << "]\033[0m" << std::endl;
 }
 
-void	log_file(std::string file)
+void	logFile(std::string file)
 {
 	std::clog << file << std::endl;
 }
 
-void	log_serv_config(Config::server config)
+void	logServConfig(Config::server config)
 {
 	std::clog << "\033[0;34m[server_names]\033[0m = \033[0;32m[";
 	for (std::list<std::string>::iterator it = config.names.begin(); it != config.names.end(); it++)
@@ -42,12 +42,12 @@ void	log_serv_config(Config::server config)
 
 //Checker:  pattern : bool ft::is_<what_you_are_checking>();
 
-bool	is_ip(std::string ip)
+bool	isIp(std::string ip)
 {
 	return (inet_addr(ip.c_str()) != (in_addr_t)(-1));
 }
 
-std::string skip_comment(std::string file)
+std::string skipComment(std::string file)
 {
 	size_t	pos_hash;
 	size_t	pos_nl;
@@ -73,7 +73,7 @@ void throwError(const std::exception& ex)
 	std::cerr << "\033[1m\033[31mERROR \033[0m: " << ex.what() << '\n';
 }
 
-std::string	reverse_str(std::string str)
+std::string	reverseStr(std::string str)
 {
 	int n = str.length();
 
@@ -82,7 +82,7 @@ std::string	reverse_str(std::string str)
 	return (str);
 }
 
-size_t	count_char(char c, std::string str)
+size_t	countChar(char c, std::string str)
 {
 	size_t count = 0;
 
@@ -93,7 +93,7 @@ size_t	count_char(char c, std::string str)
 }
 
 //sep has to be one char long
-std::list<std::string> split_string(std::string str, std::string sep)
+std::list<std::string> splitString(std::string str, std::string sep)
 {
 	std::list<std::string> ret;
 	size_t start = 0;
@@ -109,7 +109,7 @@ std::list<std::string> split_string(std::string str, std::string sep)
 	return ret;
 }
 
-size_t	skip_whitespaces(std::string str)
+size_t	skipWhitespaces(std::string str)
 {
 	int i = -1;
 	while (str[++i])
@@ -118,7 +118,7 @@ size_t	skip_whitespaces(std::string str)
 	return (i);
 }
 
-size_t	skip_brackets(std::string str)
+size_t	skipBrackets(std::string str)
 {
 	int i = -1;
 	while (str[i] == '[' || str[i] == ']' || str[i] =='{' || str[i] == '}' || str[i] == '(' || str[i] == ')')
@@ -126,20 +126,59 @@ size_t	skip_brackets(std::string str)
 	return (i);
 }
 
-bool is_number(const std::string& s)
+bool isNumber(const std::string& s)
 {
 	std::string::const_iterator it = s.begin();
 	while (it != s.end() && std::isdigit(*it++));
-	return !s.empty() && it == s.end();
+	return (!s.empty() && it == s.end());
 }
 
-std::string ipbytes_to_ipv4(struct in_addr in)
+std::string	ipBytesToIpv4(struct in_addr in)
 {
 	std::stringstream buffer;
 
 	unsigned char *bytes = (unsigned char *) &in;
 	for (int cur_bytes = 0; cur_bytes < 4; cur_bytes++)
 		buffer << (int)bytes[cur_bytes] << '.';
-	buffer.str().pop_back();
-	return (buffer.str());
+	std::string str = buffer.str();
+	return (str.substr(0, str.length() - 1));
+}
+
+// return 0 == rien, 1 == Content-Length defined, 2 == chunked (reception du message par paquet)
+int	contentType(std::string client_request)
+{std::cout << "\033[0;35m\e[1mcontentType\e[0m\033[0m" << std::endl;
+	size_t pos = 0;
+	size_t pos_in_line = 0;
+	std::string line;
+
+	for (size_t end = client_request.find("\n"); end != std::string::npos; end = client_request.find("\n", pos))
+	{
+		line = client_request.substr(pos, end - pos);
+		if ((pos_in_line = line.find("Transfer-Encoding: chunked")) != std::string::npos && pos_in_line == 0)
+			return (2);
+		else if ((pos_in_line = line.find("Content-Length")) != std::string::npos && pos_in_line == 0)
+			return (1);
+		if ((pos_in_line = client_request.find("\r\n\r\n")) != std::string::npos && pos_in_line == pos)
+			break;
+		pos = end + 1;
+	}
+	return (0);
+}
+
+size_t contentLength(std::string client_request)
+{std::cout << "\033[0;35m\e[1mcontentLength\e[0m\033[0m" << std::endl;
+	size_t pos = 0;
+	size_t pos_in_line = 0;
+	std::string line;
+
+	for (size_t end = client_request.find("\n"); end != std::string::npos; end = client_request.find("\n", pos))
+	{
+		line = client_request.substr(pos, end - pos);
+		if ((pos_in_line = line.find("Content-Length")) != std::string::npos && pos_in_line == 0)
+			return (atoi(line.substr(line.find(":") + 2, line.length()).c_str()));
+		if ((pos_in_line = client_request.find("\r\n\r\n")) != std::string::npos && pos_in_line == pos)
+			break;
+		pos = end + 1;
+	}
+	return (0);
 }

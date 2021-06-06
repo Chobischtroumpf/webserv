@@ -1,7 +1,7 @@
 #include "Config.hpp"
 
-std::list<std::string> Config::populate_location_value() 
-{std::cout << "\033[0;35m\e[1mpopulate_location_value\e[0m\033[0m" << std::endl;
+std::list<std::string> Config::populateLocationValue() 
+{std::cout << "\033[0;35m\e[1mpopulateLocationValue\e[0m\033[0m" << std::endl;
 	std::list<std::string> ret;
 	ret.push_back("name");
 	ret.push_back("root");
@@ -16,29 +16,28 @@ std::list<std::string> Config::populate_location_value()
 	return (ret);
 };
 
-
 Config::Config(std::string file)
 {std::cout << "\033[0;35m\e[1mConfig\e[0m\033[0m" << std::endl;
 	if (file.compare(file.size() - 5, 5, ".conf") != 0)
 		throw ParsingException(0, "Config file needs .conf extention");
-	std::string file_content = skip_comment(readFile(file));
+	std::string file_content = skipComment(readFile(file));
 	size_t starting_pos, pos = 0;
 	Config::server serveur;
-	this->location_values = populate_location_value();
+	this->location_values = populateLocationValue();
 
-	if(count_char('{', file_content) != count_char('}', file_content))
+	if(countChar('{', file_content) != countChar('}', file_content))
 		throw ParsingException(0, "error in config file : unmatched bracket");
 	while ((starting_pos = file_content.find("server", pos)) != std::string::npos)
 	{
-		pos = offset_cut_scope(file_content, file_content.find("{", starting_pos));
-		serveur = parse_server(file_content.substr(starting_pos, pos));
-		log_serv_config(serveur);
+		pos = offsetCutScope(file_content, file_content.find("{", starting_pos));
+		serveur = parseServer(file_content.substr(starting_pos, pos));
+		logServConfig(serveur); //logging
 		this->servers.push_back(serveur);
 	}
 }
 
-size_t	Config::offset_cut_scope(std::string file, size_t starting_pos)
-{std::cout << "\033[0;35m\e[1moffset_cut_scope\e[0m\033[0m" << std::endl;
+size_t	Config::offsetCutScope(std::string file, size_t starting_pos)
+{std::cout << "\033[0;35m\e[1moffsetCutScope\e[0m\033[0m" << std::endl;
 	std::vector<size_t> pos(2, starting_pos);
 	int opening_brace = 1;
 	int	closing_brace = 0;
@@ -52,14 +51,14 @@ size_t	Config::offset_cut_scope(std::string file, size_t starting_pos)
 	return (pos[1]);
 }
 
-bool	check_listen(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1mcheck_listen\e[0m\033[0m" << std::endl;
+bool	checkListen(std::list<std::string> element, Config::server *ret_serv)
+{std::cout << "\033[0;35m\e[1mcheckListen\e[0m\033[0m" << std::endl;
 	if (element.front() == "listen")
 	{
 		if (element.size() != 3)
 			throw ParsingException(0, "wrong amount of arguments to listen");
 		element.pop_front();
-		if (!(is_number(element.front()) && (ret_serv->port = std::atoi(element.front().c_str())) >=0))
+		if (!(isNumber(element.front()) && (ret_serv->port = std::atoi(element.front().c_str())) >=0))
 			throw ParsingException(0, element.front() + " is not a valid port");
 		element.pop_front();
 		ret_serv->host = element.front();
@@ -69,8 +68,8 @@ bool	check_listen(std::list<std::string> element, Config::server *ret_serv)
 		return (false);
 }
 
-bool	check_server_name(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1mcheck_server_name\e[0m\033[0m" << std::endl;
+bool	checkServerName(std::list<std::string> element, Config::server *ret_serv)
+{std::cout << "\033[0;35m\e[1mcheckServerName\e[0m\033[0m" << std::endl;
 	if (element.front() == "server_name")
 	{
 		if (element.size() < 2)
@@ -81,8 +80,8 @@ bool	check_server_name(std::list<std::string> element, Config::server *ret_serv)
 	return (!ret_serv->names.empty());
 }
 
-bool	check_error_page(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1mcheck_error_page\e[0m\033[0m" << std::endl;
+bool	checkErrorPage(std::list<std::string> element, Config::server *ret_serv)
+{std::cout << "\033[0;35m\e[1mcheckErrorPage\e[0m\033[0m" << std::endl;
 	ssize_t		tmp_err;
 	if (element.front() == "error_page")
 	{
@@ -90,7 +89,7 @@ bool	check_error_page(std::list<std::string> element, Config::server *ret_serv)
 			throw ParsingException(0, "wrong amount of arguments to error_page");
 		tmp_err = -1;
 		element.pop_front();
-		if (!(is_number(element.front()) && (tmp_err = std::atoi(element.front().c_str())) >=0))
+		if (!(isNumber(element.front()) && (tmp_err = std::atoi(element.front().c_str())) >=0))
 			throw ParsingException(0, element.front() + " is not a numeric value.");
 		element.pop_front();
 		ret_serv->error_pages[tmp_err] = element.front();
@@ -98,8 +97,8 @@ bool	check_error_page(std::list<std::string> element, Config::server *ret_serv)
 	return (!ret_serv->error_pages.empty());
 }
 
-bool	check_root(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1mcheck_root\e[0m\033[0m" << std::endl;
+bool	checkRoot(std::list<std::string> element, Config::server *ret_serv)
+{std::cout << "\033[0;35m\e[1mcheckRoot\e[0m\033[0m" << std::endl;
 	if (element.front() == "root")
 	{
 		if (element.size() != 2)
@@ -111,16 +110,16 @@ bool	check_root(std::list<std::string> element, Config::server *ret_serv)
 	return (!ret_serv->root.empty());
 }
 
-bool	error_server(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1merror_server\e[0m\033[0m" << std::endl;
-	return (!(check_listen(element, ret_serv)
-		|| check_server_name(element, ret_serv)
-		|| check_error_page(element, ret_serv)
-		|| check_root(element, ret_serv)));
+bool	errorServer(std::list<std::string> element, Config::server *ret_serv)
+{std::cout << "\033[0;35m\e[1merrorServer\e[0m\033[0m" << std::endl;
+	return (!(checkListen(element, ret_serv)
+		|| checkServerName(element, ret_serv)
+		|| checkErrorPage(element, ret_serv)
+		|| checkRoot(element, ret_serv)));
 }
 
-Config::server	Config::parse_server(std::string server_scope)
-{std::cout << "\033[0;35m\e[1mparse_server\e[0m\033[0m" << std::endl;
+Config::server	Config::parseServer(std::string server_scope)
+{std::cout << "\033[0;35m\e[1mparseServer\e[0m\033[0m" << std::endl;
 	size_t	starting_pos = 0;
 	size_t	closing_brace;
 	Config::server ret_server;
@@ -128,26 +127,26 @@ Config::server	Config::parse_server(std::string server_scope)
 	ret_server.port = 0;
 	while ((starting_pos = server_scope.find("location", starting_pos)) != std::string::npos)
 	{
-		closing_brace = offset_cut_scope(server_scope, server_scope.find("{", starting_pos));
-		tmp_location = parse_location(server_scope.substr(starting_pos, closing_brace - starting_pos + 1));
+		closing_brace = offsetCutScope(server_scope, server_scope.find("{", starting_pos));
+		tmp_location = parseLocation(server_scope.substr(starting_pos, closing_brace - starting_pos + 1));
 		ret_server.locations[tmp_location["name"].front()] = tmp_location;
 		server_scope.replace(starting_pos, closing_brace - starting_pos + 1, "");
 	}
 	server_scope.replace(0, server_scope.find("\n"), "");
 	while (server_scope.find(";") != std::string::npos)
 	{
-		std::string line = server_scope.substr(skip_whitespaces(server_scope), server_scope.find(";") - skip_whitespaces(server_scope));
-		std::list<std::string> element = split_string(line, " ");
-		if (error_server(element, &ret_server))
+		std::string line = server_scope.substr(skipWhitespaces(server_scope), server_scope.find(";") - skipWhitespaces(server_scope));
+		std::list<std::string> element = splitString(line, " ");
+		if (errorServer(element, &ret_server))
 			throw ParsingException(0, element.front() + " not supported");
 		server_scope.replace(0, server_scope.find(";") + 1, "");
 	}
-	check_server(&ret_server);
+	checkServer(&ret_server);
 	return (ret_server);
 }
 
-Config::location	Config::parse_location(std::string location_scope)
-{std::cout << "\033[0;35m\e[1mparse_location\e[0m\033[0m" << std::endl;
+Config::location	Config::parseLocation(std::string location_scope)
+{std::cout << "\033[0;35m\e[1mparseLocation\e[0m\033[0m" << std::endl;
 	std::string element;
 	size_t pos = 0;
 	size_t start_name;
@@ -157,24 +156,24 @@ Config::location	Config::parse_location(std::string location_scope)
 	element = location_scope.substr(pos, location_scope.find("{") - 1);
 	if ((location_len = element.find(" ", 0)) == std::string::npos)
 		throw ParsingException (0, "location badly defined."); // element.substr(location_len)
-	start_name = location_len + skip_whitespaces(&element[location_len]);
+	start_name = location_len + skipWhitespaces(&element[location_len]);
 	retval["name"] = std::list<std::string>(1, element.substr(start_name, std::string(&element[start_name]).find(" ")));
 	location_scope.replace(pos, location_scope.find("{") + 1, "");
 	while (location_scope.find(";") != std::string::npos)
 	{
-		element = location_scope.substr(skip_whitespaces(location_scope), location_scope.find(";") - skip_whitespaces(location_scope));
-		std::list<std::string> tmp_list = split_string(element, " ");
+		element = location_scope.substr(skipWhitespaces(location_scope), location_scope.find(";") - skipWhitespaces(location_scope));
+		std::list<std::string> tmp_list = splitString(element, " ");
 		std::string name = tmp_list.front();
 		tmp_list.pop_front();
 		retval[name] = tmp_list;
 		location_scope.replace(pos, location_scope.find(";") + 1, "");
 	}
-	check_location(retval);
+	checkLocation(retval);
 	return (retval);
 }
 
-void	Config::check_server(Config::server *retval)
-{std::cout << "\033[0;35m\e[1mcheck_server\e[0m\033[0m" << std::endl;
+void	Config::checkServer(Config::server *retval)
+{std::cout << "\033[0;35m\e[1mcheckServer\e[0m\033[0m" << std::endl;
 	if (retval->names.empty())
 		retval->names.push_back("default");
 	if (retval->host.empty())
@@ -193,8 +192,8 @@ void	Config::check_server(Config::server *retval)
 	}
 }
 
-void	Config::check_location(Config::location retval)
-{std::cout << "\033[0;35m\e[1mcheck_location\e[0m\033[0m" << std::endl;
+void	Config::checkLocation(Config::location retval)
+{std::cout << "\033[0;35m\e[1mcheckLocation\e[0m\033[0m" << std::endl;
 	for (Config::location::iterator i = retval.begin(); i != retval.end(); i++)
 		if (std::find(location_values.begin(), location_values.end(), i->first) == location_values.end())
 			throw ParsingException(0, i->first + " not a valid element");

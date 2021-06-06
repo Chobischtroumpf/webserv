@@ -39,7 +39,7 @@
 
 // Tools/utils.cpp:
 	std::list<std::string> splitString(std::string str, std::string sep);
-	std::string ipbytesToIpv4(struct in_addr in);
+	std::string ipBytesToIpv4(struct in_addr in);
 	class Config;
 // logger: pattern : void log_<what_you_are_logging>();
 	void	logEnv();
@@ -55,6 +55,9 @@
 	std::string skipComment(std::string file);
 	size_t		skipBrackets(std::string str);
 	std::string	reverseStr(std::string str);
-	size_t		skipWitespaces(std::string str);
+	size_t		skipWhitespaces(std::string str);
 	size_t		countChar(char c, std::string str);
+	int			contentType(std::string clientRequest);
+	size_t		contentLength(std::string client_request);
+
 #endif

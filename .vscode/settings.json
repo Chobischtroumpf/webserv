@@ -68,6 +68,8 @@
 		"bit": "cpp",
 		"stack": "cpp",
 		"__functional_03": "cpp",
-		"memory_resource": "cpp"
+		"memory_resource": "cpp",
+		"clocale": "cpp",
+		"fstream": "cpp"
 	}
 }

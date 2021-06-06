@@ -9,9 +9,11 @@ class Client
 {
 	public:
 	Client(int sd, std::string address);
-	int		getSD(void);
-	bool	requestReceived(void);
-	int		receiveRequest(void);
+	int			getSD(void);
+	std::string	getRequest(void);
+	void		setReceived(bool);
+	bool		requestReceived(void);
+	int			receiveRequest(void);
 
 	Client &operator=(const Client& Other);
 	~Client();
@@ -20,7 +22,7 @@ class Client
 		std::string		client_address;
 		int				option_buffer;
 		std::string		request;
-		bool			request_received;
+		bool			is_received;
 };
 
 class SubServ
@@ -41,7 +43,7 @@ class SubServ
 
 		Server			getMainServer();
 		int				receiveRequest(int sd, Client client);
-		void			setClientList(Client client);
+		void			setClientList(const Client &client);
 		void			createSD();
 		void			setSockOption();
 		void			setSubServNonBlock();
@@ -69,7 +71,7 @@ class Server
 		void	checkConnections();
 		void	acceptConnection(SubServ &s_srv);
 		void	upAndDownLoad(SubServ &s_srv);
-		
+
 //displays
 		fd_set						getReadfds();
 		sockaddr_in					getAddr();
