@@ -35,7 +35,7 @@ int	Client::receiveRequest()
 	char buffer[BUFFER_SIZE + 1];
 
 	bzero(buffer,BUFFER_SIZE + 1);
-	if ((read_ret = read(socket, buffer, BUFFER_SIZE)) <= 0)
+	if ((read_ret = recv(socket, buffer, BUFFER_SIZE, 0)) <= 0)
 		return (-1);
 	request.append(buffer);
 	std::clog << request << std::endl;
@@ -62,8 +62,24 @@ Client &Client::operator=(const Client& Other)
 		this->socket = Other.socket;
 		this->client_address = Other.client_address;
 		this->option_buffer = Other.option_buffer;
-		this->request = Other.request;
+		this->request = Other.request;	
 		return (*this);
 }
 
+// bool &Client::operator==(const Client& lhs, const Client& rhs)
+// {
+// 	if (lhs.socket == rhs.socket)
+// 		return true;
+// 	return false;
+// }
+
+bool operator==(const Client& lhs, const Client& rhs)
+{
+	if (lhs.socket == rhs.socket &&
+			lhs.client_address == rhs.client_address &&
+			lhs.option_buffer == rhs.option_buffer &&
+			lhs.request == rhs.request)
+		return (true);
+	return (false);
+}
 Client::~Client(){DEBUG("Client destructor")}

@@ -79,6 +79,11 @@ void	SubServ::setClientList(const Client &client)
 	this->client_list.push_back(client);
 }
 
+void	SubServ::popClient(const Client &client)
+{DEBUG("popClient")
+	this->client_list.remove(client);
+}
+
 Server	SubServ::getMainServer()
 {DEBUG("getMainServer")
 	return (this->main_serv);

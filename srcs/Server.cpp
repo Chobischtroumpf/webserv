@@ -35,7 +35,7 @@ void Server::acceptConnection(SubServ &s_srv)
 void Server::upAndDownLoad(SubServ &s_srv)
 {DEBUG("upAndDownLoad")	
 	//si FD_ISSET(sd_serv, read_fd) = true
-	// accepter connection, add socket a liste des scokets des clients
+	// accepter connection, add socket a liste des sockets des clients
 	if (FD_ISSET(s_srv.getSD(), &readfds))
 		acceptConnection(s_srv);
 	//on recup la liste de sd des clients et on itere dessus
@@ -49,6 +49,7 @@ void Server::upAndDownLoad(SubServ &s_srv)
 		//recup ce que le client a envoyer
 		if (FD_ISSET((*client).getSD(), &readfds))
 		{
+			DEBUG("		received request")
 			int ret_val;
 			if ((ret_val = (*client).receiveRequest()) < 0)
 			{//si on recoit -1 > pop le client de la liste, il n'est plus connecter au serveur
@@ -56,7 +57,9 @@ void Server::upAndDownLoad(SubServ &s_srv)
 				client = s_srv.getClientList().erase(client);
 			}
 			else if (ret_val == 0)//indiquer qu'on a recu qqchose
+			{
 				(*client).setReceived(true);
+			}
 		}
 	}
 }
