@@ -61,7 +61,7 @@ Config::server	Config::parseServer(std::string server_scope)
 	while ((starting_pos = server_scope.find("location", starting_pos)) != std::string::npos)
 	{
 		closing_brace = getScope(server_scope, server_scope.find("{", starting_pos));
-		tmp_location = parseLocation(server_scope.substr(starting_pos, closing_brace - starting_pos + 1);
+		tmp_location = parseLocation(server_scope.substr(starting_pos, closing_brace - starting_pos + 1));
 		ret_server.locations[tmp_location.name] = tmp_location;
 		server_scope.replace(starting_pos, closing_brace - starting_pos + 1, "");
 	}
@@ -139,17 +139,16 @@ Config::~Config()
 {DEBUG("config destructor")
 	std::map<std::string, location > locations;
 
-	location_values.clear();
 	for (std::list<server>::iterator it = servers.begin(); it != servers.end(); it++)
 	{
 		it->error_pages.clear();
-		for (std::map<std::string, Config::location >::iterator it1 = it->locations.begin();
+		for (std::map<std::string, Config::location>::iterator it1 = (it->locations).begin();
 			it1 != it->locations.end(); it1++)
 		{
-			for (Config::location::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
-				it2->second.clear();
-			it1->second.clear();
+			it1->second.method.clear();
+			it1->second.redirections.clear();
 		}
+		it->locations.clear();
 	}
 	servers.clear();
 }

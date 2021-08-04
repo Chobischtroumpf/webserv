@@ -19,26 +19,26 @@ class Config
 			std::string					root;
 			std::list<std::string>		method;
 			std::list<std::string>		redirections;
-			std::list<std::string>		cgi_extension;
 			std::string					index;
 			std::string					upload_path;
 			bool						is_autoindex;
 			bool						is_upload_enable;
+			std::string					cgi_extension;
 			std::string					cgi_path;
-			std::string							max_body_size;
+			std::string					max_body_size;
 			/*! @brief overload of operator = */
-			struct location& operator=(location &copy){
-				this->name = copy.name;
-				this->root = copy.root;
-				this->method = copy.method;
-				this->redirections = copy.redirections;
-				this->index = copy.index;
-				this->upload_path = copy.upload_path;
-				this->is_autoindex = copy.is_autoindex;
-				this->is_upload_enable = copy.is_upload_enable;
-				this->cgi_extension = copy.cgi_extension;
-				this->cgi_path = copy.cgi_path;
-				this->max_body_size = copy.max_body_size;
+			struct location& operator=(location const &copied){
+				this->name = copied.name;
+				this->root = copied.root;
+				this->method = copied.method;
+				this->redirections = copied.redirections;
+				this->index = copied.index;
+				this->upload_path = copied.upload_path;
+				this->is_autoindex = copied.is_autoindex;
+				this->is_upload_enable = copied.is_upload_enable;
+				this->cgi_extension = copied.cgi_extension;
+				this->cgi_path = copied.cgi_path;
+				this->max_body_size = copied.max_body_size;
 				return (*this);
 			}
 		};
@@ -51,13 +51,13 @@ class Config
 			std::map<std::string, struct location> locations;
 			size_t port;
 			/*! @brief overload of operator = */
-			struct server& operator=(server &copy){
-				this->names = copy.names;
-				this->root = copy.root;
-				this->host = copy.host;
-				this->error_pages = copy.error_pages;
-				this->locations = copy.locations;
-				this->port = copy.port;
+			struct server& operator=(server const &copied){
+				this->names = copied.names;
+				this->root = copied.root;
+				this->host = copied.host;
+				this->error_pages = copied.error_pages;
+				this->locations = copied.locations;
+				this->port = copied.port;
 				return (*this);
 			}
 		};

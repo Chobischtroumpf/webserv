@@ -27,16 +27,16 @@ void	logServConfig(Config::server config)
 		std::clog << "\033[0;34m[" << it->first << "]\033[0m = \033[0;32m[" << it->second << "]\033[0m" << std::endl;
 	std::clog << "\033[0;34m[server_port]\033[0m = \033[0;32m[" << config.port << "]\033[0m" << std::endl;
 	std::clog << "\033[0;34m[Locations]\033[0m = \033[0;32m" << std::endl << "{" << std::endl;
-	for (std::map<std::string, std::map<std::string, std::list<std::string> > >::iterator it = config.locations.begin(); it != config.locations.end(); it++)
-	{	
-		std::clog << "\t["<< it->first + "] :" << std::endl;
-		for (std::map<std::string, std::list<std::string> >::iterator it1 = it->second.begin(); it1 != it->second.end(); it1++)
-		{
-			std::clog << "\t\t[" << it1->first << "]" << std::endl;
-			for (std::list<std::string>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
-				std::clog << "\t\t\t[" << *it2 << "]" << std::endl;
-		}	
-	}
+	// for (std::map<std::string, std::map<std::string, std::list<std::string> > >::iterator it = config.locations.begin(); it != config.locations.end(); it++)
+	// {	
+	// 	std::clog << "\t["<< it->first + "] :" << std::endl;
+	// 	for (std::map<std::string, std::list<std::string> >::iterator it1 = it->second.begin(); it1 != it->second.end(); it1++)
+	// 	{
+	// 		std::clog << "\t\t[" << it1->first << "]" << std::endl;
+	// 		for (std::list<std::string>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
+	// 			std::clog << "\t\t\t[" << *it2 << "]" << std::endl;
+	// 	}	
+	// }
 	std::clog << "}\033[0m" << std::endl;
 }
 
@@ -120,7 +120,7 @@ size_t	skipWhitespaces(std::string str)
 
 size_t	skipBrackets(std::string str)
 {
-	int i = -1;
+	int i = 0;
 	while (str[i] == '[' || str[i] == ']' || str[i] =='{' || str[i] == '}' || str[i] == '(' || str[i] == ')')
 		i++;
 	return (i);

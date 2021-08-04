@@ -89,7 +89,23 @@ void	Config::checkServer(Config::server *retval)
 
 void	Config::checkLocation(Config::location retval)
 {DEBUG("checkLocation")
-	for (Config::location::iterator i = retval.begin(); i != retval.end(); i++)
-		if (std::find(location_values.begin(), location_values.end(), i->first) == location_values.end())
-			throw ParsingException(0, i->first + " not a valid element");
+	if (retval.name.empty())
+		throw ParsingException(0,"missing location name");
+	if (retval.root.empty())
+		throw ParsingException(0,"missing root directory for location");
+	if (retval.index.empty())
+		retval.index = "./index.html";
+	if (retval.method.empty())
+	{
+		retval.method.push_back("GET");
+		retval.method.push_back("PUSH");
+		retval.method.push_back("DELETE");
+	}
+	if (retval.is_upload_enable && retval.upload_path.empty())
+		retval.upload_path = "./";
+	if (retval.cgi_extension.empty())
+		retval.cgi_extension = "php";
+	if (retval.cgi_path.empty())
+		retval.cgi_path = "/usr/bin/";
+
 }

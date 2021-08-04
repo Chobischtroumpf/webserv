@@ -27,7 +27,7 @@ std::string readFile(std::string file)
 	{
 		result += buff;
 		i = 0;
-		while (i < BUFFER_SIZE)
+		while (i < res)
 			buff[i++] = 0;
 	}
 	if (res < 0)
