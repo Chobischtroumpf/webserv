@@ -13,26 +13,25 @@ std::string readFile(std::string file);
 
 class Config
 {
-	typedef	std::map<std::string, std::list<std::string> > location;
 	public:
-		//struct location {
-		// 	std::string					name;
-		// 	std::string					root;
-		// 	std::list<std::string>		method;
-		// 	std::string					index;
-		// 	std::string					upload_path;
-		// 	bool						is_autoindex;
-		// 	bool						is_upload_enable;
-		// 	std::list<std::string>		cgi_extension;
-		// 	std::string					cgi_path;
-		// };
+		struct location {
+			std::string					name;
+			std::string					root;
+			std::list<std::string>		method;
+			std::string					index;
+			std::string					upload_path;
+			bool						is_autoindex;
+			bool						is_upload_enable;
+			std::list<std::string>		cgi_extension;
+			std::string					cgi_path;
+		};
 		struct server
 		{
 			std::list<std::string> names;
 			std::string host;
 			std::string root;
 			std::map<int, std::string> error_pages;
-			std::map<std::string, std::map<std::string, std::list<std::string> > > locations;
+			std::map<std::string, struct location> locations;
 			size_t port;
 		};
 		

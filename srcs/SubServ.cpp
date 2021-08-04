@@ -1,48 +1,48 @@
 #include "Server.hpp"
 
 void SubServ::createSD()
-{std::cout << "\033[0;35m\e[1mcreateSD\e[0m\033[0m" << std::endl;
+{DEBUG("createSD")
 	if ((this->sock_des = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		throw SubServException("Creation of the SubServ descriptor failed");
 }
 
 
 void SubServ::setSockOption()
-{std::cout << "\033[0;35m\e[1msetSockOption\e[0m\033[0m" << std::endl;
+{DEBUG("setSockOption")
 	if (setsockopt(this->sock_des, SOL_SOCKET, SO_REUSEADDR,
 		&this->option_buffer, sizeof(this->option_buffer)))
 		throw SubServException("setting socket options failed");
 }
 
 void SubServ::setSubServNonBlock()
-{std::cout << "\033[0;35m\e[1msetSubServNonBlock\e[0m\033[0m" << std::endl;
+{DEBUG("setSubServNonBlock")
 	if (fcntl(this->sock_des, F_SETFL, O_NONBLOCK) < 0)
 		throw SubServException("Error setting SubServ to nonblocking");
 }
 
 void SubServ::initAddress(int port)
-{std::cout << "\033[0;35m\e[1minitAddress\e[0m\033[0m" << std::endl;
+{DEBUG("initAddress")
 	this->srv_address.sin_family = AF_INET;
 	this->srv_address.sin_addr.s_addr = INADDR_ANY;
 	this->srv_address.sin_port = htons(port);
 }
 
 void SubServ::bindSubServ()
-{std::cout << "\033[0;35m\e[1mbindSubServ\e[0m\033[0m" << std::endl;
+{DEBUG("bindSubServ")
 	if (bind(this->sock_des, (struct sockaddr *)&this->srv_address,
 		sizeof(this->srv_address)) < 0)
 		throw SubServException("Error while binding socket");
 }
 
 void SubServ::socketListener()
-{std::cout << "\033[0;35m\e[1msocketListener\e[0m\033[0m" << std::endl;
+{DEBUG("socketListener")
 	if (listen(this->sock_des, 9999) < 0)
 		throw SubServException("Error while listening to socket");
 }
 
 SubServ::SubServ(Config::server serv, Server *main_serv):
 	main_serv(*main_serv)
-{std::cout << "\033[0;35m\e[1mSubServ Constructor\e[0m\033[0m" << std::endl;
+{DEBUG("SubServ Constructor")
 	this->server_conf = serv;
 	this->option_buffer = 0;
 	createSD();
@@ -55,37 +55,37 @@ SubServ::SubServ(Config::server serv, Server *main_serv):
 
 
 int				SubServ::getSD()
-{std::cout << "\033[0;35m\e[1mgetSD\e[0m\033[0m" << std::endl;
+{DEBUG("getSD")
 	return(this->sock_des);
 }
 		
 sockaddr_in		SubServ::getAddress()
-{std::cout << "\033[0;35m\e[1mgetAddress\e[0m\033[0m" << std::endl;
+{DEBUG("getAddress")
 	return(this->srv_address);
 }
 		
 Config::server	SubServ::getConf()
-{std::cout << "\033[0;35m\e[1mgetConf\e[0m\033[0m" << std::endl;
+{DEBUG("getConf")
 	return(this->server_conf);
 }
 
 std::list<Client> &SubServ::getClientList()
-{std::cout << "\033[0;35m\e[1mgetClientList\e[0m\033[0m" << std::endl;
+{DEBUG("getClientList")
 	return (this->client_list);
 }
 
 void	SubServ::setClientList(const Client &client)
-{std::cout << "\033[0;35m\e[1msetClientList\e[0m\033[0m" << std::endl;
+{DEBUG("setClientList")
 	this->client_list.push_back(client);
 }
 
 Server	SubServ::getMainServer()
-{std::cout << "\033[0;35m\e[1mgetMainServer\e[0m\033[0m" << std::endl;
+{DEBUG("getMainServer")
 	return (this->main_serv);
 }
 
 SubServ &SubServ::operator=(const SubServ& Other)
-{std::cout << "\033[0;35m\e[1mSubserv =\e[0m\033[0m" << std::endl;
+{DEBUG("Subserv =")
 		this->main_serv = Other.main_serv;
 		this->sock_des = Other.sock_des;
 		this->option_buffer = Other.option_buffer;
@@ -95,5 +95,5 @@ SubServ &SubServ::operator=(const SubServ& Other)
 		return (*this);
 }
 
-SubServ::~SubServ(){std::cout << "\033[0;35m\e[1msocket destructor\e[0m\033[0m" << std::endl;}
+SubServ::~SubServ(){DEBUG("socket destructor")}
 		

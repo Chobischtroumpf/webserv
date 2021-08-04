@@ -1,7 +1,7 @@
 #include "Config.hpp"
 
 std::list<std::string> Config::populateLocationValue() 
-{std::cout << "\033[0;35m\e[1mpopulateLocationValue\e[0m\033[0m" << std::endl;
+{DEBUG("populateLocationValue")
 	std::list<std::string> ret;
 	ret.push_back("name");
 	ret.push_back("root");
@@ -17,7 +17,7 @@ std::list<std::string> Config::populateLocationValue()
 };
 
 Config::Config(std::string file)
-{std::cout << "\033[0;35m\e[1mConfig\e[0m\033[0m" << std::endl;
+{DEBUG("CONFIG")
 	if (file.compare(file.size() - 5, 5, ".conf") != 0)
 		throw ParsingException(0, "Config file needs .conf extention");
 	std::string file_content = skipComment(readFile(file));
@@ -37,7 +37,7 @@ Config::Config(std::string file)
 }
 
 size_t	Config::offsetCutScope(std::string file, size_t starting_pos)
-{std::cout << "\033[0;35m\e[1moffsetCutScope\e[0m\033[0m" << std::endl;
+{DEBUG("offsetCutScope")
 	std::vector<size_t> pos(2, starting_pos);
 	int opening_brace = 1;
 	int	closing_brace = 0;
@@ -52,7 +52,7 @@ size_t	Config::offsetCutScope(std::string file, size_t starting_pos)
 }
 
 bool	checkListen(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1mcheckListen\e[0m\033[0m" << std::endl;
+{DEBUG("checkListen")
 	if (element.front() == "listen")
 	{
 		if (element.size() != 3)
@@ -69,7 +69,7 @@ bool	checkListen(std::list<std::string> element, Config::server *ret_serv)
 }
 
 bool	checkServerName(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1mcheckServerName\e[0m\033[0m" << std::endl;
+{DEBUG("checkServerName")
 	if (element.front() == "server_name")
 	{
 		if (element.size() < 2)
@@ -81,7 +81,7 @@ bool	checkServerName(std::list<std::string> element, Config::server *ret_serv)
 }
 
 bool	checkErrorPage(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1mcheckErrorPage\e[0m\033[0m" << std::endl;
+{DEBUG("checkErrorPage")
 	ssize_t		tmp_err;
 	if (element.front() == "error_page")
 	{
@@ -98,7 +98,7 @@ bool	checkErrorPage(std::list<std::string> element, Config::server *ret_serv)
 }
 
 bool	checkRoot(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1mcheckRoot\e[0m\033[0m" << std::endl;
+{DEBUG("checkRoot")
 	if (element.front() == "root")
 	{
 		if (element.size() != 2)
@@ -111,7 +111,7 @@ bool	checkRoot(std::list<std::string> element, Config::server *ret_serv)
 }
 
 bool	errorServer(std::list<std::string> element, Config::server *ret_serv)
-{std::cout << "\033[0;35m\e[1merrorServer\e[0m\033[0m" << std::endl;
+{DEBUG("errorServer")
 	return (!(checkListen(element, ret_serv)
 		|| checkServerName(element, ret_serv)
 		|| checkErrorPage(element, ret_serv)
@@ -119,7 +119,7 @@ bool	errorServer(std::list<std::string> element, Config::server *ret_serv)
 }
 
 Config::server	Config::parseServer(std::string server_scope)
-{std::cout << "\033[0;35m\e[1mparseServer\e[0m\033[0m" << std::endl;
+{DEBUG("parseServer")
 	size_t	starting_pos = 0;
 	size_t	closing_brace;
 	Config::server ret_server;
@@ -146,7 +146,7 @@ Config::server	Config::parseServer(std::string server_scope)
 }
 
 Config::location	Config::parseLocation(std::string location_scope)
-{std::cout << "\033[0;35m\e[1mparseLocation\e[0m\033[0m" << std::endl;
+{DEBUG("parseLocation")
 	std::string element;
 	size_t pos = 0;
 	size_t start_name;
@@ -173,7 +173,7 @@ Config::location	Config::parseLocation(std::string location_scope)
 }
 
 void	Config::checkServer(Config::server *retval)
-{std::cout << "\033[0;35m\e[1mcheckServer\e[0m\033[0m" << std::endl;
+{DEBUG("checkServer")
 	if (retval->names.empty())
 		retval->names.push_back("default");
 	if (retval->host.empty())
@@ -193,7 +193,7 @@ void	Config::checkServer(Config::server *retval)
 }
 
 void	Config::checkLocation(Config::location retval)
-{std::cout << "\033[0;35m\e[1mcheckLocation\e[0m\033[0m" << std::endl;
+{DEBUG("checkLocation")
 	for (Config::location::iterator i = retval.begin(); i != retval.end(); i++)
 		if (std::find(location_values.begin(), location_values.end(), i->first) == location_values.end())
 			throw ParsingException(0, i->first + " not a valid element");
@@ -205,7 +205,7 @@ std::list<Config::server>		&Config::getServers()
 }
 
 Config::~Config()
-{std::cout << "\033[0;35m\e[1mconfig destructor\e[0m\033[0m" << std::endl;
+{DEBUG("config destructor")
 	std::map<std::string, location > locations;
 
 	location_values.clear();
