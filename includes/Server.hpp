@@ -8,15 +8,16 @@ class Server;
 class Client
 {
 	public:
-	Client(int sd, std::string address);
-	int			getSD(void);
-	std::string	getRequest(void);
-	void		setReceived(bool);
-	bool		requestReceived(void);
-	int			receiveRequest(void);
+		Client(int sd, std::string address);
+		int			getSD(void);
+		std::string	getRequest(void);
+		void		setReceived(bool);
+		bool		requestReceived(void);
+		int			receiveRequest(void);
 
-	Client &operator=(const Client& Other);
-	~Client();
+		Client &operator=(const Client& Other);
+		friend bool operator==(const Client& lhs, const Client& rhs);
+		~Client();
 	private:
 		int				socket;
 		std::string		client_address;
@@ -24,16 +25,17 @@ class Client
 		std::string		request;
 		bool			is_received;
 };
+		// friend bool &Client::operator==(const Client& lhs, const Client& rhs);
 
 class SubServ
 {
 	private:
-		Server				&main_serv;
-		int					sock_des;
-		int					option_buffer;
-		struct sockaddr_in	srv_address;
+		Server					&main_serv;
+		int						sock_des;
+		int						option_buffer;
+		struct sockaddr_in		srv_address;
 		struct Config::server	server_conf;
-		std::list<Client>	client_list;
+		std::list<Client>		client_list;
 	public:
 		SubServ(Config::server serv, Server *main_serv);
 		int					getSD();
@@ -44,6 +46,7 @@ class SubServ
 		Server			getMainServer();
 		int				receiveRequest(int sd, Client client);
 		void			setClientList(const Client &client);
+		void			popClient(const Client &client);
 		void			createSD();
 		void			setSockOption();
 		void			setSubServNonBlock();

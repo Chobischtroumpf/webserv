@@ -2,13 +2,13 @@
 #include "General.hpp"
 
 Server::Server(Config config)
-{std::cout << "\033[0;35m\e[1mServer constructor\e[0m\033[0m" << std::endl;
+{DEBUG("Server constructor")
 	for (std::list<Config::server>::iterator i = config.getServers().begin(); i != config.getServers().end(); i++)
 		sub_serv.push_back(SubServ(*i, this));
 }
 
 Server::Server(Server &Other)
-{std::cout << "\033[0;35m\e[1mServer copy constructor\e[0m\033[0m" << std::endl;
+{DEBUG("Server copy constructor")
 	this->readfds = Other.readfds;
 	this->writefds = Other.writefds;
 	this->sub_serv = Other.sub_serv;
@@ -16,7 +16,7 @@ Server::Server(Server &Other)
 }
 
 void Server::acceptConnection(SubServ &s_srv)
-{std::cout << "\033[0;35m\e[1macceptConnection\e[0m\033[0m" << std::endl;
+{DEBUG("acceptConnection")
 	sockaddr_in client;
 	socklen_t size = sizeof(client);
 	int new_sd;
@@ -33,9 +33,9 @@ void Server::acceptConnection(SubServ &s_srv)
 }
 
 void Server::upAndDownLoad(SubServ &s_srv)
-{std::cout << "\033[0;35m\e[1mupAndDownLoad\e[0m\033[0m" << std::endl;	
+{DEBUG("upAndDownLoad")	
 	//si FD_ISSET(sd_serv, read_fd) = true
-	// accepter connection, add socket a liste des scokets des clients
+	// accepter connection, add socket a liste des sockets des clients
 	if (FD_ISSET(s_srv.getSD(), &readfds))
 		acceptConnection(s_srv);
 	//on recup la liste de sd des clients et on itere dessus
@@ -49,6 +49,7 @@ void Server::upAndDownLoad(SubServ &s_srv)
 		//recup ce que le client a envoyer
 		if (FD_ISSET((*client).getSD(), &readfds))
 		{
+			DEBUG("		received request")
 			int ret_val;
 			if ((ret_val = (*client).receiveRequest()) < 0)
 			{//si on recoit -1 > pop le client de la liste, il n'est plus connecter au serveur
@@ -56,7 +57,9 @@ void Server::upAndDownLoad(SubServ &s_srv)
 				client = s_srv.getClientList().erase(client);
 			}
 			else if (ret_val == 0)//indiquer qu'on a recu qqchose
+			{
 				(*client).setReceived(true);
+			}
 		}
 	}
 }
@@ -67,7 +70,7 @@ static void getUpAndDownLoad(SubServ &s_srv)
 }
 
 void	Server::listenIt()
-{std::cout << "\033[0;35m\e[1mlistenIt\e[0m\033[0m" << std::endl;
+{DEBUG("listenIt")
 	fd_set	server_read_fd;
 	 //biggest fd in the set
 
@@ -96,7 +99,7 @@ void	Server::listenIt()
 }
 
 Server &Server::operator=(const Server& Other)
-{std::cout << "\033[0;35m\e[1mServer =\e[0m\033[0m" << std::endl;
+{DEBUG("Server =")
 	this->readfds = Other.readfds;
 	this->writefds = Other.writefds;
 	this->sub_serv = Other.sub_serv;
@@ -106,7 +109,7 @@ Server &Server::operator=(const Server& Other)
 
 
 Server::~Server()
-{std::cout << "\033[0;35m\e[1mServer destructor\e[0m\033[0m" << std::endl;
+{DEBUG("Server destructor")
 	sub_serv.clear();
 }
 

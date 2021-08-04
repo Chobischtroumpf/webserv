@@ -1,41 +1,41 @@
 #include "General.hpp"
 
 Client::Client(int sd, std::string address)
-{std::cout << "\033[0;35m\e[1mClient constructor\e[0m\033[0m" << std::endl;
+{DEBUG("Client constructor")
 	socket = sd;
 	this->client_address = address;
 }
 
 int		Client::getSD()
-{std::cout << "\033[0;35m\e[1mgetSD client\e[0m\033[0m" << std::endl;
+{DEBUG("getSD client")
 	return (this->socket);
 }
 
 std::string	Client::getRequest(void)
-{std::cout << "\033[0;35m\e[1mgetRequest\e[0m\033[0m" << std::endl;
+{DEBUG("getRequest")
 	return (this->request);
 }
 
 void	Client::setReceived(bool received)
-{std::cout << "\033[0;35m\e[1msetReceived\e[0m\033[0m" << std::endl;
+{DEBUG("setReceived")
 	this->is_received = received;
 }
 
 
 bool	Client::requestReceived()
-{std::cout << "\033[0;35m\e[1mrequestReceived\e[0m\033[0m" << std::endl;
+{DEBUG("requestReceived")
 	return (this->is_received);
 }
 
 // return -1 == error, 0 == On a fini de lire, 1 == Il reste des choses a lire
 int	Client::receiveRequest()
-{std::cout << "\033[0;35m\e[1mreceiveRequest\e[0m\033[0m" << std::endl;
+{DEBUG("receiveRequest")
 	size_t	pos;
 	int read_ret;
 	char buffer[BUFFER_SIZE + 1];
 
 	bzero(buffer,BUFFER_SIZE + 1);
-	if ((read_ret = read(socket, buffer, BUFFER_SIZE)) <= 0)
+	if ((read_ret = recv(socket, buffer, BUFFER_SIZE, 0)) <= 0)
 		return (-1);
 	request.append(buffer);
 	std::clog << request << std::endl;
@@ -62,8 +62,24 @@ Client &Client::operator=(const Client& Other)
 		this->socket = Other.socket;
 		this->client_address = Other.client_address;
 		this->option_buffer = Other.option_buffer;
-		this->request = Other.request;
+		this->request = Other.request;	
 		return (*this);
 }
 
-Client::~Client(){std::cout << "\033[0;35m\e[1mClient destructor\e[0m\033[0m" << std::endl;}
+// bool &Client::operator==(const Client& lhs, const Client& rhs)
+// {
+// 	if (lhs.socket == rhs.socket)
+// 		return true;
+// 	return false;
+// }
+
+bool operator==(const Client& lhs, const Client& rhs)
+{
+	if (lhs.socket == rhs.socket &&
+			lhs.client_address == rhs.client_address &&
+			lhs.option_buffer == rhs.option_buffer &&
+			lhs.request == rhs.request)
+		return (true);
+	return (false);
+}
+Client::~Client(){DEBUG("Client destructor")}

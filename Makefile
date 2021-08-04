@@ -31,6 +31,7 @@ LDFLAGS =
 SRCS =\
 	./srcs/Tools/Utils.cpp\
 	./srcs/Config.cpp\
+	./srcs/CheckConfig.cpp\
 	./srcs/Parsing/Init_parser.cpp\
 	./srcs/main.cpp\
 	./srcs/Server.cpp\
