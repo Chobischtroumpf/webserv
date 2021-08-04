@@ -8,15 +8,15 @@ class Server;
 class Client
 {
 	public:
-	Client(int sd, std::string address);
-	int			getSD(void);
-	std::string	getRequest(void);
-	void		setReceived(bool);
-	bool		requestReceived(void);
-	int			receiveRequest(void);
+		Client(int sd, std::string address);
+		int			getSD(void);
+		std::string	getRequest(void);
+		void		setReceived(bool);
+		bool		requestReceived(void);
+		int			receiveRequest(void);
 
-	Client &operator=(const Client& Other);
-	~Client();
+		Client &operator=(const Client& Other);
+		~Client();
 	private:
 		int				socket;
 		std::string		client_address;
