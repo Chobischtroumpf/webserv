@@ -41,6 +41,7 @@ class Config
 		std::list<server> servers;
 	public:
 		Config(std::string file);
+		/* PARSE LOCATION */
 		location				parseLocation(std::string location_scope);
 		server					parseServer(std::string server_scope);
 		size_t					offsetCutScope(std::string files, size_t starting_pos);
