@@ -1,10 +1,16 @@
 #include "Server.hpp"
 #include "General.hpp"
 
+Server::Server()
+{DEBUG("Server default constructor")
+	keep_going = true;
+}
+
 Server::Server(Config config)
 {DEBUG("Server constructor")
 	for (std::list<Config::server>::iterator i = config.getServers().begin(); i != config.getServers().end(); i++)
 		sub_serv.push_back(SubServ(*i, this));
+	keep_going = true;
 }
 
 Server::Server(Server &Other)
@@ -13,6 +19,7 @@ Server::Server(Server &Other)
 	this->writefds = Other.writefds;
 	this->sub_serv = Other.sub_serv;
 	this->max_sd = Other.max_sd;
+	this->keep_going = true;
 }
 
 void Server::acceptConnection(SubServ &s_srv)
@@ -22,8 +29,11 @@ void Server::acceptConnection(SubServ &s_srv)
 	int new_sd;
 	if ((new_sd = accept(s_srv.getSD(), (sockaddr *)&client, &size)) < 0)
 	{
+		if (errno == EBADF)
+			return;
 		if (errno != EWOULDBLOCK)
 			throw ServerException("Accept Failed");
+		
 		return ;
 	}
 	Client c = Client(new_sd, ipBytesToIpv4(client.sin_addr));
@@ -81,7 +91,7 @@ void	Server::listenIt()
 		max_sd = (*i).getSD();
 	}
 	readfds = server_read_fd;
-	for (;"ever";)
+	while(keep_going)
 	{//boucle infinie
 		FD_ZERO(&writefds);
 		try

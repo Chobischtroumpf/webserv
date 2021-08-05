@@ -65,8 +65,10 @@ class Server
 		fd_set				readfds;
 		fd_set				writefds;
 		int					max_sd;
+		int					keep_going;
 		std::list<SubServ>	sub_serv;
 
+		Server();
 		Server(Config config);
 		Server(Server& other);
 
