@@ -7,9 +7,9 @@ Client::Client(int sd, std::string address)
 	this->client_address = address;
 }
 
-int		Client::getSD()
+int		Client::getSocketDesc()
 {
-	//DEBUG("getSD client")
+	//DEBUG("getSocketDesc client")
 	return (this->socket);
 }
 
@@ -49,7 +49,6 @@ int	Client::receiveRequest()
 	if ((read_ret = read(socket, buffer, BUFFER_SIZE)) <= 0)
 		return (-1);
 	request.append(buffer);
-	std::clog << request << std::endl;
 	int	type_content = contentType(request);
 	std::string end_body = type_content == 2 ? "0\r\n\r\n" : "\r\n\r\n";
 	//check si on a tout le header
@@ -89,7 +88,7 @@ void Client::printClient(void)
 	
 	std::cout << std::left << "+-" << std::endl ;
 	std::cout << std::left << "| Client" << " :" << std::endl ;
-	std::cout << std::left << "|  - SD	: " << getSD() << std::endl;
+	std::cout << std::left << "|  - SD	: " << getSocketDesc() << std::endl;
 	std::cout << std::left << "|  - Address: " << getAddress() << std::endl;
 	std::cout << std::left << "|  - Request: " << getRequest() << std::endl;
 	std::cout << std::left << "+-" << std::endl ;
@@ -108,7 +107,7 @@ bool operator==(const Client& lhs, const Client& rhs)
 std::ostream &operator<<(std::ostream &os, Client &other)
 {
 	os << "Client" << " :" << std::endl 
-	<< "  - SD	:" << other.getSD() << std::endl
+	<< "  - SD	:" << other.getSocketDesc() << std::endl
 	<< "  - Address: " << other.getAddress() << std::endl
 	<< "  - Request: " << other.getRequest() << std::endl;
 	return (os);
