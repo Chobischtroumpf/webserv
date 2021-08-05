@@ -7,7 +7,7 @@ Server::Server()
 }
 
 Server::Server(Config config)
-{DEBUG("Server constructor")
+{DEBUG("##### SERVER INIT #####\n")
 	for (std::list<Config::server>::iterator i = config.getServers().begin(); i != config.getServers().end(); i++)
 		sub_serv.push_back(SubServ(*i, this));
 	keep_going = true;
@@ -27,7 +27,7 @@ void Server::acceptConnection(SubServ &s_srv)
 	sockaddr_in client;
 	socklen_t size = sizeof(client);
 	int new_sd;
-	if ((new_sd = accept(s_srv.getSD(), (sockaddr *)&client, &size)) < 0)
+	if ((new_sd = accept(s_srv.getSocketDesc(), (sockaddr *)&client, &size)) < 0)
 	{
 		if (errno == EBADF)
 			return;
@@ -40,36 +40,46 @@ void Server::acceptConnection(SubServ &s_srv)
 	s_srv.setClientList(dynamic_cast<Client&>(c));
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
+	FD_SET(new_sd, &server_read_fd);
 }
 
-void Server::upAndDownLoad(SubServ &s_srv)
+void Server::upAndDownLoad(SubServ &sub_srv)
 {DEBUG("upAndDownLoad")	
 	//si FD_ISSET(sd_serv, read_fd) = true
 	// accepter connection, add socket a liste des sockets des clients
-	if (FD_ISSET(s_srv.getSD(), &readfds))
-		acceptConnection(s_srv);
+	std::cout << "subserv socket : " << FD_ISSET(sub_srv.getSocketDesc(), &readfds) << std::endl;
+	if (FD_ISSET(sub_srv.getSocketDesc(), &readfds))
+		acceptConnection(sub_srv);
+	sub_srv.printSubserv();
+	FD_COPY(&server_read_fd, &readfds);
 	//on recup la liste de sd des clients et on itere dessus
 	//si FD_ISSET(sd_client, writefds)
-	for (std::list<Client>::iterator client = s_srv.getClientList().begin(); client != s_srv.getClientList().end(); client++)
+	for (std::list<Client>::iterator client = sub_srv.getClientList().begin(); client != sub_srv.getClientList().end(); client++)
 	{
-		if (FD_ISSET((*client).getSD(), &writefds) && (*client).requestReceived() == true)
+		DEBUG("DEBUT DE L'ENQUETE")
+		std::cout << (FD_ISSET((*client).getSocketDesc(), &readfds));
+		if (FD_ISSET((*client).getSocketDesc(), &writefds) && (*client).requestReceived() == true)
 		{
+			DEBUG("PARSE HEADER")
 			//parsing header
 		}
-		//recup ce que le client a envoyer
-		if (FD_ISSET((*client).getSD(), &readfds))
+		//recup ce que le client a envoyé
+		if (FD_ISSET((*client).getSocketDesc(), &readfds))
 		{
 			DEBUG("		received request")
 			int ret_val;
 			if ((ret_val = (*client).receiveRequest()) < 0)
 			{//si on recoit -1 > pop le client de la liste, il n'est plus connecter au serveur
-				close((*client).getSD());
-				client = s_srv.getClientList().erase(client);
+				DEBUG("AAAAAAAAAAAAAAAAAAAAAAAH")
+				close((*client).getSocketDesc());
+				client = sub_srv.getClientList().erase(client);
+				//remove from fd_set
 			}
 			else if (ret_val == 0)//indiquer qu'on a recu qqchose
 			{
 				(*client).setReceived(true);
 			}
+			(*client).printClient();
 		}
 	}
 }
@@ -80,25 +90,27 @@ static void getUpAndDownLoad(SubServ &s_srv)
 }
 
 void	Server::listenIt()
-{DEBUG("listenIt")
-	fd_set	server_read_fd;
+{
+	DEBUG("##### SERVER LISTENING #####")
 	 //biggest fd in the set
 
 	FD_ZERO(&server_read_fd);
 	for (std::list<SubServ>::iterator i = sub_serv.begin(); i != sub_serv.end(); i++)
 	{
-		FD_SET((*i).getSD(), &server_read_fd);
-		max_sd = (*i).getSD();
+		FD_SET((*i).getSocketDesc(), &server_read_fd);
+		max_sd = (*i).getSocketDesc();
 	}
-	readfds = server_read_fd;
+	FD_COPY(&server_read_fd, &readfds);
 	while(keep_going)
 	{//boucle infinie
 		FD_ZERO(&writefds);
+		DEBUG("boucle");
 		try
 		{
 			if (select(max_sd + 1, &readfds, &writefds, NULL, NULL) < 0 && errno!=EINTR)
 				ServerException("Select Failed");
 			//iterer sur chaque SD de chaque sub_serv
+
 			std::for_each(sub_serv.begin(), sub_serv.end(), getUpAndDownLoad);
 		}
 		catch (const std::exception& e)
