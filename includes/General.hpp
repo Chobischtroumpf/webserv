@@ -28,6 +28,7 @@
 # include <map>
 # include <algorithm>
 # include <iterator>
+# include <iomanip>
 
 # include "Exceptions.hpp"
 # include "Config.hpp"

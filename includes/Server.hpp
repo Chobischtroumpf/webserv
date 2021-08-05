@@ -5,15 +5,21 @@
 
 class Server;
 
+
+//////////////////////////////////////////////////////////////////////////////////////
+// maybe we should had const keyword to our getters for the sake of good practise ? //
+//////////////////////////////////////////////////////////////////////////////////////
 class Client
 {
 	public:
 		Client(int sd, std::string address);
 		int			getSD(void);
 		std::string	getRequest(void);
+		std::string	getAddress(void);
 		void		setReceived(bool);
 		bool		requestReceived(void);
 		int			receiveRequest(void);
+		void		printClient(void);
 
 		Client &operator=(const Client& Other);
 		friend bool operator==(const Client& lhs, const Client& rhs);
@@ -25,13 +31,14 @@ class Client
 		std::string		request;
 		bool			is_received;
 };
-		// friend bool &Client::operator==(const Client& lhs, const Client& rhs);
+
+// friend bool &Client::operator==(const Client& lhs, const Client& rhs);
 
 class SubServ
 {
 	private:
 		Server					&main_serv;
-		int						sock_des;
+		int						sock_des; // I would rename to SD, it's confusing
 		int						option_buffer;
 		struct sockaddr_in		srv_address;
 		struct Config::server	server_conf;
@@ -53,6 +60,8 @@ class SubServ
 		void			initAddress(int port);
 		void			bindSubServ();
 		void			socketListener();
+		void			printSubserv(void);
+		void 			printClientList(void);
 
 		SubServ &operator=(const SubServ& Other);
 		~SubServ();

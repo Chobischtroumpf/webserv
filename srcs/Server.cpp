@@ -2,7 +2,7 @@
 #include "General.hpp"
 
 Server::Server(Config config)
-{DEBUG("Server constructor")
+{DEBUG("##### SERVER INIT #####\n")
 	for (std::list<Config::server>::iterator i = config.getServers().begin(); i != config.getServers().end(); i++)
 		sub_serv.push_back(SubServ(*i, this));
 }
@@ -28,6 +28,7 @@ void Server::acceptConnection(SubServ &s_srv)
 	}
 	Client c = Client(new_sd, ipBytesToIpv4(client.sin_addr));
 	s_srv.setClientList(dynamic_cast<Client&>(c));
+	c.printClient();
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
 }
@@ -38,21 +39,26 @@ void Server::upAndDownLoad(SubServ &s_srv)
 	// accepter connection, add socket a liste des sockets des clients
 	if (FD_ISSET(s_srv.getSD(), &readfds))
 		acceptConnection(s_srv);
+	s_srv.printSubserv();
 	//on recup la liste de sd des clients et on itere dessus
 	//si FD_ISSET(sd_client, writefds)
 	for (std::list<Client>::iterator client = s_srv.getClientList().begin(); client != s_srv.getClientList().end(); client++)
 	{
+		DEBUG("DEBUT DE L'ENQUETE")
+		std::cout << (FD_ISSET((*client).getSD(), &readfds));
 		if (FD_ISSET((*client).getSD(), &writefds) && (*client).requestReceived() == true)
 		{
+			DEBUG("PARSE HEADER")
 			//parsing header
 		}
-		//recup ce que le client a envoyer
+		//recup ce que le client a envoyé
 		if (FD_ISSET((*client).getSD(), &readfds))
 		{
 			DEBUG("		received request")
 			int ret_val;
 			if ((ret_val = (*client).receiveRequest()) < 0)
 			{//si on recoit -1 > pop le client de la liste, il n'est plus connecter au serveur
+				DEBUG("AAAAAAAAAAAAAAAAAAAAAAAH")
 				close((*client).getSD());
 				client = s_srv.getClientList().erase(client);
 			}
@@ -70,7 +76,8 @@ static void getUpAndDownLoad(SubServ &s_srv)
 }
 
 void	Server::listenIt()
-{DEBUG("listenIt")
+{
+	DEBUG("##### SERVER LISTENING #####")
 	fd_set	server_read_fd;
 	 //biggest fd in the set
 
@@ -84,11 +91,14 @@ void	Server::listenIt()
 	for (;"ever";)
 	{//boucle infinie
 		FD_ZERO(&writefds);
+			
+
 		try
 		{
 			if (select(max_sd + 1, &readfds, &writefds, NULL, NULL) < 0 && errno!=EINTR)
 				ServerException("Select Failed");
 			//iterer sur chaque SD de chaque sub_serv
+
 			std::for_each(sub_serv.begin(), sub_serv.end(), getUpAndDownLoad);
 		}
 		catch (const std::exception& e)

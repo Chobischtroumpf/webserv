@@ -1,41 +1,52 @@
 #include "General.hpp"
 
 Client::Client(int sd, std::string address)
-{DEBUG("Client constructor")
+{
+	DEBUG("##### CLIENT INIT #####")
 	socket = sd;
 	this->client_address = address;
 }
 
 int		Client::getSD()
-{DEBUG("getSD client")
+{
+	//DEBUG("getSD client")
 	return (this->socket);
 }
 
 std::string	Client::getRequest(void)
-{DEBUG("getRequest")
+{
+	//DEBUG("getRequest")
 	return (this->request);
 }
 
+std::string	Client::getAddress(void)
+{
+	return (this->client_address);
+}
+
 void	Client::setReceived(bool received)
-{DEBUG("setReceived")
+{
+	//DEBUG("setReceived")
 	this->is_received = received;
 }
 
 
 bool	Client::requestReceived()
-{DEBUG("requestReceived")
+{
+	//DEBUG("requestReceived")
 	return (this->is_received);
 }
 
 // return -1 == error, 0 == On a fini de lire, 1 == Il reste des choses a lire
 int	Client::receiveRequest()
-{DEBUG("receiveRequest")
+{
+	DEBUG("receiveRequest")
 	size_t	pos;
 	int read_ret;
 	char buffer[BUFFER_SIZE + 1];
 
 	bzero(buffer,BUFFER_SIZE + 1);
-	if ((read_ret = recv(socket, buffer, BUFFER_SIZE, 0)) <= 0)
+	if ((read_ret = read(socket, buffer, BUFFER_SIZE)) <= 0)
 		return (-1);
 	request.append(buffer);
 	std::clog << request << std::endl;
@@ -73,6 +84,17 @@ Client &Client::operator=(const Client& Other)
 // 	return false;
 // }
 
+void Client::printClient(void)
+{	
+	
+	std::cout << std::left << "+-" << std::endl ;
+	std::cout << std::left << "| Client" << " :" << std::endl ;
+	std::cout << std::left << "|  - SD	: " << getSD() << std::endl;
+	std::cout << std::left << "|  - Address: " << getAddress() << std::endl;
+	std::cout << std::left << "|  - Request: " << getRequest() << std::endl;
+	std::cout << std::left << "+-" << std::endl ;
+}
+
 bool operator==(const Client& lhs, const Client& rhs)
 {
 	if (lhs.socket == rhs.socket &&
@@ -82,4 +104,15 @@ bool operator==(const Client& lhs, const Client& rhs)
 		return (true);
 	return (false);
 }
+
+std::ostream &operator<<(std::ostream &os, Client &other)
+{
+	os << "Client" << " :" << std::endl 
+	<< "  - SD	:" << other.getSD() << std::endl
+	<< "  - Address: " << other.getAddress() << std::endl
+	<< "  - Request: " << other.getRequest() << std::endl;
+	return (os);
+}
+
+
 Client::~Client(){DEBUG("Client destructor")}

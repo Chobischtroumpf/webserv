@@ -17,7 +17,8 @@
 // };
 
 Config::Config(std::string file)
-{DEBUG("CONFIG")
+{
+	DEBUG("##### CONFIG #####\n")
 	if (file.compare(file.size() - 5, 5, ".conf") != 0)
 		throw ParsingException(0, "Config file needs .conf extention");
 	std::string file_content = skipComment(readFile(file));

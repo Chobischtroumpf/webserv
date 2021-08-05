@@ -42,7 +42,8 @@ void SubServ::socketListener()
 
 SubServ::SubServ(Config::server serv, Server *main_serv):
 	main_serv(*main_serv)
-{DEBUG("SubServ Constructor")
+{
+	DEBUG("##### SUBSERV INIT #####")
 	this->server_conf = serv;
 	this->option_buffer = 0;
 	createSD();
@@ -53,30 +54,50 @@ SubServ::SubServ(Config::server serv, Server *main_serv):
 	socketListener();
 }
 
+void SubServ::printSubserv(void)
+{
+	std::cout << "SubServ" << " :" << std::endl ;
+	std::cout << "  - SD	:" << getSD() << std::endl;
+	std::cout << "  - client list : " << std::endl;
+	printClientList();
+}
 
 int				SubServ::getSD()
-{DEBUG("getSD")
+{
+	//DEBUG("getSD")
 	return(this->sock_des);
 }
 		
 sockaddr_in		SubServ::getAddress()
-{DEBUG("getAddress")
+{
+	//DEBUG("getAddress")
 	return(this->srv_address);
 }
 		
 Config::server	SubServ::getConf()
-{DEBUG("getConf")
+{
+	//DEBUG("getConf")
 	return(this->server_conf);
 }
 
 std::list<Client> &SubServ::getClientList()
-{DEBUG("getClientList")
+{
+	//DEBUG("getClientList")
 	return (this->client_list);
 }
 
 void	SubServ::setClientList(const Client &client)
-{DEBUG("setClientList")
+{
+	//DEBUG("setClientList")
 	this->client_list.push_back(client);
+}
+
+void	SubServ::printClientList(void)
+{
+	for (std::list<Client>::iterator i = getClientList().begin(); i != getClientList().end(); i++)
+	{
+		(*i).printClient();
+	}
 }
 
 void	SubServ::popClient(const Client &client)
