@@ -70,6 +70,7 @@
 		"__functional_03": "cpp",
 		"memory_resource": "cpp",
 		"clocale": "cpp",
-		"fstream": "cpp"
+		"fstream": "cpp",
+		"iomanip": "cpp"
 	}
 }

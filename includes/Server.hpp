@@ -13,7 +13,7 @@ class Client
 {
 	public:
 		Client(int sd, std::string address);
-		int			getSD(void);
+		int			getSocketDesc(void);
 		std::string	getRequest(void);
 		std::string	getAddress(void);
 		void		setReceived(bool);
@@ -38,14 +38,14 @@ class SubServ
 {
 	private:
 		Server					&main_serv;
-		int						sock_des; // I would rename to SD, it's confusing
+		int						sock_desc; // I would rename to SD, it's confusing
 		int						option_buffer;
 		struct sockaddr_in		srv_address;
 		struct Config::server	server_conf;
 		std::list<Client>		client_list;
 	public:
 		SubServ(Config::server serv, Server *main_serv);
-		int					getSD();
+		int					getSocketDesc();
 		sockaddr_in			getAddress();
 		Config::server		getConf();
 		std::list<Client>	&getClientList();
@@ -71,8 +71,9 @@ class Server
 {
 	public:
 
-		fd_set				readfds;
+		fd_set				readfds; //this one is a temp one that gets modified by select
 		fd_set				writefds;
+		fd_set				server_read_fd; //this one is the main one, containing all the SubServs and clients
 		int					max_sd;
 		std::list<SubServ>	sub_serv;
 
