@@ -43,6 +43,7 @@ class SubServ
 		struct sockaddr_in		srv_address;
 		struct Config::server	server_conf;
 		std::list<Client>		client_list;
+		struct timeval			timeout;
 	public:
 		SubServ(Config::server serv, Server *main_serv);
 		int					getSocketDesc();
