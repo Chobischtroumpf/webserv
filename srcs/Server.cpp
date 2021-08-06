@@ -11,6 +11,7 @@ Server::Server(Config config)
 	for (std::list<Config::server>::iterator i = config.getServers().begin(); i != config.getServers().end(); i++)
 		sub_serv.push_back(SubServ(*i, this));
 	keep_going = true;
+	timeout = 
 }
 
 Server::Server(Server &Other)
@@ -41,6 +42,7 @@ void Server::acceptConnection(SubServ &s_srv)
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
 	FD_SET(new_sd, &server_read_fd);
+	FD_SET(new_sd, &readfds);
 }
 
 void Server::upAndDownLoad(SubServ &sub_srv)
@@ -70,7 +72,6 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			int ret_val;
 			if ((ret_val = (*client).receiveRequest()) < 0)
 			{//si on recoit -1 > pop le client de la liste, il n'est plus connecter au serveur
-				DEBUG("AAAAAAAAAAAAAAAAAAAAAAAH")
 				close((*client).getSocketDesc());
 				client = sub_srv.getClientList().erase(client);
 				//remove from fd_set
