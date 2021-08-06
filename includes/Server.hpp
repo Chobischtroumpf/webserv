@@ -75,8 +75,10 @@ class Server
 		fd_set				writefds;
 		fd_set				server_read_fd; //this one is the main one, containing all the SubServs and clients
 		int					max_sd;
+		int					keep_going;
 		std::list<SubServ>	sub_serv;
 
+		Server();
 		Server(Config config);
 		Server(Server& other);
 
