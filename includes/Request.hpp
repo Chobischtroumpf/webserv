@@ -1,3 +1,6 @@
+#ifndef REQUEST_HPP
+#define REQUEST_HPP
+
 #include "General.hpp"
 
 class HttpRequest
@@ -24,3 +27,5 @@ class HttpRequest
 		std::string							GetBody() const;
 		
 };
+
+#endif

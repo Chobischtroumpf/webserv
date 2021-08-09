@@ -86,6 +86,9 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 		{
 			DEBUG("PARSE HEADER")
 			//parsing header
+
+			//send request
+			(*client).sendRequest();
 		}
 		//recup ce que le client a envoyé
 		if (FD_ISSET((*client).getSocketDesc(), &readfds))
