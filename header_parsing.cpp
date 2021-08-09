@@ -1,9 +1,5 @@
-struct req_info {
-	// will contain all the information parsed
-	// method 
-	// host
-	//
-}
+#include "General.hpp"
+
 
 void getMethod()
 {}
@@ -19,9 +15,8 @@ void validHeaderFormat()
 	// all the fields are valid fields -> check in a list of authorized fields
 }
 
-void request_parser(string request)
+void request_parser(std::string request)
 {
-	
 	// separate header and body
 	// check validity of header
 	// parse fields into struct

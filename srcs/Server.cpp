@@ -11,7 +11,6 @@ Server::Server(Config config)
 	for (std::list<Config::server>::iterator i = config.getServers().begin(); i != config.getServers().end(); i++)
 		sub_serv.push_back(SubServ(*i, this));
 	keep_going = true;
-	timeout = 
 }
 
 Server::Server(Server &Other)
