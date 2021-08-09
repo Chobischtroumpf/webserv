@@ -33,6 +33,7 @@
 # include "Exceptions.hpp"
 # include "Config.hpp"
 // # include "Socket.hpp"
+# include "Request.hpp"
 # include "Server.hpp"
 # include "Request.hpp"
 # include "Response.hpp"
