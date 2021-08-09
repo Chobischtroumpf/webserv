@@ -84,8 +84,7 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 		std::cout << (FD_ISSET((*client).getSocketDesc(), &readfds));
 		if (FD_ISSET((*client).getSocketDesc(), &writefds) && (*client).requestReceived() == true)
 		{
-			DEBUG("PARSE HEADER")
-			//parsing header
+			DEBUG("PARSE REQUEST")
 		}
 		//recup ce que le client a envoyé
 		if (FD_ISSET((*client).getSocketDesc(), &readfds))
@@ -103,6 +102,13 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 				(*client).setReceived(true);
 			}
 			(*client).printClient();
+
+			///////////// TEST ZONE ////////////////
+			HttpRequest test = HttpRequest((*client).getRequest());
+			
+
+			////////////////////////////////////////
+
 		}
 	}
 }
