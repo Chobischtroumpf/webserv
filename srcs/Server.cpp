@@ -4,6 +4,8 @@
 Server::Server()
 {DEBUG("Server default constructor")
 	keep_going = true;
+	this->timeout.tv_sec = 1;
+	this->timeout.tv_usec = 0;
 }
 
 Server::Server(Config config)
@@ -11,7 +13,8 @@ Server::Server(Config config)
 	for (std::list<Config::server>::iterator i = config.getServers().begin(); i != config.getServers().end(); i++)
 		sub_serv.push_back(SubServ(*i, this));
 	keep_going = true;
-	timeout = 
+	this->timeout.tv_sec = 1;
+	this->timeout.tv_usec = 0;
 }
 
 Server::Server(Server &Other)
@@ -21,6 +24,25 @@ Server::Server(Server &Other)
 	this->sub_serv = Other.sub_serv;
 	this->max_sd = Other.max_sd;
 	this->keep_going = true;
+	this->timeout= Other.timeout;
+}
+
+void Server::checkConnections(void)
+{
+	char c[1];
+	for (std::list<SubServ>::iterator subserv_it = this->sub_serv.begin();
+			subserv_it != this->sub_serv.end(); subserv_it++)
+	{
+		for (std::list<Client>::iterator client_it = (*subserv_it).getClientList().begin();
+				 client_it != (*subserv_it).getClientList().end(); client_it++)
+		{
+			if (recv((*client_it).getSocketDesc(), c, 1, MSG_PEEK) == 0)
+			{
+				close((*client_it).getSocketDesc());
+				(*subserv_it).popClient((*client_it));
+			}
+		}
+	}
 }
 
 void Server::acceptConnection(SubServ &s_srv)
@@ -42,7 +64,7 @@ void Server::acceptConnection(SubServ &s_srv)
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
 	FD_SET(new_sd, &server_read_fd);
-	FD_SET(new_sd, &readfds);
+	FD_SET(new_sd, &server_write_fd);
 }
 
 void Server::upAndDownLoad(SubServ &sub_srv)
@@ -102,17 +124,23 @@ void	Server::listenIt()
 		max_sd = (*i).getSocketDesc();
 	}
 	FD_COPY(&server_read_fd, &readfds);
+	int ret_sel = 1;
 	while(keep_going)
 	{//boucle infinie
 		FD_ZERO(&writefds);
 		DEBUG("boucle");
 		try
 		{
-			if (select(max_sd + 1, &readfds, &writefds, NULL, NULL) < 0 && errno!=EINTR)
+			DEBUG(ret_sel)
+			if ((ret_sel = select(max_sd + 1, &readfds, &writefds, NULL, NULL/*&timeout*/)) < 0 && errno!=EINTR)
 				ServerException("Select Failed");
-			//iterer sur chaque SD de chaque sub_serv
-
-			std::for_each(sub_serv.begin(), sub_serv.end(), getUpAndDownLoad);
+			// else if (ret_sel == 0)
+			// {
+			// 	DEBUG("before check connections")
+				// checkConnections();
+			// }
+			else //iterer sur chaque SD de chaque sub_serv
+				std::for_each(sub_serv.begin(), sub_serv.end(), getUpAndDownLoad);
 		}
 		catch (const std::exception& e)
 		{

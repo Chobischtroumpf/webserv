@@ -9,6 +9,9 @@ class Server;
 //////////////////////////////////////////////////////////////////////////////////////
 // maybe we should had const keyword to our getters for the sake of good practise ? //
 //////////////////////////////////////////////////////////////////////////////////////
+// yeah maybe we should do that, could be a good idea //
+////////////////////////////////////////////////////////
+
 class Client
 {
 	public:
@@ -43,7 +46,6 @@ class SubServ
 		struct sockaddr_in		srv_address;
 		struct Config::server	server_conf;
 		std::list<Client>		client_list;
-		struct timeval			timeout;
 	public:
 		SubServ(Config::server serv, Server *main_serv);
 		int					getSocketDesc();
@@ -75,8 +77,10 @@ class Server
 		fd_set				readfds; //this one is a temp one that gets modified by select
 		fd_set				writefds;
 		fd_set				server_read_fd; //this one is the main one, containing all the SubServs and clients
+		fd_set				server_write_fd; 
 		int					max_sd;
 		int					keep_going;
+		struct timeval		timeout;
 		std::list<SubServ>	sub_serv;
 
 		Server();
