@@ -6,8 +6,10 @@ Server *server;
 
 void	ctrl_c(int signal)
 {
+	
 	if (signal == SIGINT)
 	{
+		//std::cout << "SIGNNNNNNNNNNAAAAAAAAAAAL";
 		for (std::list<SubServ>::iterator subserver = server->sub_serv.begin(); subserver != server->sub_serv.end(); subserver++)
 		{
 			for (std::list<Client>::iterator client = (*subserver).getClientList().begin(); client != (*subserver).getClientList().end(); client++)
@@ -15,7 +17,9 @@ void	ctrl_c(int signal)
 			close((*subserver).getSocketDesc());
 		}
 		server->keep_going = false;
+		exit(-1);
 	}
+
 }
 
 int	main(int ac, char **av, char **env)

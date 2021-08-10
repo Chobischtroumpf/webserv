@@ -16,7 +16,7 @@ HttpRequest&	HttpRequest::operator=(const HttpRequest & other) {
 	{
 		this->_method = other.GetMethod();
 		this->_version = other.GetVersion();
-		this->_header_fields = other.GetHeaderFields();
+		//this->_header_fields = other->GetHeaderFields();
 		this->_header = other.GetHeader();
 		this->_body = other.GetBody();
 		this->_raw = other.GetRaw();
@@ -48,12 +48,19 @@ void HttpRequest::ParseHeader()
 	_version = line.back();
 
 	splitted_header.pop_front(); //Remove first line
+	
 	while (!splitted_header.empty())
 	{
-		line.clear();
-		line = splitString( splitted_header.front(), ":" ); // getting headerfield Key, value
-		std::cout << "FILLING MAP : first = "  << line.front() << " second = " << line.back() << std::endl;
-		this->_header_fields[line.front()] = line.back();   // fills map
+		std::string key;
+		std::string value;
+
+		int index = splitted_header.front().find(':');
+		key = splitted_header.front().substr(0, index);
+		value = splitted_header.front().substr(index + 1);
+
+		//std::cout << "first = "  << trim(key, " \r\n") << std::endl << "second = " << trim(value, " \r\n") << std::endl;
+		this->_header_fields[trim(key, " \r\n")] = trim(value, " \r\n");   // fills map
+		//std::cout << _header_fields[key];
 		splitted_header.pop_front();
 	}
 }
@@ -66,7 +73,6 @@ void HttpRequest::DisplayHeader()
 	std::cout << "Method : " << GetMethod() << " |\tHTTP version : ";
 	std::cout << GetVersion() << '\n';
 	std::cout << "Path : " << GetPath() << '\n';
-	std::cout << "field : " << GetHeaderFields().begin()->first << '\n';
 
 	for (it = GetHeaderFields().begin(); it != GetHeaderFields().end(); it++)
 		std::cout << it->first << ": " << it->second << '\n';
@@ -93,7 +99,7 @@ std::string		HttpRequest::GetBody() const
 	return this->_body;
 }
 
-std::map<std::string,std::string> HttpRequest::GetHeaderFields() const
+std::map<std::string,std::string>& HttpRequest::GetHeaderFields()
 {
 	return this->_header_fields;
 }

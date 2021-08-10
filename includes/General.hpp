@@ -43,8 +43,9 @@
 // Tools/utils.cpp:
 	std::list<std::string> splitString(std::string str, std::string sep);
 	std::string	ipBytesToIpv4(struct in_addr in);
-	void		rtrim(std::string& s, const char* set)
-
+	std::string& rtrim(std::string& s, const char* set);
+	std::string& ltrim(std::string& s, const char* set);
+	std::string& trim(std::string& s, const char* set);
 	class Config;
 
 // logger: pattern : void log_<what_you_are_logging>();

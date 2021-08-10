@@ -25,7 +25,7 @@ class HttpRequest
 
 		std::string							GetMethod() const;
 		std::string							GetVersion() const;
-		std::map<std::string, std::string>	GetHeaderFields() const;
+		std::map<std::string, std::string>&	GetHeaderFields();
 		std::string							GetHeader() const;
 		std::string							GetBody() const;
 		std::string							GetRaw() const;
