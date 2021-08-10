@@ -32,26 +32,46 @@ HttpRequest::HttpRequest(std::string req)
 	this->_body = "";
 	SplitHeadBody();
 	ParseHeader();
-}
-
-void HttpRequest::ParseFirstLine()
-{
-
+	DisplayHeader();
 }
 
 void HttpRequest::ParseHeader()
 {
 	std::list<std::string> splitted_header; 
-	std::list<std::string> first_line; 
+	std::list<std::string> line; 
 	splitted_header = splitString(_header, "\r\n");
-	first_line = splitString(splitted_header.front(), " "); // first_line[0] == Method, first_line[1] == Path, first_line[2] == version 
+	line = splitString(splitted_header.front(), " "); // first_line[0] == Method, first_line[1] == Path, first_line[2] == version 
 
-	_method = first_line.front();
-	first_line.pop_front();
-	_path = first_line.front();
-	_version = first_line.back();
+	_method = line.front();
+	line.pop_front();
+	_path = line.front();
+	_version = line.back();
+
+	splitted_header.pop_front(); //Remove first line
+	while (!splitted_header.empty())
+	{
+		line.clear();
+		line = splitString( splitted_header.front(), ":" ); // getting headerfield Key, value
+		std::cout << "FILLING MAP : first = "  << line.front() << " second = " << line.back() << std::endl;
+		this->_header_fields[line.front()] = line.back();   // fills map
+		splitted_header.pop_front();
+	}
+}
+
+void HttpRequest::DisplayHeader()
+{
 	
-	std::cout << "Method : " << _method << ", Path : " << _path << ", version : " << _version << std::endl; 
+	std::map<std::string, std::string>::const_iterator	it;
+
+	std::cout << "Method : " << GetMethod() << " |\tHTTP version : ";
+	std::cout << GetVersion() << '\n';
+	std::cout << "Path : " << GetPath() << '\n';
+	std::cout << "field : " << GetHeaderFields().begin()->first << '\n';
+
+	for (it = GetHeaderFields().begin(); it != GetHeaderFields().end(); it++)
+		std::cout << it->first << ": " << it->second << '\n';
+
+	std::cout << '\n' << "Request body :\n" << GetBody() << '\n';
 }
 
 void HttpRequest::SplitHeadBody()
@@ -92,3 +112,11 @@ std::string		HttpRequest::GetRaw() const
 {
 	return this->_raw;
 }
+
+std::string		HttpRequest::GetPath() const
+{
+	return this->_path;
+}
+
+//bool			valid_request() 
+//{}

@@ -82,6 +82,23 @@ std::string	reverseStr(std::string str)
 	return (str);
 }
 
+std::string& rtrim(std::string& s, const char* set)
+{
+    s.erase(s.find_last_not_of(set) + 1);
+    return s;
+}
+
+std::string& ltrim(std::string& s, const char* set)
+{
+    s.erase(0, s.find_first_not_of(set));
+    return s;
+}
+
+std::string& trim(std::string& s, const char* set)
+{
+    return ltrim(rtrim(s, set), set);
+}
+
 size_t	countChar(char c, std::string str)
 {
 	size_t count = 0;

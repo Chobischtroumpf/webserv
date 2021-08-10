@@ -20,8 +20,8 @@ class HttpRequest
 		HttpRequest& 						operator=(const HttpRequest &other);
 
 		void								SplitHeadBody();
-		void								ParseFirstLine();
 		void								ParseHeader();
+		void								DisplayHeader();
 
 		std::string							GetMethod() const;
 		std::string							GetVersion() const;
@@ -29,4 +29,5 @@ class HttpRequest
 		std::string							GetHeader() const;
 		std::string							GetBody() const;
 		std::string							GetRaw() const;
+		std::string							GetPath() const;
 };
