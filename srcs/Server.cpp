@@ -106,6 +106,13 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 				(*client).setReceived(true);
 			}
 			(*client).printClient();
+
+			///////////// TEST ZONE ////////////////
+			HttpRequest test = HttpRequest((*client).getRequest());
+			
+
+			////////////////////////////////////////
+
 		}
 	}
 }
