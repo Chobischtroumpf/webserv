@@ -40,7 +40,7 @@ bool	Client::requestReceived()
 // return -1 == error, 0 == On a fini de lire, 1 == Il reste des choses a lire
 int	Client::receiveRequest()
 {
-	DEBUG("receiveRequest")
+	//DEBUG("receiveRequest")
 	size_t	pos;
 	int read_ret;
 	char buffer[BUFFER_SIZE + 1];
@@ -79,7 +79,6 @@ int	Client::sendRequest(void)
 
 void Client::printClient(void)
 {	
-	
 	std::cout << std::left << "+-" << std::endl ;
 	std::cout << std::left << "| Client" << " :" << std::endl ;
 	std::cout << std::left << "|  - SD	: " << getSocketDesc() << std::endl;
@@ -117,4 +116,6 @@ std::ostream &operator<<(std::ostream &os, Client &other)
 }
 
 
-Client::~Client(){DEBUG("Client destructor")}
+Client::~Client(){
+	//DEBUG("Client destructor")
+	}
