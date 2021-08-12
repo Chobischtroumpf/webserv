@@ -112,12 +112,14 @@ void	SubServ::popClient(const Client &client)
 }
 
 Server	SubServ::getMainServer()
-{DEBUG("getMainServer")
+{
+	//DEBUG("getMainServer")
 	return (this->main_serv);
 }
 
 SubServ &SubServ::operator=(const SubServ& Other)
-{DEBUG("Subserv =")
+{
+	//DEBUG("Subserv =")
 		this->main_serv = Other.main_serv;
 		this->sock_desc = Other.sock_desc;
 		this->option_buffer = Other.option_buffer;
@@ -127,5 +129,7 @@ SubServ &SubServ::operator=(const SubServ& Other)
 		return (*this);
 }
 
-SubServ::~SubServ(){DEBUG("socket destructor")}
+SubServ::~SubServ(){
+	//DEBUG("socket destructor")
+	}
 		

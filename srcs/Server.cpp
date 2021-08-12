@@ -9,7 +9,7 @@ Server::Server()
 }
 
 Server::Server(Config config)
-{DEBUG("##### SERVER INIT #####\n")
+{DEBUG("##### SERVER INIT #####")
 	for (std::list<Config::server>::iterator i = config.getServers().begin(); i != config.getServers().end(); i++)
 		sub_serv.push_back(SubServ(*i, this));
 	keep_going = true;
@@ -18,7 +18,8 @@ Server::Server(Config config)
 }
 
 Server::Server(Server &Other)
-{DEBUG("Server copy constructor")
+{
+	//DEBUG("Server copy constructor")
 	this->readfds = Other.readfds;
 	this->writefds = Other.writefds;
 	this->sub_serv = Other.sub_serv;
@@ -135,7 +136,7 @@ void	Server::listenIt()
 		FD_ZERO(&writefds);
 		try
 		{
-			DEBUG(ret_sel)
+			//DEBUG(ret_sel)
 			if ((ret_sel = select(max_sd + 1, &readfds, &writefds, NULL, NULL/*&timeout*/)) < 0 && errno!=EINTR)
 				ServerException("Select Failed");
 			// else if (ret_sel == 0)
@@ -154,7 +155,8 @@ void	Server::listenIt()
 }
 
 Server &Server::operator=(const Server& Other)
-{DEBUG("Server =")
+{
+	//DEBUG("Server =")
 	this->readfds = Other.readfds;
 	this->writefds = Other.writefds;
 	this->sub_serv = Other.sub_serv;
@@ -164,7 +166,8 @@ Server &Server::operator=(const Server& Other)
 
 
 Server::~Server()
-{DEBUG("Server destructor")
+{
+	//DEBUG("Server destructor")
 	sub_serv.clear();
 }
 

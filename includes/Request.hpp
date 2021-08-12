@@ -3,15 +3,15 @@
 class HttpRequest
 {
 	private:
-		std::string							_method;		// GET, POST OR DELETE
-		std::string							_version;		// Should always be "HTTP/1.1" of  "HTTP/1.0", otherwise -> Bad Request
-		std::map<std::string, std::string>	_header_fields;	// < Key, Value>
-		std::string							_header;		// Everything before CRLF 
-		std::string							_body;			// Everything after CRLF 
-		std::string							_raw;			// Whole request
-		std::string							_path;			// Path to requested 
-		std::list<std::string>				_available_locations; 
-		int									_return_code; 
+		std::string							_method;				// GET, POST OR DELETE
+		std::string							_version;				// Should always be "HTTP/1.1" of  "HTTP/1.0", otherwise -> Bad Request
+		std::map<std::string, std::string>	_header_fields;			// < Key, Value>
+		std::string							_header;				// Everything before CRLF 
+		std::string							_body;					// Everything after CRLF 
+		std::string							_raw;					// Whole request
+		std::string							_path;					// Path to requested 
+		std::list<std::string>				_available_locations;	// locations from config file
+		int									_return_code;			// initialized at 200, changed properly if an error occurs
 
 	public:
 		HttpRequest();
@@ -36,7 +36,5 @@ class HttpRequest
 
 		bool								CheckMethod();
 		bool								CheckVersion();
-		bool								CheckPath()		const;
-		bool								CheckHeaderFields()	const;
-		bool								CheckBody()		const;
+		bool								CheckPath();
 };

@@ -37,7 +37,7 @@ HttpRequest::HttpRequest(std::string req, Config::server conf)
 	}
 	SplitHeadBody();
 	ParseHeader();
-	ValidateRequest();
+	std::cout << "Request valid : " << ValidateRequest();
 	DisplayRequest();
 }
 
@@ -134,7 +134,6 @@ bool	HttpRequest::CheckMethod()
 		_return_code = 400;
 		return false;
 	}
-	DEBUG("Method ok")
 	return true;
 }
 
@@ -145,24 +144,23 @@ bool	HttpRequest::CheckVersion()
 		_return_code = 400;
 		return false;
 	}
-	DEBUG("Version ok")
 	return true;
 }
 
-//bool	HttpRequest::CheckPath() const 
-//{
+bool	HttpRequest::CheckPath()
+{
+	if (!(std::find(_available_locations.begin(), _available_locations.end(), _path) != _available_locations.end()))
+	{
+		_return_code = 404;
+		return false;
+	}
+	return true;
+}
 
-//}
 //bool	HttpRequest::CheckHeaderFields() const {}
-//bool	HttpRequest::CheckBody() const {}
-
 
 bool			HttpRequest::ValidateRequest()
 {
-	CheckMethod();
-	CheckVersion();
-	//HttpRequest::CheckPath();
+	return (CheckMethod() && CheckVersion() && CheckPath());
 	//CheckHeaderFields();
-	//HttpRequest::CheckBody();
-	return true;
 }
