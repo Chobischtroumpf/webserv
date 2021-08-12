@@ -72,7 +72,7 @@ int	Client::sendRequest(void)
 	// create Response object with HttpRequest
 	// once created, get response string
 	// write response string into client's socket
-	// if write = -1 client disconnected, call 
+	// if write = -1 client disconnected, call pop client
 	// set is_received to false
 
 }

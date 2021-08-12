@@ -4,8 +4,6 @@ ResponseHeader::ResponseHeader()
 {
 }
 
-
-
 void	ResponseHeader::initErrorMap()
 {
 	errors[100]= "Continue";

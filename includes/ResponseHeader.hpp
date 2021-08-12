@@ -22,6 +22,7 @@ class	ResponseHeader
 		
 		ResponseHeader &operator=(const ResponseHeader &src);
 
+		std::string	setErrorCode(int code);
 		void		setContentLanguage(const std::string& lang = "");
 		void		setContentLength(size_t size);
 		void		setContentLocation(int code, const std::string& path = "");
@@ -31,9 +32,10 @@ class	ResponseHeader
 		void		setServer(void);
 		void		setTransferEncoding(void);
 
-		std::string	getHeader(size_t size, const std::string& path, int code, std::string type, const std::string& content_location, const std::string& lang);
+		std::string	getHeader();
 		std::string	writeHeader(void);
 		void		setValues(size_t size, const std::string& path, int code, std::string type, const std::string& content_location, const std::string& lang);
 		std::string	getStatusMessage(int code);
 };
+
 #endif
