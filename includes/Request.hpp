@@ -22,6 +22,7 @@ class HttpRequest
 		void								SplitHeadBody();
 		void								ParseHeader();
 		void								DisplayHeader();
+		bool								ValidateRequest();
 
 		std::string							GetMethod() const;
 		std::string							GetVersion() const;
@@ -30,4 +31,10 @@ class HttpRequest
 		std::string							GetBody() const;
 		std::string							GetRaw() const;
 		std::string							GetPath() const;
+
+		bool								CheckMethod()	const;
+		bool								CheckVersion()	const;
+		bool								CheckPath()	const;
+		bool								CheckHeader()	const;
+		bool								CheckBody()	const;
 };

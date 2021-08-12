@@ -32,6 +32,7 @@ HttpRequest::HttpRequest(std::string req)
 	this->_body = "";
 	SplitHeadBody();
 	ParseHeader();
+	ValidateRequest();
 	DisplayHeader();
 }
 
@@ -63,6 +64,7 @@ void HttpRequest::ParseHeader()
 		//std::cout << _header_fields[key];
 		splitted_header.pop_front();
 	}
+	
 }
 
 void HttpRequest::DisplayHeader()
@@ -124,5 +126,33 @@ std::string		HttpRequest::GetPath() const
 	return this->_path;
 }
 
-//bool			valid_request() 
-//{}
+bool	HttpRequest::CheckMethod() const
+{
+	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))
+		return false;
+	DEBUG("Method ok")
+	return true;
+}
+
+bool	HttpRequest::CheckVersion() const
+{
+	if (_version.compare("HTTP/1.0") && _version.compare("HTTP/1.1"))
+		return false;
+	DEBUG("Version ok")
+	return true;
+}
+
+//bool	HttpRequest::CheckPath() const {}
+//bool	HttpRequest::CheckHeader() const {}
+//bool	HttpRequest::CheckBody() const {}
+
+
+bool			HttpRequest::ValidateRequest()
+{
+	CheckMethod();
+	CheckVersion();
+	//HttpRequest::CheckPath();
+	//HttpRequest::CheckHeader();
+	//HttpRequest::CheckBody();
+	return true;
+}
