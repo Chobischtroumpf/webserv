@@ -4,8 +4,6 @@
 # include "General.hpp"
 
 class Server;
-
-
 //////////////////////////////////////////////////////////////////////////////////////
 // maybe we should had const keyword to our getters for the sake of good practise ? //
 //////////////////////////////////////////////////////////////////////////////////////
@@ -31,8 +29,9 @@ class Client
 		int				socket;
 		std::string		client_address;
 		int				option_buffer;
-		std::string		request;
+		std::string		raw_request;
 		bool			is_received;
+		HttpRequest		request;
 };
 
 // friend bool &Client::operator==(const Client& lhs, const Client& rhs);

@@ -16,7 +16,7 @@ int		Client::getSocketDesc()
 std::string	Client::getRequest(void)
 {
 	//DEBUG("getRequest")
-	return (this->request);
+	return (this->raw_request);
 }
 
 std::string	Client::getAddress(void)
@@ -40,7 +40,7 @@ bool	Client::requestReceived()
 // return -1 == error, 0 == On a fini de lire, 1 == Il reste des choses a lire
 int	Client::receiveRequest()
 {
-	DEBUG("receiveRequest")
+	//DEBUG("receiveRequest")
 	size_t	pos;
 	int read_ret;
 	char buffer[BUFFER_SIZE + 1];
@@ -48,17 +48,17 @@ int	Client::receiveRequest()
 	bzero(buffer,BUFFER_SIZE + 1);
 	if ((read_ret = read(socket, buffer, BUFFER_SIZE)) <= 0)
 		return (-1);
-	request.append(buffer);
-	int	type_content = contentType(request);
+	raw_request.append(buffer);
+	int	type_content = contentType(raw_request);
 	std::string end_body = type_content == 2 ? "0\r\n\r\n" : "\r\n\r\n";
 	//check si on a tout le header
-	if ((pos = request.find("\r\n\r\n")) != std::string::npos && type_content == 0)
+	if ((pos = raw_request.find("\r\n\r\n")) != std::string::npos && type_content == 0)
 		return (0);
 	if (type_content > 0)
 	{
-		std::string body = request.substr(pos + 4, request.length() - (pos + 4));
-		if (type_content == 1 && contentLength(request) <= body.length())
-			return (contentLength(request) == body.length() ? 0 : -1);
+		std::string body = raw_request.substr(pos + 4, raw_request.length() - (pos + 4));
+		if (type_content == 1 && contentLength(raw_request) <= body.length())
+			return (contentLength(raw_request) == body.length() ? 0 : -1);
 		if ((pos = body.find(end_body)) != std::string::npos)
 			if (((type_content == 2 && (pos == 0 || (body[pos - 1] == '\n' && body[pos - 2] == '\r')))
 				|| type_content == 1))
@@ -85,7 +85,6 @@ Client &Client::operator=(const Client& Other)
 
 void Client::printClient(void)
 {	
-	
 	std::cout << std::left << "+-" << std::endl ;
 	std::cout << std::left << "| Client" << " :" << std::endl ;
 	std::cout << std::left << "|  - SD	: " << getSocketDesc() << std::endl;
@@ -99,7 +98,7 @@ bool operator==(const Client& lhs, const Client& rhs)
 	if (lhs.socket == rhs.socket &&
 			lhs.client_address == rhs.client_address &&
 			lhs.option_buffer == rhs.option_buffer &&
-			lhs.request == rhs.request)
+			lhs.raw_request == rhs.raw_request)
 		return (true);
 	return (false);
 }
@@ -114,4 +113,6 @@ std::ostream &operator<<(std::ostream &os, Client &other)
 }
 
 
-Client::~Client(){DEBUG("Client destructor")}
+Client::~Client(){
+	//DEBUG("Client destructor")
+	}
