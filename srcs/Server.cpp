@@ -46,7 +46,8 @@ void Server::checkConnections(void)
 }
 
 void Server::acceptConnection(SubServ &s_srv)
-{DEBUG("acceptConnection")
+{
+	//DEBUG("acceptConnection")
 	sockaddr_in client;
 	socklen_t size = sizeof(client);
 	int new_sd;
@@ -68,19 +69,19 @@ void Server::acceptConnection(SubServ &s_srv)
 }
 
 void Server::upAndDownLoad(SubServ &sub_srv)
-{DEBUG("upAndDownLoad")	
+{
+	//DEBUG("upAndDownLoad")	
 	//si FD_ISSET(sd_serv, read_fd) = true
 	// accepter connection, add socket a liste des sockets des clients
-	std::cout << "subserv socket : " << FD_ISSET(sub_srv.getSocketDesc(), &readfds) << std::endl;
+	//std::cout << "subserv socket : " << FD_ISSET(sub_srv.getSocketDesc(), &readfds) << std::endl;
 	if (FD_ISSET(sub_srv.getSocketDesc(), &readfds))
 		acceptConnection(sub_srv);
-	sub_srv.printSubserv();
+	//sub_srv.printSubserv();
 	FD_COPY(&server_read_fd, &readfds);
 	//on recup la liste de sd des clients et on itere dessus
 	//si FD_ISSET(sd_client, writefds)
 	for (std::list<Client>::iterator client = sub_srv.getClientList().begin(); client != sub_srv.getClientList().end(); client++)
 	{
-		DEBUG("DEBUT DE L'ENQUETE")
 		std::cout << (FD_ISSET((*client).getSocketDesc(), &readfds));
 		if (FD_ISSET((*client).getSocketDesc(), &writefds) && (*client).requestReceived() == true)
 		{
@@ -89,7 +90,7 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 		//recup ce que le client a envoyé
 		if (FD_ISSET((*client).getSocketDesc(), &readfds))
 		{
-			DEBUG("		received request")
+			//DEBUG("		received request")
 			int ret_val;
 			if ((ret_val = (*client).receiveRequest()) < 0)
 			{//si on recoit -1 > pop le client de la liste, il n'est plus connecter au serveur
@@ -101,12 +102,10 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			{
 				(*client).setReceived(true);
 			}
-			(*client).printClient();
+			//(*client).printClient();
 
 			///////////// TEST ZONE ////////////////
-			HttpRequest test = HttpRequest((*client).getRequest());
-			
-
+			HttpRequest test = HttpRequest((*client).getRequest(), sub_srv.getConf());
 			////////////////////////////////////////
 
 		}
@@ -134,7 +133,6 @@ void	Server::listenIt()
 	while(keep_going)
 	{//boucle infinie
 		FD_ZERO(&writefds);
-		DEBUG("boucle");
 		try
 		{
 			DEBUG(ret_sel)

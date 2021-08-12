@@ -24,16 +24,21 @@ HttpRequest&	HttpRequest::operator=(const HttpRequest & other) {
     return *this;
 }
 
-HttpRequest::HttpRequest(std::string req)
+HttpRequest::HttpRequest(std::string req, Config::server conf)
 {
+	this->_return_code = 200;
 	this->_raw = req;
 	this->_method = "";
 	this->_version = "";
 	this->_body = "";
+	for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
+	{
+		this->_available_locations.push_back(it->first);
+	}
 	SplitHeadBody();
 	ParseHeader();
 	ValidateRequest();
-	DisplayHeader();
+	DisplayRequest();
 }
 
 void HttpRequest::ParseHeader()
@@ -58,16 +63,12 @@ void HttpRequest::ParseHeader()
 		int index = splitted_header.front().find(':');
 		key = splitted_header.front().substr(0, index);
 		value = splitted_header.front().substr(index + 1);
-
-		//std::cout << "first = "  << trim(key, " \r\n") << std::endl << "second = " << trim(value, " \r\n") << std::endl;
-		this->_header_fields[trim(key, " \r\n")] = trim(value, " \r\n");   // fills map
-		//std::cout << _header_fields[key];
+		this->_header_fields[trim(key, " \r\n")] = trim(value, " \r\n");
 		splitted_header.pop_front();
 	}
-	
 }
 
-void HttpRequest::DisplayHeader()
+void HttpRequest::DisplayRequest()
 {
 	
 	std::map<std::string, std::string>::const_iterator	it;
@@ -88,7 +89,7 @@ void HttpRequest::SplitHeadBody()
 
 	head_body = splitString(this->_raw, "\r\n\r\n");
 	this->_header = head_body.front();
-	this->_body = head_body.back();
+	this->_body = trim(head_body.back(), " \r\n");
 }
 
 std::string		HttpRequest::GetMethod() const
@@ -126,24 +127,33 @@ std::string		HttpRequest::GetPath() const
 	return this->_path;
 }
 
-bool	HttpRequest::CheckMethod() const
+bool	HttpRequest::CheckMethod()
 {
 	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))
+	{
+		_return_code = 400;
 		return false;
+	}
 	DEBUG("Method ok")
 	return true;
 }
 
-bool	HttpRequest::CheckVersion() const
+bool	HttpRequest::CheckVersion()
 {
 	if (_version.compare("HTTP/1.0") && _version.compare("HTTP/1.1"))
+	{
+		_return_code = 400;
 		return false;
+	}
 	DEBUG("Version ok")
 	return true;
 }
 
-//bool	HttpRequest::CheckPath() const {}
-//bool	HttpRequest::CheckHeader() const {}
+//bool	HttpRequest::CheckPath() const 
+//{
+
+//}
+//bool	HttpRequest::CheckHeaderFields() const {}
 //bool	HttpRequest::CheckBody() const {}
 
 
@@ -152,7 +162,7 @@ bool			HttpRequest::ValidateRequest()
 	CheckMethod();
 	CheckVersion();
 	//HttpRequest::CheckPath();
-	//HttpRequest::CheckHeader();
+	//CheckHeaderFields();
 	//HttpRequest::CheckBody();
 	return true;
 }

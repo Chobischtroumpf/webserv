@@ -38,7 +38,8 @@ Config::Config(std::string file)
 }
 
 size_t	Config::getScope(std::string file, size_t starting_pos)
-{DEBUG("getScope")
+{
+	//DEBUG("getScope")
 	std::vector<size_t> pos(2, starting_pos);
 	int opening_brace = 1;
 	int	closing_brace = 0;
@@ -53,7 +54,8 @@ size_t	Config::getScope(std::string file, size_t starting_pos)
 }
 
 Config::server	Config::parseServer(std::string server_scope)
-{DEBUG("parseServer")
+{
+	//DEBUG("parseServer")
 	size_t	starting_pos = 0;
 	size_t	closing_brace;
 	Config::server ret_server;
@@ -80,7 +82,8 @@ Config::server	Config::parseServer(std::string server_scope)
 }
 
 Config::location	Config::parseLocation(std::string location_scope)
-{DEBUG("parseLocation")
+{
+	//DEBUG("parseLocation")
 	std::string element;
 	size_t pos = 0;
 	size_t start_name;
@@ -137,7 +140,8 @@ std::list<Config::server>		&Config::getServers()
 }
 
 Config::~Config()
-{DEBUG("config destructor")
+{
+	//DEBUG("config destructor")
 	std::map<std::string, location > locations;
 
 	for (std::list<server>::iterator it = servers.begin(); it != servers.end(); it++)

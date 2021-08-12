@@ -9,7 +9,6 @@ void	ctrl_c(int signal)
 	
 	if (signal == SIGINT)
 	{
-		//std::cout << "SIGNNNNNNNNNNAAAAAAAAAAAL";
 		for (std::list<SubServ>::iterator subserver = server->sub_serv.begin(); subserver != server->sub_serv.end(); subserver++)
 		{
 			for (std::list<Client>::iterator client = (*subserver).getClientList().begin(); client != (*subserver).getClientList().end(); client++)

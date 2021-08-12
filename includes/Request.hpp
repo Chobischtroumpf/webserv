@@ -10,10 +10,12 @@ class HttpRequest
 		std::string							_body;			// Everything after CRLF 
 		std::string							_raw;			// Whole request
 		std::string							_path;			// Path to requested 
+		std::list<std::string>				_available_locations; 
+		int									_return_code; 
 
 	public:
 		HttpRequest();
-		HttpRequest(std::string req);
+		HttpRequest(std::string req, Config::server conf);
 		HttpRequest(const HttpRequest &other);
 		~HttpRequest();
 		
@@ -21,7 +23,7 @@ class HttpRequest
 
 		void								SplitHeadBody();
 		void								ParseHeader();
-		void								DisplayHeader();
+		void								DisplayRequest();
 		bool								ValidateRequest();
 
 		std::string							GetMethod() const;
@@ -32,9 +34,9 @@ class HttpRequest
 		std::string							GetRaw() const;
 		std::string							GetPath() const;
 
-		bool								CheckMethod()	const;
-		bool								CheckVersion()	const;
-		bool								CheckPath()	const;
-		bool								CheckHeader()	const;
-		bool								CheckBody()	const;
+		bool								CheckMethod();
+		bool								CheckVersion();
+		bool								CheckPath()		const;
+		bool								CheckHeaderFields()	const;
+		bool								CheckBody()		const;
 };
