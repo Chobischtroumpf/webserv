@@ -12,6 +12,7 @@ class Client
 		std::string	getAddress(void);
 		HttpRequest	getHttpRequest(void);
 		void		setReceived(bool);
+		void 		setClientNonBlock(void);
 		bool		requestReceived(void);
 		int			receiveRequest(void);
 		void		printClient(void);

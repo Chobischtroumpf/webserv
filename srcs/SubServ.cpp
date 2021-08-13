@@ -86,6 +86,7 @@ Config::server	SubServ::getConf()
 	return(this->server_conf);
 }
 
+// REMOVING REFERENCE MAKES SEGFAULT
 std::list<Client> &SubServ::getClientList()
 {
 	//DEBUG("getClientList")

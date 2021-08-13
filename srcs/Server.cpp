@@ -62,7 +62,7 @@ void Server::acceptConnection(SubServ &s_srv)
 		return ;
 	}
 	Client c = Client(new_sd, ipBytesToIpv4(client.sin_addr));
-	s_srv.setClientList(dynamic_cast<Client&>(c));
+	s_srv.setClientList(c);
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
 	FD_SET(new_sd, &server_read_fd);
@@ -71,50 +71,36 @@ void Server::acceptConnection(SubServ &s_srv)
 
 void Server::upAndDownLoad(SubServ &sub_srv)
 {
-	//DEBUG("upAndDownLoad")	
-	//si FD_ISSET(sd_serv, read_fd) = true
-	// accepter connection, add socket a liste des sockets des clients
-	//std::cout << "subserv socket : " << FD_ISSET(sub_srv.getSocketDesc(), &readfds) << std::endl;
 	if (FD_ISSET(sub_srv.getSocketDesc(), &readfds))
 		acceptConnection(sub_srv);
-	//sub_srv.printSubserv();
 	FD_COPY(&server_read_fd, &readfds);
-	//on recup la liste de sd des clients et on itere dessus
-	//si FD_ISSET(sd_client, writefds)
+
 	for (std::list<Client>::iterator client = sub_srv.getClientList().begin(); client != sub_srv.getClientList().end(); client++)
 	{
-		std::cout << (FD_ISSET((*client).getSocketDesc(), &readfds));
+		// std::cout << "writefd isset: " << (FD_ISSET((*client).getSocketDesc(), &writefds)) << std::endl << "request : " << ((*client).requestReceived() == true) << std::endl;
 		if (FD_ISSET((*client).getSocketDesc(), &writefds) && (*client).requestReceived() == true)
 		{
 			DEBUG("PARSE HEADER")
-			//parsing header
-
+			HttpRequest test = HttpRequest((*client).getRequest(), sub_srv.getConf());
 			//send request
 			(*client).sendRequest();
 		}
-		//recup ce que le client a envoyé
+		std::cout << "readfds set: " << ((*client).requestReceived() == true) << std::endl;
 		if (FD_ISSET((*client).getSocketDesc(), &readfds))
 		{
-			//DEBUG("		received request")
 			int ret_val;
 			if ((ret_val = (*client).receiveRequest()) < 0)
-			{//si on recoit -1 > pop le client de la liste, il n'est plus connecter au serveur
+			{
 				close((*client).getSocketDesc());
 				client = sub_srv.getClientList().erase(client);
-				//remove from fd_set
 			}
-			else if (ret_val == 0)//indiquer qu'on a recu qqchose
+			else if (ret_val == 0)
 			{
 				(*client).setReceived(true);
 			}
-			//(*client).printClient();
-
-			///////////// TEST ZONE ////////////////
-			HttpRequest test = HttpRequest((*client).getRequest(), sub_srv.getConf());
-			////////////////////////////////////////
-
 		}
 	}
+	sub_srv.printClientList();
 }
 
 static void getUpAndDownLoad(SubServ &s_srv)
@@ -138,18 +124,14 @@ void	Server::listenIt()
 	while(keep_going)
 	{//boucle infinie
 		FD_ZERO(&writefds);
+		FD_COPY(&server_write_fd, &writefds);
 		try
 		{
-			//DEBUG(ret_sel)
 			if ((ret_sel = select(max_sd + 1, &readfds, &writefds, NULL, NULL/*&timeout*/)) < 0 && errno!=EINTR)
 				ServerException("Select Failed");
-			// else if (ret_sel == 0)
-			// {
-			// 	DEBUG("before check connections")
-				// checkConnections();
-			// }
-			else //iterer sur chaque SD de chaque sub_serv
+			else 
 				std::for_each(sub_serv.begin(), sub_serv.end(), getUpAndDownLoad);
+
 		}
 		catch (const std::exception& e)
 		{
@@ -160,7 +142,6 @@ void	Server::listenIt()
 
 Server &Server::operator=(const Server& Other)
 {
-	//DEBUG("Server =")
 	this->readfds = Other.readfds;
 	this->writefds = Other.writefds;
 	this->sub_serv = Other.sub_serv;
@@ -168,35 +149,8 @@ Server &Server::operator=(const Server& Other)
 	return (*this);
 }
 
-
 Server::~Server()
 {
 	//DEBUG("Server destructor")
 	sub_serv.clear();
 }
-
-// int opt = 0;
-// 	struct protoent *protocol = NULL;
-
-// 	this->address.sin_family = AF_INET;
-// 	this->address.sin_addr.s_addr = INADDR_ANY;
-// 	this->address.sin_port = htons(port);
-// 	// std::cout << "socket\n";
-// 	if ((this->sock_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-// 		std::cout << strerror(errno) << std::endl;
-// 	fcntl(this->sock_fd, F_SETFL, O_NONBLOCK);
-// 	if ((protocol = getprotobyname("tcp")) == NULL)
-// 		exit(-1);
-// 	// if (setsockopt(this->sock_fd, protocol->p_proto, IPV6_V6ONLY, &opt, sizeof(opt)))
-// 	// 	std::cout << "1 " << strerror(errno) << std::endl;
-// 	opt = 1;
-// 	// std::cout << "setsockopt2\n";
-// 	if (setsockopt(this->sock_fd, protocol->p_proto, SO_REUSEADDR, &opt, sizeof(opt)))
-// 		std::cout << "2" << strerror(errno) << std::endl;
-// 	// std::cout << "bind\n";
-// 	if (bind(this->sock_fd, (struct sockaddr *)&this->address,
-// 		sizeof(this->address))<0)
-// 		std::cout << strerror(errno) << std::endl;
-// 	// std::cout << "listen\n";
-// 	if (listen(this->sock_fd, 128) < 0)
-// 		std::cout << strerror(errno) << std::endl;

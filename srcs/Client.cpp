@@ -4,8 +4,17 @@
 Client::Client(int sd, std::string address)
 {
 	DEBUG("##### CLIENT INIT #####")
-	socket = sd;
+	this->socket = sd;
+	setClientNonBlock();
 	this->client_address = address;
+	this->is_received = false;
+}
+
+void Client::setClientNonBlock()
+{
+	//DEBUG("setClientNonBlock")
+	if (fcntl(this->socket, F_SETFL, O_NONBLOCK) < 0)
+		throw ("Error setting Client to nonblocking");
 }
 
 int		Client::getSocketDesc()
