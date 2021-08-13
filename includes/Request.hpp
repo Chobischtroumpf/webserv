@@ -36,6 +36,7 @@ class HttpRequest
 		std::string							GetBody() const;
 		std::string							GetRaw() const;
 		std::string							GetPath() const;
+		int									GetCode() const;
 
 		bool								CheckMethod();
 		bool								CheckVersion();

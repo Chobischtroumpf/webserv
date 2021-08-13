@@ -8,6 +8,14 @@ Response::Response(Response &Other)
 	this->header = Other.getResponseHeaderObj();
 }
 
+std::string			Response::getErrorFile(int code ,Config::server server_config)
+{
+	(void) code;
+	(void) server_config;
+	std::string ret = std::string("Temporary error handling");
+	return (ret);
+}
+
 std::string	Response::setErrorCode(Config::server server_config)
 {
 	std::string string = "";
@@ -34,7 +42,7 @@ Response::Response(HttpRequest request, Config::server server_config)
 	// std::map<std::string, std::string> headers = request.GetHeaderFields();
 	// check httpRequest for method
 	std::string method = request.GetMethod();
-	error_code = request.getCode();
+	error_code = request.GetCode();
 	
 	if ((this->response_body = setErrorCode(server_config)) == "")
 	{

@@ -1,5 +1,6 @@
 #ifndef RESPONSEHEADER_HPP
 # define RESPONSEHEADER_HPP
+
 # include "General.hpp"
 
 class	ResponseHeader

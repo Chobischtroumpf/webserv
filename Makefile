@@ -47,6 +47,8 @@ HEADERS =\
 	./includes/Server.hpp\
 	./includes/General.hpp\
 	./includes/Request.hpp\
+	./includes/Response.hpp\
+	./includes/ResponseHeader.hpp\
 	# ./includes/Socket.hpp\
 
 ###▲▲▲<src-updater-do-not-edit-or-remove>▲▲▲

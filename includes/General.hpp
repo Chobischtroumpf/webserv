@@ -32,11 +32,10 @@
 
 # include "Exceptions.hpp"
 # include "Config.hpp"
-// # include "Socket.hpp"
-# include "Request.hpp"
-# include "Server.hpp"
 # include "Request.hpp"
 # include "ResponseHeader.hpp"
+// # include "Socket.hpp"
+# include "Server.hpp"
 # include "Response.hpp"
 
 # define DEBUG(MSG) std::cout << "\033[0;35m\e[1m" << MSG << "\e[0m\033[0m" << std::endl;

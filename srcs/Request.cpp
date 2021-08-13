@@ -127,6 +127,11 @@ std::string		HttpRequest::GetPath() const
 	return this->_path;
 }
 
+int				HttpRequest::GetCode() const
+{
+	return this->_return_code;
+}
+
 bool	HttpRequest::CheckMethod()
 {
 	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))

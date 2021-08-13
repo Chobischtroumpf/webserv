@@ -1,6 +1,8 @@
 #ifndef RESPONSE_HPP
-#define RESPONSE_HPP
-#include "General.hpp"
+# define RESPONSE_HPP
+
+# include "General.hpp"
+
 
 class Response
 {
@@ -14,7 +16,7 @@ class Response
 		Response(Response &Other);
 		Response(HttpRequest request, Config::server server_config);
 
-
+		std::string		getErrorFile(int code, Config::server server_config);
 		std::string		setErrorCode(Config::server server_config);
 		std::string		getResponse(void);
 		std::string		getResponseBody(void);
