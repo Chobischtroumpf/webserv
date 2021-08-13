@@ -19,7 +19,7 @@ class	ResponseHeader
 	public:
 		ResponseHeader(void);
 		ResponseHeader(ResponseHeader &Other);
-		~ResponseHeader(void);
+		~ResponseHeader(void){};
 		
 		ResponseHeader &operator=(const ResponseHeader &src);
 
@@ -34,15 +34,15 @@ class	ResponseHeader
 		void		setTransferEncoding(void);
 
 		std::string	getHeader(void);
-		std::string	getContentLanguage(void);
-		std::string	getContentLength(void);
-		std::string	getContentLocation(void);
-		std::string	getContentType(void);
-		std::string	getDate(void);
-		std::string	getLocation(void);
-		std::string	getServer(void);
-		std::string	getTransferEncoding(void);
-		std::map<int, std::string>	getErrors(void);
+		std::string	getContentLanguage(void) const;
+		std::string	getContentLength(void) const;
+		std::string	getContentLocation(void) const;
+		std::string	getContentType(void) const;
+		std::string	getDate(void) const;
+		std::string	getLocation(void) const;
+		std::string	getServer(void) const;
+		std::string	getTransferEncoding(void) const;
+		std::map<int, std::string>	getErrors(void) const;
 
 
 		std::string	writeHeader(void);

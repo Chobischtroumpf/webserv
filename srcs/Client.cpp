@@ -1,4 +1,5 @@
 #include "General.hpp"
+#include "Client.hpp"
 
 Client::Client(int sd, std::string address)
 {

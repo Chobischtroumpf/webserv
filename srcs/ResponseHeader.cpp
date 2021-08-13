@@ -33,49 +33,63 @@ std::string	ResponseHeader::getHeader(void)
 	return (header);
 }
 
-std::string	ResponseHeader::getContentLanguage(void)
+std::string	ResponseHeader::getContentLanguage(void) const
 {
 	return (this->content_language);
 }
 
-std::string	ResponseHeader::getContentLength(void)
+std::string	ResponseHeader::getContentLength(void) const
 {
 	return (this->content_length);
 }
 
-std::string	ResponseHeader::getContentLocation(void)
+std::string	ResponseHeader::getContentLocation(void) const
 {
 	return (this->content_location);
 }
 
-std::string	ResponseHeader::getContentType(void)
+std::string	ResponseHeader::getContentType(void) const
 {
 	return (this->content_type);
 }
 
-std::string	ResponseHeader::getDate(void)
+std::string	ResponseHeader::getDate(void) const
 {
 	return (this->date);
 }
 
-std::string	ResponseHeader::getLocation(void)
+std::string	ResponseHeader::getLocation(void) const
 {
 	return (this->location);
 }
 
-std::string	ResponseHeader::getServer(void)
+std::string	ResponseHeader::getServer(void) const
 {
 	return (this->server);
 }
 
-std::string	ResponseHeader::getTransferEncoding(void)
+std::string	ResponseHeader::getTransferEncoding(void) const
 {
 	return (this->transfer_encoding);
 }
 
-std::map<int, std::string>	ResponseHeader::getErrors(void)
+std::map<int, std::string>	ResponseHeader::getErrors(void) const
 {
 	return (this->errors);
+}
+
+ResponseHeader &ResponseHeader::operator=(const ResponseHeader &src)
+{
+	this->content_language = src.getContentLanguage();
+	this->content_length = src.getContentLength();
+	this->content_location = src.getContentLocation();
+	this->content_type = src.getContentType();
+	this->date = src.getDate();
+	this->location = src.getLocation();
+	this->server = src.getServer();
+	this->transfer_encoding = src.getTransferEncoding();
+	this->errors = src.getErrors(); 
+	return (*this);
 }
 
 void	ResponseHeader::initErrorMap()

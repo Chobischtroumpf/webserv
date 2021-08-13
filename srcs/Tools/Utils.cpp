@@ -1,5 +1,5 @@
 # include "General.hpp"
-
+# include "Request.hpp"
 extern std::map<std::string, std::string>	g_env;
 
 //logger: pattern : void ft::log_<what_you_are_logging>();

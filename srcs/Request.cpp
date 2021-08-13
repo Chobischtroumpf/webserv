@@ -1,4 +1,4 @@
-# include "General.hpp"
+#include "Request.hpp"
 
 HttpRequest::HttpRequest()
 {}

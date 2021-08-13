@@ -1,4 +1,5 @@
 #include "General.hpp"
+#include "Server.hpp"
 
 std::map<std::string, std::string>	g_env;
 

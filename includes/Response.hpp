@@ -2,7 +2,8 @@
 # define RESPONSE_HPP
 
 # include "General.hpp"
-
+# include "Request.hpp"
+# include "ResponseHeader.hpp"
 
 class Response
 {
