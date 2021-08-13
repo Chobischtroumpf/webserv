@@ -67,21 +67,15 @@ int	Client::receiveRequest()
 	return (1);
 }
 
-Client &Client::operator=(const Client& Other)
+int	Client::sendRequest(void)
 {
-		this->socket = Other.socket;
-		this->client_address = Other.client_address;
-		this->option_buffer = Other.option_buffer;
-		this->request = Other.request;	
-		return (*this);
+	// create Response object with HttpRequest
+	// once created, get response string
+	// write response string into client's socket
+	// if write = -1 client disconnected, call pop client
+	// set is_received to false
+	return (0);
 }
-
-// bool &Client::operator==(const Client& lhs, const Client& rhs)
-// {
-// 	if (lhs.socket == rhs.socket)
-// 		return true;
-// 	return false;
-// }
 
 void Client::printClient(void)
 {	
@@ -91,6 +85,15 @@ void Client::printClient(void)
 	std::cout << std::left << "|  - Address: " << getAddress() << std::endl;
 	std::cout << std::left << "|  - Request: " << getRequest() << std::endl;
 	std::cout << std::left << "+-" << std::endl ;
+}
+
+Client &Client::operator=(const Client& Other)
+{
+		this->socket = Other.socket;
+		this->client_address = Other.client_address;
+		this->option_buffer = Other.option_buffer;
+		this->request = Other.request;	
+		return (*this);
 }
 
 bool operator==(const Client& lhs, const Client& rhs)

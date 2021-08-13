@@ -17,10 +17,12 @@ class Client
 		int			getSocketDesc(void);
 		std::string	getRequest(void);
 		std::string	getAddress(void);
+		HttpRequest	getHttpRequest(void);
 		void		setReceived(bool);
 		bool		requestReceived(void);
 		int			receiveRequest(void);
 		void		printClient(void);
+		int			sendRequest(void);
 
 		Client &operator=(const Client& Other);
 		friend bool operator==(const Client& lhs, const Client& rhs);
@@ -32,6 +34,9 @@ class Client
 		std::string		raw_request;
 		bool			is_received;
 		HttpRequest		request;
+		std::string		response_header;
+		std::string		response;
+
 };
 
 // friend bool &Client::operator==(const Client& lhs, const Client& rhs);

@@ -201,3 +201,8 @@ size_t contentLength(std::string client_request)
 	}
 	return (0);
 }
+
+Config::location	&getLocationConfig(Config::server server_config, HttpRequest request)
+{
+	return (server_config.locations[request.GetPath()]);
+}
