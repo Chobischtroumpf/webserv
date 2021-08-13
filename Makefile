@@ -38,6 +38,8 @@ SRCS =\
 	./srcs/SubServ.cpp\
 	./srcs/Client.cpp\
 	./srcs/Request.cpp\
+	./srcs/Response.cpp\
+	./srcs/ResponseHeader.cpp\
 
 HEADERS =\
 	./includes/Exceptions.hpp\

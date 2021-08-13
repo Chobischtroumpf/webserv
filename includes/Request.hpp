@@ -41,3 +41,5 @@ class HttpRequest
 		bool								CheckVersion();
 		bool								CheckPath();
 };
+
+#endif

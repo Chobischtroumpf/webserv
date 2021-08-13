@@ -8,21 +8,21 @@ Response::Response(Response &Other)
 	this->header = Other.getResponseHeaderObj();
 }
 
-std::string	Response::setErrorCode(int code)
+std::string	Response::setErrorCode(Config::server server_config)
 {
 	std::string string = "";
-	switch (code)
+	switch (error_code)
 	{
 		case 400:
-			return(getErrorFile(400));
+			return(getErrorFile(400, server_config));
 		case 403:
-			return(getErrorFile(403));
+			return(getErrorFile(403, server_config));
 		case 404:
-			return(getErrorFile(404));
+			return(getErrorFile(404, server_config));
 		case 405:
-			return(getErrorFile(405));
+			return(getErrorFile(405, server_config));
 		case 413:
-			return(getErrorFile(413));
+			return(getErrorFile(413, server_config));
 		default:
 			break;
 	}
@@ -34,8 +34,9 @@ Response::Response(HttpRequest request, Config::server server_config)
 	// std::map<std::string, std::string> headers = request.GetHeaderFields();
 	// check httpRequest for method
 	std::string method = request.GetMethod();
+	error_code = request.getCode();
 	
-	if ((this->response_body = setErrorCode(request.getCode())) == "")
+	if ((this->response_body = setErrorCode(server_config)) == "")
 	{
 		if (method == "GET")
 			getMethod(request, server_config);
@@ -67,15 +68,18 @@ ResponseHeader	&Response::getResponseHeaderObj(void)
 	return (header);
 }
 
-ResponseHeader &Response::getMethod(HttpRequest request, Config::server &server_config, ResponseHeader &header)
+void	Response::getMethod(HttpRequest request, Config::server &server_config)
 {
-	
+	(void)request;
+	(void)server_config;
 }
-ResponseHeader &Response::postMethod(HttpRequest request, Config::server &server_config, ResponseHeader &header)
+void	Response::postMethod(HttpRequest request, Config::server &server_config)
 {
-	
+	(void)request;
+	(void)server_config;
 }
-ResponseHeader &Response::deleteMethod(HttpRequest request, Config::server &server_config, ResponseHeader &header)
+void	Response::deleteMethod(HttpRequest request, Config::server &server_config)
 {
-	
+	(void)request;
+	(void)server_config;
 }

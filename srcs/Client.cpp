@@ -74,7 +74,7 @@ int	Client::sendRequest(void)
 	// write response string into client's socket
 	// if write = -1 client disconnected, call pop client
 	// set is_received to false
-
+	return (0);
 }
 
 void Client::printClient(void)

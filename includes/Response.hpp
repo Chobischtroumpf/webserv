@@ -15,7 +15,7 @@ class Response
 		Response(HttpRequest request, Config::server server_config);
 
 
-		std::string		setErrorCode(int code);
+		std::string		setErrorCode(Config::server server_config);
 		std::string		getResponse(void);
 		std::string		getResponseBody(void);
 		std::string		getResponseHeader(void);
