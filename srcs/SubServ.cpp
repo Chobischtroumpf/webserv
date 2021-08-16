@@ -96,7 +96,12 @@ std::list<Client> &SubServ::getClientList()
 void	SubServ::setClientList(const Client &client)
 {
 	//DEBUG("setClientList")
+	//DEBUG("ClientList Before adding\n")
+	//printClientList();
 	this->client_list.push_back(client);
+	//DEBUG("ClientList after adding\n")
+	//printClientList();
+	//std::cout << std::endl << std::endl << std::endl << std::endl;
 }
 
 void	SubServ::printClientList(void)
@@ -112,7 +117,7 @@ void	SubServ::popClient(const Client &client)
 	this->client_list.remove(client);
 }
 
-Server	SubServ::getMainServer()
+Server&	SubServ::getMainServer()
 {
 	//DEBUG("getMainServer")
 	return (this->main_serv);

@@ -30,7 +30,6 @@ class Client
 		HttpRequest		request;
 		std::string		response_header;
 		std::string		response;
-
 };
 
 #endif

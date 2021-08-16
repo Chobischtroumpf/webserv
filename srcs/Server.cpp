@@ -58,26 +58,30 @@ void Server::acceptConnection(SubServ &s_srv)
 			return;
 		if (errno != EWOULDBLOCK)
 			throw ServerException("Accept Failed");
-		
 		return ;
 	}
 	Client c = Client(new_sd, ipBytesToIpv4(client.sin_addr));
 	s_srv.setClientList(c);
+	
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
+
 	FD_SET(new_sd, &server_read_fd);
 	FD_SET(new_sd, &server_write_fd);
+	
 }
 
 void Server::upAndDownLoad(SubServ &sub_srv)
 {
 	if (FD_ISSET(sub_srv.getSocketDesc(), &readfds))
+	{
 		acceptConnection(sub_srv);
-	FD_COPY(&server_read_fd, &readfds);
-
+	}
 	for (std::list<Client>::iterator client = sub_srv.getClientList().begin(); client != sub_srv.getClientList().end(); client++)
 	{
-		// std::cout << "writefd isset: " << (FD_ISSET((*client).getSocketDesc(), &writefds)) << std::endl << "request : " << ((*client).requestReceived() == true) << std::endl;
+		std::cout << "writefd isset: " << (FD_ISSET((*client).getSocketDesc(), &writefds)) << std::endl;
+		std::cout << "readfd isset: " << (FD_ISSET((*client).getSocketDesc(), &readfds)) << std::endl;
+		std::cout << "request received: " << ((*client).requestReceived() == true) << std::endl;
 		if (FD_ISSET((*client).getSocketDesc(), &writefds) && (*client).requestReceived() == true)
 		{
 			DEBUG("PARSE HEADER")
@@ -85,22 +89,27 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			//send request
 			(*client).sendRequest();
 		}
-		std::cout << "readfds set: " << ((*client).requestReceived() == true) << std::endl;
+	
 		if (FD_ISSET((*client).getSocketDesc(), &readfds))
 		{
 			int ret_val;
 			if ((ret_val = (*client).receiveRequest()) < 0)
 			{
+				DEBUG("--> deleting client")
 				close((*client).getSocketDesc());
 				client = sub_srv.getClientList().erase(client);
+				//DEBUG("Clients still in list : \n")
+				//sub_srv.printClientList();
 			}
 			else if (ret_val == 0)
 			{
+				std::cout << "Set received" << std::endl;
 				(*client).setReceived(true);
 			}
 		}
 	}
-	sub_srv.printClientList();
+		//DEBUG("###CLIENT LIST###")
+		//sub_srv.printClientList();
 }
 
 static void getUpAndDownLoad(SubServ &s_srv)
@@ -111,27 +120,30 @@ static void getUpAndDownLoad(SubServ &s_srv)
 void	Server::listenIt()
 {
 	DEBUG("##### SERVER LISTENING #####")
-	 //biggest fd in the set
-
 	FD_ZERO(&server_read_fd);
 	for (std::list<SubServ>::iterator i = sub_serv.begin(); i != sub_serv.end(); i++)
 	{
 		FD_SET((*i).getSocketDesc(), &server_read_fd);
-		max_sd = (*i).getSocketDesc();
+		max_sd = (*i).getSocketDesc(); //what if the last subserv as a smaller sd ?
 	}
+
 	FD_COPY(&server_read_fd, &readfds);
 	int ret_sel = 1;
 	while(keep_going)
 	{//boucle infinie
 		FD_ZERO(&writefds);
+		FD_COPY(&server_read_fd, &readfds);
 		FD_COPY(&server_write_fd, &writefds);
+
 		try
-		{
+		{	
+			DEBUG("ON SELECT")
 			if ((ret_sel = select(max_sd + 1, &readfds, &writefds, NULL, NULL/*&timeout*/)) < 0 && errno!=EINTR)
 				ServerException("Select Failed");
 			else 
+			{
 				std::for_each(sub_serv.begin(), sub_serv.end(), getUpAndDownLoad);
-
+			}
 		}
 		catch (const std::exception& e)
 		{

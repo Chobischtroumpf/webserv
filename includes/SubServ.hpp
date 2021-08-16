@@ -22,7 +22,7 @@ class SubServ
 		Config::server		getConf();
 		std::list<Client>	&getClientList();
 
-		Server			getMainServer();
+		Server			&getMainServer();
 		int				receiveRequest(int sd, Client client);
 		void			setClientList(const Client &client);
 		void			popClient(const Client &client);
