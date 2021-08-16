@@ -37,12 +37,18 @@ SRCS =\
 	./srcs/Server.cpp\
 	./srcs/SubServ.cpp\
 	./srcs/Client.cpp\
+	./srcs/Request.cpp\
+	./srcs/Response.cpp\
+	./srcs/ResponseHeader.cpp\
 
 HEADERS =\
 	./includes/Exceptions.hpp\
 	./includes/Config.hpp\
 	./includes/Server.hpp\
 	./includes/General.hpp\
+	./includes/Request.hpp\
+	./includes/Response.hpp\
+	./includes/ResponseHeader.hpp\
 	# ./includes/Socket.hpp\
 
 ###▲▲▲<src-updater-do-not-edit-or-remove>▲▲▲

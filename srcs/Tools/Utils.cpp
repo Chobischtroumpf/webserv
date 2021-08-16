@@ -1,5 +1,5 @@
-#include "General.hpp"
-
+# include "General.hpp"
+# include "Request.hpp"
 extern std::map<std::string, std::string>	g_env;
 
 //logger: pattern : void ft::log_<what_you_are_logging>();
@@ -27,20 +27,8 @@ void	logServConfig(Config::server config)
 		std::clog << "\033[0;34m[" << it->first << "]\033[0m = \033[0;32m[" << it->second << "]\033[0m" << std::endl;
 	std::clog << "\033[0;34m[server_port]\033[0m = \033[0;32m[" << config.port << "]\033[0m" << std::endl;
 	std::clog << "\033[0;34m[Locations]\033[0m = \033[0;32m" << std::endl << "{" << std::endl;
-	// for (std::map<std::string, std::map<std::string, std::list<std::string> > >::iterator it = config.locations.begin(); it != config.locations.end(); it++)
-	// {	
-	// 	std::clog << "\t["<< it->first + "] :" << std::endl;
-	// 	for (std::map<std::string, std::list<std::string> >::iterator it1 = it->second.begin(); it1 != it->second.end(); it1++)
-	// 	{
-	// 		std::clog << "\t\t[" << it1->first << "]" << std::endl;
-	// 		for (std::list<std::string>::iterator it2 = it1->second.begin(); it2 != it1->second.end(); it2++)
-	// 			std::clog << "\t\t\t[" << *it2 << "]" << std::endl;
-	// 	}	
-	// }
 	std::clog << "}\033[0m" << std::endl;
 }
-
-//Checker:  pattern : bool ft::is_<what_you_are_checking>();
 
 bool	isIp(std::string ip)
 {
@@ -82,6 +70,23 @@ std::string	reverseStr(std::string str)
 	return (str);
 }
 
+std::string& rtrim(std::string& s, const char* set)
+{
+    s.erase(s.find_last_not_of(set) + 1);
+    return s;
+}
+
+std::string& ltrim(std::string& s, const char* set)
+{
+    s.erase(0, s.find_first_not_of(set));
+    return s;
+}
+
+std::string& trim(std::string& s, const char* set)
+{
+    return ltrim(rtrim(s, set), set);
+}
+
 size_t	countChar(char c, std::string str)
 {
 	size_t count = 0;
@@ -92,7 +97,6 @@ size_t	countChar(char c, std::string str)
 	return (count);
 }
 
-//sep has to be one char long
 std::list<std::string> splitString(std::string str, std::string sep)
 {
 	std::list<std::string> ret;
@@ -147,7 +151,7 @@ std::string	ipBytesToIpv4(struct in_addr in)
 // return 0 == rien, 1 == Content-Length defined, 2 == chunked (reception du message par paquet)
 int	contentType(std::string client_request)
 {
-	DEBUG("contentType")
+	//DEBUG("contentType")
 	size_t pos = 0;
 	size_t pos_in_line = 0;
 	std::string line;
@@ -168,7 +172,6 @@ int	contentType(std::string client_request)
 
 size_t contentLength(std::string client_request)
 {
-	DEBUG("contentLength");
 	size_t pos = 0;
 	size_t pos_in_line = 0;
 	std::string line;
@@ -183,4 +186,9 @@ size_t contentLength(std::string client_request)
 		pos = end + 1;
 	}
 	return (0);
+}
+
+Config::location	&getLocationConfig(Config::server server_config, HttpRequest request)
+{
+	return (server_config.locations[request.GetPath()]);
 }

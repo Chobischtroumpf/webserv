@@ -28,20 +28,23 @@
 # include <map>
 # include <algorithm>
 # include <iterator>
+# include <iomanip>
 
 # include "Exceptions.hpp"
 # include "Config.hpp"
-// # include "Socket.hpp"
-# include "Server.hpp"
 
-# define DEBUG(MSG) std::cout << "\033[0;35m\e[1m" MSG "\e[0m\033[0m" << std::endl;
+# define DEBUG(MSG) std::cout << "\033[0;35m\e[1m" << MSG << "\e[0m\033[0m" << std::endl;
 
 # define BUFFER_SIZE 1000000
 
 // Tools/utils.cpp:
 	std::list<std::string> splitString(std::string str, std::string sep);
-	std::string ipBytesToIpv4(struct in_addr in);
+	std::string	ipBytesToIpv4(struct in_addr in);
+	std::string& rtrim(std::string& s, const char* set);
+	std::string& ltrim(std::string& s, const char* set);
+	std::string& trim(std::string& s, const char* set);
 	class Config;
+
 // logger: pattern : void log_<what_you_are_logging>();
 	void	logEnv();
 	void	logFile(std::string file);
@@ -50,6 +53,7 @@
 // checker: pattern : bool is_<what_you_are_checking>();
 	bool	isIp(std::string ip);
 	bool	isNumber(const std::string& s);
+
 
 // Parsing/InitParser.cpp:
 	void		parseEnv(char **env);
