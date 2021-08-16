@@ -188,7 +188,29 @@ size_t contentLength(std::string client_request)
 	return (0);
 }
 
+
+
 Config::location	&getLocationConfig(Config::server server_config, HttpRequest request)
 {
 	return (server_config.locations[request.GetPath()]);
+}
+
+// -1 : stat failed or nor a file or directory
+// 0  : is a directory
+// 1  : is a file
+
+int		isFile(std::string path)
+{
+	struct stat info;
+	if (stat(path.c_str(), &info) != 0)
+		return (-1);
+	else
+	{
+		if (S_ISREG(info.st_mode))
+			return (1);
+		else if (S_ISDIR(info.st_mode))
+			return (0);
+		else
+			return (-1);
+	}
 }
