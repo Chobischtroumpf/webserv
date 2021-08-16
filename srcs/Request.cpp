@@ -37,8 +37,10 @@ HttpRequest::HttpRequest(std::string req, Config::server conf)
 	}
 	SplitHeadBody();
 	ParseHeader();
-	std::cout << "Request valid : " << ValidateRequest();
-	DisplayRequest();
+	std::cout << "Request valid : " << ValidateRequest() << std::endl;
+	MakePath(conf);
+	// DisplayRequest();
+	std::cout << "Path : " << _path << std::endl;
 }
 
 void HttpRequest::ParseHeader()
@@ -154,7 +156,9 @@ bool	HttpRequest::CheckVersion()
 
 bool	HttpRequest::CheckPath()
 {
-	if (!(std::find(_available_locations.begin(), _available_locations.end(), _path) != _available_locations.end()))
+	int pos = _path.size() - reverseStr(_path).find("/");
+	std::string path_without_file = _path.substr(0, pos);
+	if (!(std::find(_available_locations.begin(), _available_locations.end(), path_without_file) != _available_locations.end()))
 	{
 		_return_code = 404;
 		return false;
@@ -162,7 +166,15 @@ bool	HttpRequest::CheckPath()
 	return true;
 }
 
-//bool	HttpRequest::CheckHeaderFields() const {}
+void	HttpRequest::MakePath(Config::server serv_conf)
+{
+	std::string path_without_file = _path.substr(0, _path.size() - (reverseStr(_path).find("/") + 1));
+	std::string new_path = serv_conf.locations[path_without_file].root + _path.substr(_path.size() - (reverseStr(_path).find("/") + 1));
+	DEBUG("new_path : " + new_path)
+	// DEBUG("path_without_file :" + path_without_file)
+
+	std::cout << _path << std::endl;
+}
 
 bool			HttpRequest::ValidateRequest()
 {

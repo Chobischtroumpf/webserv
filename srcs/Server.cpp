@@ -105,6 +105,7 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			{
 				std::cout << "Set received" << std::endl;
 				(*client).setReceived(true);
+				HttpRequest test = HttpRequest((*client).getRequest(), sub_srv.getConf()); //testing
 			}
 		}
 	}
@@ -138,7 +139,7 @@ void	Server::listenIt()
 		try
 		{	
 			DEBUG("ON SELECT")
-			if ((ret_sel = select(max_sd + 1, &readfds, &writefds, NULL, NULL/*&timeout*/)) < 0 && errno!=EINTR)
+			if ((ret_sel = select(max_sd + 1, &readfds, NULL/*&readfds*/, NULL, NULL/*&timeout*/)) < 0 && errno!=EINTR)
 				ServerException("Select Failed");
 			else 
 			{

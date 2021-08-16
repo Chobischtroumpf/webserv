@@ -30,15 +30,15 @@ void	logServConfig(Config::server config)
 	for (std::map<std::string, Config::location>::iterator it = config.locations.begin(); it != config.locations.end(); it++)
 	{
 		std::clog << "	\033[0;34m[location name]\033[0m = \033[0;32m[" << (*it).second.name << "]\033[0m" << std::endl;
-		std::clog << "\033[0;34m[Root]\033[0m = \033[0;32m[" << (*it).second.name << "]\033[0m" << std::endl;
-		std::clog << "\033[0;34m[methods]\033[0m = \033[0;32m[";
+		std::clog << "	\033[0;34m[Root]\033[0m = \033[0;32m[" << (*it).second.root << "]\033[0m" << std::endl;
+		std::clog << "	\033[0;34m[methods]\033[0m = \033[0;32m[";
 		for (std::list<std::string>::iterator it2 = (*it).second.method.begin(); it2 != (*it).second.method.end(); it2++)
+			std::clog << "	\033[0;34m[" << (*it2) << "]\033[0m";
+		std::clog << "\033[0;32m]\033[0m" << std::endl;
+		std::clog << "	\033[0;34m[redirections]\033[0m = \033[0;32m[";
+		for (std::list<std::string>::iterator it2 = (*it).second.redirections.begin(); it2 != (*it).second.redirections.end(); it2++)
 			std::clog << " \033[0;34m[" << (*it2) << "]\033[0m";
-		std::clog << "]\033[0m" << std::endl;
-		std::clog << "\033[0;34m[redirections]\033[0m = \033[0;32m[";
-		for (std::list<std::string>::iterator it2 = (*it).second.method.begin(); it2 != (*it).second.method.end(); it2++)
-			std::clog << " \033[0;34m[" << (*it2) << "]\033[0m";
-		std::clog << "]\033[0m" << std::endl;	std::clog << "\033[0;34m[location name]\033[0m = \033[0;32m[" << (*it).second.name << "]\033[0m" << std::endl;
+		std::clog << "\033[0;32m]\033[0m" << std::endl;
 	}
 	std::clog << "}\033[0m" << std::endl;
 }
