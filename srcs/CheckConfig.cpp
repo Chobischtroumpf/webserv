@@ -82,7 +82,7 @@ void	Config::checkServer(Config::server *retval)
 	if (retval->port == 0)
 			throw ParsingException(0, "Host has no port.");
 	if (retval->root.empty())
-		retval->root = "./default/default.html";
+		retval->root = "./";
 	int error_code[13] = {400, 403, 404, 405, 406, 411, 413, 500, 501, 502, 503, 504, 505};
 	for (size_t i = 0; i < 13; i++)
 	{
