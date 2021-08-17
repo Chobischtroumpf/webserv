@@ -98,8 +98,6 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 				DEBUG("--> deleting client")
 				close((*client).getSocketDesc());
 				client = sub_srv.getClientList().erase(client);
-				//DEBUG("Clients still in list : \n")
-				//sub_srv.printClientList();
 			}
 			else if (ret_val == 0)
 			{
@@ -109,8 +107,6 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			}
 		}
 	}
-		//DEBUG("###CLIENT LIST###")
-		//sub_srv.printClientList();
 }
 
 static void getUpAndDownLoad(SubServ &s_srv)
