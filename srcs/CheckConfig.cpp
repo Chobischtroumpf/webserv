@@ -6,10 +6,10 @@ bool	checkListen(std::list<std::string> element, Config::server *ret_serv)
 	if (element.front() == "listen")
 	{
 		if (element.size() != 3)
-			throw ParsingException(0, "wrong amount of arguments to listen");
+			return (false);
 		element.pop_front();
 		if (!(isNumber(element.front()) && (ret_serv->port = std::atoi(element.front().c_str())) >=0))
-			throw ParsingException(0, element.front() + " is not a valid port");
+			return (false);
 		element.pop_front();
 		ret_serv->host = element.front();
 		return (true);
@@ -27,8 +27,9 @@ bool	checkServerName(std::list<std::string> element, Config::server *ret_serv)
 			throw ParsingException(0, "not enough arguments in server_name");
 		element.pop_front();
 		ret_serv->names.insert(ret_serv->names.end(), element.begin(), element.end());
+		return (true);
 	}
-	return (!ret_serv->names.empty());
+	return(false);
 }
 
 bool	checkErrorPage(std::list<std::string> element, Config::server *ret_serv)
@@ -45,8 +46,9 @@ bool	checkErrorPage(std::list<std::string> element, Config::server *ret_serv)
 			throw ParsingException(0, element.front() + " is not a numeric value.");
 		element.pop_front();
 		ret_serv->error_pages[tmp_err] = element.front();
+		return (true);
 	}
-	return (!ret_serv->error_pages.empty());
+	return (false);
 }
 
 bool	checkRoot(std::list<std::string> element, Config::server *ret_serv)
@@ -57,10 +59,12 @@ bool	checkRoot(std::list<std::string> element, Config::server *ret_serv)
 		if (element.size() != 2)
 			throw ParsingException(0, "wrong amount of arguments to root");
 		element.pop_front();
+		std:: cout << "root begins with / : " << (*(element.front().begin()) == '/') << std::endl;
 		if (*(element.front().begin()) == '/')
 			ret_serv->root = element.front();
+		return (true);
 	}
-	return (!ret_serv->root.empty());
+	return (false);
 }
 
 bool	errorServer(std::list<std::string> element, Config::server *ret_serv)
@@ -82,7 +86,7 @@ void	Config::checkServer(Config::server *retval)
 	if (retval->port == 0)
 			throw ParsingException(0, "Host has no port.");
 	if (retval->root.empty())
-		retval->root = "./default/default.html";
+		retval->root = "./";
 	int error_code[13] = {400, 403, 404, 405, 406, 411, 413, 500, 501, 502, 503, 504, 505};
 	for (size_t i = 0; i < 13; i++)
 	{

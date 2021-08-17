@@ -37,8 +37,10 @@ HttpRequest::HttpRequest(std::string req, Config::server conf)
 	}
 	SplitHeadBody();
 	ParseHeader();
-	std::cout << "Request valid : " << ValidateRequest();
-	DisplayRequest();
+	std::cout << "Request valid : " << ValidateRequest() << std::endl;
+	MakePath(conf);
+	// DisplayRequest();
+	std::cout << "Path : " << _path << std::endl;
 }
 
 void HttpRequest::ParseHeader()
@@ -154,15 +156,32 @@ bool	HttpRequest::CheckVersion()
 
 bool	HttpRequest::CheckPath()
 {
-	if (!(std::find(_available_locations.begin(), _available_locations.end(), _path) != _available_locations.end()))
+	int pos = _path.rfind("/");
+	std::string path_without_file = _path.substr(0, pos);
+	if (!(std::find(_available_locations.begin(), _available_locations.end(), path_without_file) != _available_locations.end()))
 	{
 		_return_code = 404;
-		return false;
+		return true;
 	}
 	return true;
 }
 
-//bool	HttpRequest::CheckHeaderFields() const {}
+void	HttpRequest::MakePath(Config::server serv_conf)
+{
+	std::string root_without_final_slash;
+	int length_root = serv_conf.root.length();
+	int pos = serv_conf.root.rfind('/');
+	if ((length_root - 1) == pos)
+		root_without_final_slash = serv_conf.root.substr(0, length_root - 1);
+	else
+		root_without_final_slash = serv_conf.root;
+	std::string path_no_file = _path.substr(0, _path.rfind('/')+1);
+	std::string file = _path.substr(_path.rfind('/')+1);
+	_path = root_without_final_slash;
+	_path += serv_conf.locations[path_no_file].root;
+	_path += file;
+	std::cout << _path << std::endl;
+}
 
 bool			HttpRequest::ValidateRequest()
 {

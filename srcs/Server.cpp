@@ -98,18 +98,15 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 				DEBUG("--> deleting client")
 				close((*client).getSocketDesc());
 				client = sub_srv.getClientList().erase(client);
-				//DEBUG("Clients still in list : \n")
-				//sub_srv.printClientList();
 			}
 			else if (ret_val == 0)
 			{
 				std::cout << "Set received" << std::endl;
 				(*client).setReceived(true);
+				HttpRequest test = HttpRequest((*client).getRequest(), sub_srv.getConf()); //testing
 			}
 		}
 	}
-		//DEBUG("###CLIENT LIST###")
-		//sub_srv.printClientList();
 }
 
 static void getUpAndDownLoad(SubServ &s_srv)
@@ -138,7 +135,7 @@ void	Server::listenIt()
 		try
 		{	
 			DEBUG("ON SELECT")
-			if ((ret_sel = select(max_sd + 1, &readfds, &writefds, NULL, NULL/*&timeout*/)) < 0 && errno!=EINTR)
+			if ((ret_sel = select(max_sd + 1, &readfds, NULL/*&readfds*/, NULL, NULL/*&timeout*/)) < 0 && errno!=EINTR)
 				ServerException("Select Failed");
 			else 
 			{

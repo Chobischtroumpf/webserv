@@ -41,6 +41,7 @@ class HttpRequest
 		bool								CheckMethod();
 		bool								CheckVersion();
 		bool								CheckPath();
+		void								MakePath(Config::server serv_conf);
 };
 
 #endif

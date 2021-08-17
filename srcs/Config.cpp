@@ -1,21 +1,5 @@
 #include "Config.hpp"
 
-// std::list<std::string> Config::populateLocationValue() 
-// {DEBUG("populateLocationValue")
-// 	std::list<std::string> ret;
-// 	ret.push_back("name");
-// 	ret.push_back("root");
-// 	ret.push_back("method");
-// 	ret.push_back("index");
-// 	ret.push_back("upload_path");
-// 	ret.push_back("autoindex");
-// 	ret.push_back("upload_enable");
-// 	ret.push_back("cgi_extension");
-// 	ret.push_back("cgi_path");
-// 	ret.push_back("client_max_body_size");
-// 	return (ret);
-// };
-
 Config::Config(std::string file)
 {
 	DEBUG("##### CONFIG #####\n")
