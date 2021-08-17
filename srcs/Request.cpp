@@ -37,8 +37,10 @@ HttpRequest::HttpRequest(std::string req, Config::server conf)
 	}
 	SplitHeadBody();
 	ParseHeader();
-	std::cout << "Request valid : " << ValidateRequest() << std::endl;
-	MakePath(conf);
+	if (ValidateRequest())
+	{
+		MakePath(conf);
+	}
 	// DisplayRequest();
 	std::cout << "Path : " << _path << std::endl;
 }
@@ -157,11 +159,11 @@ bool	HttpRequest::CheckVersion()
 bool	HttpRequest::CheckPath()
 {
 	int pos = _path.rfind("/");
-	std::string path_without_file = _path.substr(0, pos);
+	std::string path_without_file = _path.substr(0, pos + 1);
 	if (!(std::find(_available_locations.begin(), _available_locations.end(), path_without_file) != _available_locations.end()))
 	{
 		_return_code = 404;
-		return true;
+		return false;
 	}
 	return true;
 }
@@ -177,9 +179,7 @@ void	HttpRequest::MakePath(Config::server serv_conf)
 		root_without_final_slash = serv_conf.root;
 	std::string path_no_file = _path.substr(0, _path.rfind('/')+1);
 	std::string file = _path.substr(_path.rfind('/')+1);
-	_path = root_without_final_slash;
-	_path += serv_conf.locations[path_no_file].root;
-	_path += file;
+	_path = root_without_final_slash + serv_conf.locations[path_no_file].root + file;
 	std::cout << _path << std::endl;
 }
 
