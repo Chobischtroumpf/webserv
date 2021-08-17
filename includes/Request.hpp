@@ -14,6 +14,7 @@ class HttpRequest
 		std::string							_raw;					// Whole request
 		std::string							_path;					// Path to requested
 		std::list<std::string>				_available_locations;	// locations from config file
+		Config::location					_location;
 		int									_return_code;			// initialized at 200, changed properly if an error occurs
 
 	public:
@@ -27,7 +28,7 @@ class HttpRequest
 		void								SplitHeadBody();
 		void								ParseHeader();
 		void								DisplayRequest();
-		bool								ValidateRequest();
+		bool								ValidateRequest(Config::server serv_conf);
 
 		std::string							GetMethod() const;
 		std::string							GetVersion() const;
@@ -40,8 +41,10 @@ class HttpRequest
 
 		bool								CheckMethod();
 		bool								CheckVersion();
-		bool								CheckPath();
+		bool								CheckPath(Config::server serv_conf);
+		bool								CheckFile();
 		void								MakePath(Config::server serv_conf);
+
 };
 
 #endif

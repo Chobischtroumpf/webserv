@@ -31,13 +31,13 @@ HttpRequest::HttpRequest(std::string req, Config::server conf)
 	this->_method = "";
 	this->_version = "";
 	this->_body = "";
-	for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
-	{
-		this->_available_locations.push_back(it->first);
-	}
+	//for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
+	//{
+	//	this->_available_locations.push_back(it->first);
+	//}
 	SplitHeadBody();
 	ParseHeader();
-	std::cout << "Request valid : " << ValidateRequest() << std::endl;
+	std::cout << "Request valid : " << ValidateRequest(conf) << std::endl;
 	MakePath(conf);
 	// DisplayRequest();
 	std::cout << "Path : " << _path << std::endl;
@@ -154,16 +154,40 @@ bool	HttpRequest::CheckVersion()
 	return true;
 }
 
-bool	HttpRequest::CheckPath()
+
+bool	HttpRequest::CheckPath(Config::server conf)
 {
 	int pos = _path.rfind("/");
-	std::string path_without_file = _path.substr(0, pos);
-	if (!(std::find(_available_locations.begin(), _available_locations.end(), path_without_file) != _available_locations.end()))
+	std::string tmp_path = _path.substr(0, pos); // Right trim up to '/'
+	// set une variable config::server.locations correct_location
+	// OpTiMiSeR lE cOdE -> rEfErEnCe 
+	for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
 	{
-		_return_code = 404;
-		return true;
+		if (tmp_path == it->first)
+		{
+			_location = it->second;
+			std::cout << "The whole path corresponds" << std::endl;
+			return true;
+		}
 	}
-	return true;
+	while((pos = tmp_path.rfind("/")))
+	{
+		tmp_path = _path.substr(0, pos + 1);
+		for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
+		{
+			if (tmp_path == it->first)
+			{
+				_location = it->second;
+				std::cout << "A part of the path corresponds" << std::endl;
+				return true;
+			}
+		}
+		tmp_path = _path.substr(0, pos);
+	}
+	std::cout << "Couldn't find a corresponding location" << std::endl;
+	_return_code = 404;
+
+	return false;
 }
 
 void	HttpRequest::MakePath(Config::server serv_conf)
@@ -183,8 +207,30 @@ void	HttpRequest::MakePath(Config::server serv_conf)
 	std::cout << _path << std::endl;
 }
 
-bool			HttpRequest::ValidateRequest()
+//bool			HttpRequest::CheckFile()
+//{
+
+//// -1 : stat failed or nor a file or directory
+//// 0  : is a directory
+//// 1  : is a file
+
+//	struct stat info;
+//	if (stat(_path.c_str(), &info) != 0)
+//		return (-1);
+//	else
+//	{
+//		if (S_ISREG(info.st_mode))
+//			return (1);
+//		else if (S_ISDIR(info.st_mode))
+//			return (0);
+//		else
+//			return (-1);
+//	}
+
+//}
+
+bool			HttpRequest::ValidateRequest(Config::server conf)
 {
-	return (CheckMethod() && CheckVersion() && CheckPath());
+	return (CheckMethod() && CheckVersion() && CheckPath(conf));
 	//CheckHeaderFields();
 }
