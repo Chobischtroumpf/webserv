@@ -172,11 +172,11 @@ void	HttpRequest::MakePath(Config::server serv_conf)
 	int length_root = serv_conf.root.length();
 	int pos = serv_conf.root.rfind('/');
 	if ((length_root - 1) == pos)
-		root_without_final_slash = serv_conf.root.substr(0, length_root - 2);
+		root_without_final_slash = serv_conf.root.substr(0, length_root - 1);
 	else
 		root_without_final_slash = serv_conf.root;
-	std::string path_no_file = _path.substr(0, serv_conf.root.rfind('/')+1);
-	std::string file = _path.substr(serv_conf.root.rfind('/')+1);
+	std::string path_no_file = _path.substr(0, _path.rfind('/')+1);
+	std::string file = _path.substr(_path.rfind('/')+1);
 	_path = root_without_final_slash;
 	_path += serv_conf.locations[path_no_file].root;
 	_path += file;
