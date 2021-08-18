@@ -205,5 +205,5 @@ size_t contentLength(std::string client_request)
 
 Config::location	&getLocationConfig(Config::server server_config, HttpRequest request)
 {
-	return (server_config.locations[request.GetPath()]);
+	return (server_config.locations[request.getPath()]);
 }

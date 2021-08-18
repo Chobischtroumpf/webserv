@@ -159,9 +159,11 @@ bool	HttpRequest::checkVersion()
 bool	HttpRequest::checkPath(Config::server conf)
 {
 	int pos = _path.rfind("/");
-	std::string tmp_path = _path.substr(0, pos); // Right trim up to '/'
+	std::string tmp_path = _path.substr(0, pos + 1); // Right trim up to '/'
 	// set une variable config::server.locations correct_location
 	// OpTiMiSeR lE cOdE -> rEfErEnCe 
+	std::cout << "1 tmp_path : " << tmp_path << std::endl;
+
 	for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
 	{
 		if (tmp_path == it->first)
@@ -176,9 +178,12 @@ bool	HttpRequest::checkPath(Config::server conf)
 		tmp_path = _path.substr(0, pos + 1);
 		for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
 		{
+			std::cout << "2 tmp_path : " << tmp_path << std::endl;
 			if (tmp_path == it->first)
 			{
+
 				_location = it->second;
+				//_path = tmp_path;
 				std::cout << "A part of the path corresponds" << std::endl;
 				return true;
 			}
@@ -210,20 +215,23 @@ void	HttpRequest::makePath(Config::server serv_conf)
 
 bool			HttpRequest::checkFile()
 {
-
-// -1 : stat failed or nor a file or directory
-// 0  : is a directory
-// 1  : is a file
-
+	// It only works if the path given in the config file is absolute
 	struct stat info;
+	std::cout << stat(_path.c_str(), &info) << std::endl;
 	if (stat(_path.c_str(), &info) != 0)
 		return (-1);
 	else
 	{
 		if (S_ISREG(info.st_mode))
+		{
+			std::cout << "This is a file" << std::endl;
 			return (1);
+		}
 		else if (S_ISDIR(info.st_mode))
+		{
+			std::cout << "This is a directory" << std::endl;
 			return (0);
+		}
 		else
 			return (-1);
 	}

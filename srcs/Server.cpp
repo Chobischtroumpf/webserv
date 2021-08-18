@@ -79,9 +79,9 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 	}
 	for (std::list<Client>::iterator client = sub_srv.getClientList().begin(); client != sub_srv.getClientList().end(); client++)
 	{
-		std::cout << "writefd isset: " << (FD_ISSET((*client).getSocketDesc(), &writefds)) << std::endl;
-		std::cout << "readfd isset: " << (FD_ISSET((*client).getSocketDesc(), &readfds)) << std::endl;
-		std::cout << "request received: " << ((*client).requestReceived() == true) << std::endl;
+		//std::cout << "writefd isset: " << (FD_ISSET((*client).getSocketDesc(), &writefds)) << std::endl;
+		//std::cout << "readfd isset: " << (FD_ISSET((*client).getSocketDesc(), &readfds)) << std::endl;
+		//std::cout << "request received: " << ((*client).requestReceived() == true) << std::endl;
 		if (FD_ISSET((*client).getSocketDesc(), &writefds) && (*client).requestReceived() == true)
 		{
 			DEBUG("PARSE HEADER")

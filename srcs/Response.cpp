@@ -41,8 +41,8 @@ Response::Response(HttpRequest request, Config::server server_config)
 {
 	// std::map<std::string, std::string> headers = request.GetHeaderFields();
 	// check httpRequest for method
-	std::string method = request.GetMethod();
-	error_code = request.GetCode();
+	std::string method = request.getMethod();
+	error_code = request.getCode();
 	
 	if ((this->response_body = setErrorCode(server_config)) == "")
 	{
