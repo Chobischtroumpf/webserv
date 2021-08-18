@@ -25,25 +25,25 @@ class HttpRequest
 		
 		HttpRequest& 						operator=(const HttpRequest &other);
 
-		void								SplitHeadBody();
-		void								ParseHeader();
-		void								DisplayRequest();
-		bool								ValidateRequest(Config::server serv_conf);
+		void								splitHeadBody();
+		void								parseHeader();
+		void								displayRequest();
+		bool								validateRequest(Config::server serv_conf);
 
-		std::string							GetMethod() const;
-		std::string							GetVersion() const;
-		std::map<std::string, std::string>&	GetHeaderFields();
-		std::string							GetHeader() const;
-		std::string							GetBody() const;
-		std::string							GetRaw() const;
-		std::string							GetPath() const;
-		int									GetCode() const;
+		std::string							getMethod() const;
+		std::string							getVersion() const;
+		std::map<std::string, std::string>&	getHeaderFields();
+		std::string							getHeader() const;
+		std::string							getBody() const;
+		std::string							getRaw() const;
+		std::string							getPath() const;
+		int									getCode() const;
 
-		bool								CheckMethod();
-		bool								CheckVersion();
-		bool								CheckPath(Config::server serv_conf);
-		bool								CheckFile();
-		void								MakePath(Config::server serv_conf);
+		bool								checkMethod();
+		bool								checkVersion();
+		bool								checkPath(Config::server serv_conf);
+		bool								checkFile();
+		void								makePath(Config::server serv_conf);
 
 };
 

@@ -14,12 +14,12 @@ HttpRequest::HttpRequest(const HttpRequest& other)
 HttpRequest&	HttpRequest::operator=(const HttpRequest & other) {
 	if (this != &other)
 	{
-		this->_method = other.GetMethod();
-		this->_version = other.GetVersion();
+		this->_method = other.getMethod();
+		this->_version = other.getVersion();
 		//this->_header_fields = other->GetHeaderFields();
-		this->_header = other.GetHeader();
-		this->_body = other.GetBody();
-		this->_raw = other.GetRaw();
+		this->_header = other.getHeader();
+		this->_body = other.getBody();
+		this->_raw = other.getRaw();
 	}
     return *this;
 }
@@ -35,15 +35,16 @@ HttpRequest::HttpRequest(std::string req, Config::server conf)
 	//{
 	//	this->_available_locations.push_back(it->first);
 	//}
-	SplitHeadBody();
-	ParseHeader();
-	std::cout << "Request valid : " << ValidateRequest(conf) << std::endl;
-	MakePath(conf);
+	splitHeadBody();
+	parseHeader();
+	std::cout << "Request valid : " << validateRequest(conf) << std::endl;
+	makePath(conf);
 	// DisplayRequest();
+	checkFile();
 	std::cout << "Path : " << _path << std::endl;
 }
 
-void HttpRequest::ParseHeader()
+void HttpRequest::parseHeader()
 {
 	std::list<std::string> splitted_header; 
 	std::list<std::string> line; 
@@ -70,22 +71,22 @@ void HttpRequest::ParseHeader()
 	}
 }
 
-void HttpRequest::DisplayRequest()
+void HttpRequest::displayRequest()
 {
 	
 	std::map<std::string, std::string>::const_iterator	it;
 
-	std::cout << "Method : " << GetMethod() << " |\tHTTP version : ";
-	std::cout << GetVersion() << '\n';
-	std::cout << "Path : " << GetPath() << '\n';
+	std::cout << "Method : " << getMethod() << " |\tHTTP version : ";
+	std::cout << getVersion() << '\n';
+	std::cout << "Path : " << getPath() << '\n';
 
-	for (it = GetHeaderFields().begin(); it != GetHeaderFields().end(); it++)
+	for (it = getHeaderFields().begin(); it != getHeaderFields().end(); it++)
 		std::cout << it->first << ": " << it->second << '\n';
 
-	std::cout << '\n' << "Request body :\n" << GetBody() << '\n';
+	std::cout << '\n' << "Request body :\n" << getBody() << '\n';
 }
 
-void HttpRequest::SplitHeadBody()
+void HttpRequest::splitHeadBody()
 {
 	std::list<std::string> head_body;
 
@@ -94,47 +95,47 @@ void HttpRequest::SplitHeadBody()
 	this->_body = trim(head_body.back(), " \r\n");
 }
 
-std::string		HttpRequest::GetMethod() const
+std::string		HttpRequest::getMethod() const
 {
 	return this->_method;
 }
 
-std::string		HttpRequest::GetBody() const
+std::string		HttpRequest::getBody() const
 {
 	return this->_body;
 }
 
-std::map<std::string,std::string>& HttpRequest::GetHeaderFields()
+std::map<std::string,std::string>& HttpRequest::getHeaderFields()
 {
 	return this->_header_fields;
 }
 
-std::string		HttpRequest::GetHeader() const
+std::string		HttpRequest::getHeader() const
 {
 	return this->_header;
 }
 
-std::string		HttpRequest::GetVersion() const
+std::string		HttpRequest::getVersion() const
 {
 	return this->_version;
 }
 
-std::string		HttpRequest::GetRaw() const
+std::string		HttpRequest::getRaw() const
 {
 	return this->_raw;
 }
 
-std::string		HttpRequest::GetPath() const
+std::string		HttpRequest::getPath() const
 {
 	return this->_path;
 }
 
-int				HttpRequest::GetCode() const
+int				HttpRequest::getCode() const
 {
 	return this->_return_code;
 }
 
-bool	HttpRequest::CheckMethod()
+bool	HttpRequest::checkMethod()
 {
 	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))
 	{
@@ -144,7 +145,7 @@ bool	HttpRequest::CheckMethod()
 	return true;
 }
 
-bool	HttpRequest::CheckVersion()
+bool	HttpRequest::checkVersion()
 {
 	if (_version.compare("HTTP/1.0") && _version.compare("HTTP/1.1"))
 	{
@@ -155,7 +156,7 @@ bool	HttpRequest::CheckVersion()
 }
 
 
-bool	HttpRequest::CheckPath(Config::server conf)
+bool	HttpRequest::checkPath(Config::server conf)
 {
 	int pos = _path.rfind("/");
 	std::string tmp_path = _path.substr(0, pos); // Right trim up to '/'
@@ -190,7 +191,7 @@ bool	HttpRequest::CheckPath(Config::server conf)
 	return false;
 }
 
-void	HttpRequest::MakePath(Config::server serv_conf)
+void	HttpRequest::makePath(Config::server serv_conf)
 {
 	std::string root_without_final_slash;
 	int length_root = serv_conf.root.length();
@@ -203,34 +204,34 @@ void	HttpRequest::MakePath(Config::server serv_conf)
 	std::string file = _path.substr(_path.rfind('/')+1);
 	_path = root_without_final_slash;
 	_path += serv_conf.locations[path_no_file].root;
-	_path += file;
+	_path += file; 
 	std::cout << _path << std::endl;
 }
 
-//bool			HttpRequest::CheckFile()
-//{
-
-//// -1 : stat failed or nor a file or directory
-//// 0  : is a directory
-//// 1  : is a file
-
-//	struct stat info;
-//	if (stat(_path.c_str(), &info) != 0)
-//		return (-1);
-//	else
-//	{
-//		if (S_ISREG(info.st_mode))
-//			return (1);
-//		else if (S_ISDIR(info.st_mode))
-//			return (0);
-//		else
-//			return (-1);
-//	}
-
-//}
-
-bool			HttpRequest::ValidateRequest(Config::server conf)
+bool			HttpRequest::checkFile()
 {
-	return (CheckMethod() && CheckVersion() && CheckPath(conf));
+
+// -1 : stat failed or nor a file or directory
+// 0  : is a directory
+// 1  : is a file
+
+	struct stat info;
+	if (stat(_path.c_str(), &info) != 0)
+		return (-1);
+	else
+	{
+		if (S_ISREG(info.st_mode))
+			return (1);
+		else if (S_ISDIR(info.st_mode))
+			return (0);
+		else
+			return (-1);
+	}
+
+}
+
+bool			HttpRequest::validateRequest(Config::server conf)
+{
+	return (checkMethod() && checkVersion() && checkPath(conf));
 	//CheckHeaderFields();
 }
