@@ -37,10 +37,10 @@ std::string	Response::setErrorCode(Config::server server_config)
 	return (string);
 }
 
-Response::Response(HttpRequest request, Config::server server_config)
+Response::Response(Request request, Config::server server_config)
 {
 	// std::map<std::string, std::string> headers = request.GetHeaderFields();
-	// check httpRequest for method
+	// check Request for method
 	std::string method = request.getMethod();
 	error_code = request.getCode();
 	
@@ -76,17 +76,17 @@ ResponseHeader	&Response::getResponseHeaderObj(void)
 	return (header);
 }
 
-void	Response::getMethod(HttpRequest request, Config::server &server_config)
+void	Response::getMethod(Request request, Config::server &server_config)
 {
 	(void)request;
 	(void)server_config;
 }
-void	Response::postMethod(HttpRequest request, Config::server &server_config)
+void	Response::postMethod(Request request, Config::server &server_config)
 {
 	(void)request;
 	(void)server_config;
 }
-void	Response::deleteMethod(HttpRequest request, Config::server &server_config)
+void	Response::deleteMethod(Request request, Config::server &server_config)
 {
 	(void)request;
 	(void)server_config;

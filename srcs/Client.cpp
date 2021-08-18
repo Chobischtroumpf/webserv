@@ -79,6 +79,7 @@ int	Client::receiveRequest()
 
 int	Client::sendRequest(void)
 {
+	
 	// create Response object with HttpRequest
 	// once created, get response string
 	// write response string into client's socket

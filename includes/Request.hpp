@@ -3,11 +3,11 @@
 
 #include "General.hpp"
 
-class HttpRequest
+class Request
 {
 	private:
 		std::string							_method;				// GET, POST OR DELETE
-		std::string							_version;				// Should always be "HTTP/1.1" of  "HTTP/1.0", otherwise -> Bad Request
+		std::string							_version;				// Should always be "/1.1" of  "/1.0", otherwise -> Bad Request
 		std::map<std::string, std::string>	_header_fields;			// < Key, Value>
 		std::string							_header;				// Everything before CRLF 
 		std::string							_body;					// Everything after CRLF 
@@ -18,12 +18,12 @@ class HttpRequest
 		int									_return_code;			// initialized at 200, changed properly if an error occurs
 
 	public:
-		HttpRequest();
-		HttpRequest(std::string req, Config::server conf);
-		HttpRequest(const HttpRequest &other);
-		~HttpRequest();
+		Request();
+		Request(std::string req, Config::server conf);
+		Request(const Request &other);
+		~Request();
 		
-		HttpRequest& 						operator=(const HttpRequest &other);
+		Request& 						operator=(const Request &other);
 
 		void								splitHeadBody();
 		void								parseHeader();

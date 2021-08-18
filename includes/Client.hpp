@@ -10,7 +10,7 @@ class Client
 		int			getSocketDesc(void);
 		std::string	getRequest(void);
 		std::string	getAddress(void);
-		HttpRequest	getHttpRequest(void);
+		Request	getHttpRequest(void);
 		void		setReceived(bool);
 		void 		setClientNonBlock(void);
 		bool		requestReceived(void);
@@ -27,7 +27,7 @@ class Client
 		int				option_buffer;
 		std::string		raw_request;
 		bool			is_received;
-		HttpRequest		request;
+		Request		request;
 		std::string		response_header;
 		std::string		response;
 };
