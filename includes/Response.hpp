@@ -9,13 +9,14 @@ class Response
 {
 	private:
 		ResponseHeader	header;
+		std::string		datetime;
 		int				error_code;
 		std::string		response_body;
 		std::string		response_header;
 	public:
 		Response();
 		Response(Response &Other);
-		Response(HttpRequest request, Config::server server_config);
+		Response(Request request);
 
 		std::string		getErrorFile(int code, Config::server server_config);
 		std::string		setErrorCode(Config::server server_config);
@@ -23,9 +24,11 @@ class Response
 		std::string		getResponseBody(void);
 		std::string		getResponseHeader(void);
 		ResponseHeader	&getResponseHeaderObj(void);
-		void			getMethod(HttpRequest request, Config::server &server_config);
-		void			postMethod(HttpRequest request, Config::server &server_config);
-		void			deleteMethod(HttpRequest request, Config::server &server_config);
+
+		void			generate_datetime(void);
+		void			getMethod(Request request, Config::server &server_config);
+		void			postMethod(Request request, Config::server &server_config);
+		void			deleteMethod(Request request, Config::server &server_config);
 };
 
 #endif 

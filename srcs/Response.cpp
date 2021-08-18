@@ -37,12 +37,13 @@ std::string	Response::setErrorCode(Config::server server_config)
 	return (string);
 }
 
-Response::Response(HttpRequest request, Config::server server_config)
+Response::Response(Request request)
 {
 	// std::map<std::string, std::string> headers = request.GetHeaderFields();
-	// check httpRequest for method
-	std::string method = request.GetMethod();
-	error_code = request.GetCode();
+	// check Request for method
+	Config::server server_config = request.getConf();
+	std::string method = request.getMethod();
+	error_code = request.getCode();
 	
 	if ((this->response_body = setErrorCode(server_config)) == "")
 	{
@@ -55,6 +56,24 @@ Response::Response(HttpRequest request, Config::server server_config)
 	}
 	
 }
+
+void Response::generate_datetime(void)
+{
+	std::time_t t = std::time(0);   // get time now
+   	tm *ltm = localtime(&t);
+	char buffer[80];
+	// print various components of tm structure.
+	//   std::cout << "Year:" << 1900 + ltm->tm_year << std::endl;
+	//   std::cout << "Month: "<< 1 + ltm->tm_mon<< std::endl;
+	//   std::cout << "Day: "<< ltm->tm_mday << std::endl;
+	//   std::cout << "Time: "<< 5+ltm->tm_hour << ":";
+	//   std::cout << 30+ltm->tm_min << ":";
+	
+	//   std::cout << ltm->tm_sec << std::endl;
+		strftime (buffer,80,"Now it's %I:%M%p.",ltm);
+  	std::cout << buffer;
+}
+
 
 std::string Response::getResponse(void)
 {
@@ -76,17 +95,17 @@ ResponseHeader	&Response::getResponseHeaderObj(void)
 	return (header);
 }
 
-void	Response::getMethod(HttpRequest request, Config::server &server_config)
+void	Response::getMethod(Request request, Config::server &server_config)
 {
 	(void)request;
 	(void)server_config;
 }
-void	Response::postMethod(HttpRequest request, Config::server &server_config)
+void	Response::postMethod(Request request, Config::server &server_config)
 {
 	(void)request;
 	(void)server_config;
 }
-void	Response::deleteMethod(HttpRequest request, Config::server &server_config)
+void	Response::deleteMethod(Request request, Config::server &server_config)
 {
 	(void)request;
 	(void)server_config;

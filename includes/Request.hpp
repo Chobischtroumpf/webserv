@@ -2,46 +2,51 @@
 #define REQUEST_HPP
 
 #include "General.hpp"
-
-class HttpRequest
+#include "Config.hpp"
+class Request
 {
 	private:
 		std::string							_method;				// GET, POST OR DELETE
-		std::string							_version;				// Should always be "HTTP/1.1" of  "HTTP/1.0", otherwise -> Bad Request
+		std::string							_version;				// Should always be "/1.1" of  "/1.0", otherwise -> Bad Request
 		std::map<std::string, std::string>	_header_fields;			// < Key, Value>
 		std::string							_header;				// Everything before CRLF 
 		std::string							_body;					// Everything after CRLF 
 		std::string							_raw;					// Whole request
 		std::string							_path;					// Path to requested
 		std::list<std::string>				_available_locations;	// locations from config file
+		Config::location					_location;
+		Config::server 						_conf;
 		int									_return_code;			// initialized at 200, changed properly if an error occurs
 
 	public:
-		HttpRequest();
-		HttpRequest(std::string req, Config::server conf);
-		HttpRequest(const HttpRequest &other);
-		~HttpRequest();
+		Request();
+		Request(std::string req, Config::server conf);
+		Request(const Request &other);
+		~Request();
 		
-		HttpRequest& 						operator=(const HttpRequest &other);
+		Request& 						operator=(const Request &other);
 
-		void								SplitHeadBody();
-		void								ParseHeader();
-		void								DisplayRequest();
-		bool								ValidateRequest();
+		void								splitHeadBody();
+		void								parseHeader();
+		void								displayRequest();
+		bool								validateRequest(Config::server serv_conf);
 
-		std::string							GetMethod() const;
-		std::string							GetVersion() const;
-		std::map<std::string, std::string>&	GetHeaderFields();
-		std::string							GetHeader() const;
-		std::string							GetBody() const;
-		std::string							GetRaw() const;
-		std::string							GetPath() const;
-		int									GetCode() const;
+		std::string							getMethod() const;
+		std::string							getVersion() const;
+		std::map<std::string, std::string>&	getHeaderFields();
+		std::string							getHeader() const;
+		std::string							getBody() const;
+		std::string							getRaw() const;
+		std::string							getPath() const;
+		int									getCode() const;
+		Config::server						getConf() const;
 
-		bool								CheckMethod();
-		bool								CheckVersion();
-		bool								CheckPath();
-		void								MakePath(Config::server serv_conf);
+		bool								checkMethod();
+		bool								checkVersion();
+		bool								checkPath(Config::server serv_conf);
+		bool								checkFile();
+		void								makePath(Config::server serv_conf);
+
 };
 
 #endif
