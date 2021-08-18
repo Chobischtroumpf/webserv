@@ -2,7 +2,7 @@
 #define REQUEST_HPP
 
 #include "General.hpp"
-
+#include "Config.hpp"
 class Request
 {
 	private:
@@ -15,6 +15,7 @@ class Request
 		std::string							_path;					// Path to requested
 		std::list<std::string>				_available_locations;	// locations from config file
 		Config::location					_location;
+		Config::server 						_conf;
 		int									_return_code;			// initialized at 200, changed properly if an error occurs
 
 	public:
@@ -38,6 +39,7 @@ class Request
 		std::string							getRaw() const;
 		std::string							getPath() const;
 		int									getCode() const;
+		Config::server						getConf() const;
 
 		bool								checkMethod();
 		bool								checkVersion();

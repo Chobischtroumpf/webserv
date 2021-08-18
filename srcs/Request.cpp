@@ -31,10 +31,7 @@ Request::Request(std::string req, Config::server conf)
 	this->_method = "";
 	this->_version = "";
 	this->_body = "";
-	//for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
-	//{
-	//	this->_available_locations.push_back(it->first);
-	//}
+	this->_conf = conf; 
 	splitHeadBody();
 	parseHeader();
 	std::cout << "Request valid : " << validateRequest(conf) << std::endl;
@@ -134,6 +131,12 @@ int				Request::getCode() const
 {
 	return this->_return_code;
 }
+
+Config::server	Request::getConf() const
+{
+	return this->_conf;
+}
+
 
 bool	Request::checkMethod()
 {

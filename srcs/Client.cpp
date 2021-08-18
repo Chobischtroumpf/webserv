@@ -1,5 +1,6 @@
 #include "General.hpp"
 #include "Client.hpp"
+#include "Response.hpp"
 
 Client::Client(int sd, std::string address)
 {
@@ -77,9 +78,12 @@ int	Client::receiveRequest()
 	return (1);
 }
 
-int	Client::sendRequest(void)
+int	Client::sendRequest(Request request)
 {
 	
+	Response res(request);
+	res.generate_datetime();
+	send(this->socket, "HTTP/1.1 200 OK\nContent-Type: text/html\n\r\n\rOUI", 47,0);
 	// create Response object with HttpRequest
 	// once created, get response string
 	// write response string into client's socket

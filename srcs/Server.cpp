@@ -90,7 +90,7 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 		if (FD_ISSET((*client).getSocketDesc(), &writefds) && (*client).requestReceived() == true)
 		{
 			Request test = Request((*client).getRequest(), sub_srv.getConf());
-			(*client).sendRequest();
+			(*client).sendRequest(test);
 			removeClient(client, sub_srv);
 		}
 		if (FD_ISSET((*client).getSocketDesc(), &readfds))
