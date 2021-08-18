@@ -77,8 +77,12 @@ int	Client::receiveRequest()
 	return (1);
 }
 
-int	Client::sendRequest(void)
+int	Client::sendRequest(Config::server conf_serv)
 {
+	Response response(this->request, conf_serv);
+	std::cout << "header : " << response.getResponseHeader() << std::endl;
+	std::cout << "body : " << response.getResponseBody() << std::endl;
+	send(socket, response.getResponse().c_str(),response.getResponse().size(), 0);
 	// create Response object with HttpRequest
 	// once created, get response string
 	// write response string into client's socket

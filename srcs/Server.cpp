@@ -95,7 +95,7 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			DEBUG("PARSE HEADER")
 			HttpRequest test = HttpRequest((*client).getRequest(), sub_srv.getConf());
 			//send request
-			(*client).sendRequest();
+			(*client).sendRequest(sub_srv.getConf());
 			removeClient(client, sub_srv);
 		}
 		if (FD_ISSET((*client).getSocketDesc(), &readfds))

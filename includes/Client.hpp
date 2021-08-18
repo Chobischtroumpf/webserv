@@ -2,6 +2,7 @@
 # define CLIENT_HPP
 # include "General.hpp"
 # include "Request.hpp"
+# include "Response.hpp"
 
 class Client
 {
@@ -16,7 +17,7 @@ class Client
 		bool		requestReceived(void);
 		int			receiveRequest(void);
 		void		printClient(void);
-		int			sendRequest(void);
+		int			sendRequest(Config::server conf_serv);
 
 		Client &operator=(const Client& Other);
 		friend bool operator==(const Client& lhs, const Client& rhs);

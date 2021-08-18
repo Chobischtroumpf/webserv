@@ -8,52 +8,40 @@ Response::Response(Response &Other)
 	this->header = Other.getResponseHeaderObj();
 }
 
-std::string			Response::getErrorFile(int code ,Config::server server_config)
+std::string			Response::getErrorPage(int code ,Config::server server_config)
 {
-	(void) code;
-	(void) server_config;
-	std::string ret = std::string("Temporary error handling");
-	return (ret);
+	if (!server_config.error_pages[code].empty())
+		return(readFile(server_config.error_pages[code]));
+	return ("");
 }
 
-std::string	Response::setErrorCode(Config::server server_config)
-{
-	std::string string = "";
-	switch (error_code)
-	{
-		case 400:
-			return(getErrorFile(400, server_config));
-		case 403:
-			return(getErrorFile(403, server_config));
-		case 404:
-			return(getErrorFile(404, server_config));
-		case 405:
-			return(getErrorFile(405, server_config));
-		case 413:
-			return(getErrorFile(413, server_config));
-		default:
-			break;
-	}
-	return (string);
-}
+// std::string	Response::setErrorCode(Config::server server_config)
+// {
+// 	// std::string string = "";
+// 	// return ()
+// 	// return (string);
+// }
 
 Response::Response(HttpRequest request, Config::server server_config)
 {
 	// std::map<std::string, std::string> headers = request.GetHeaderFields();
 	// check httpRequest for method
 	std::string method = request.getMethod();
-	error_code = request.getCode();
-	
-	if ((this->response_body = setErrorCode(server_config)) == "")
+	//error handling must happen before this
+	error_code = 404;
+	this->response_body = getErrorPage(error_code, server_config);
+	if (!response_body.empty())
 	{
-		if (method == "GET")
-			getMethod(request, server_config);
-		else if (method == "POST")
-			postMethod(request, server_config);
-		else if (method == "DELETE")
-			deleteMethod(request, server_config);
+		std::ostringstream ss;
+		ss << response_body.size();
+		this->response_header = "HTTP/1.1 404 Not Found\r\nDate: Wed, 18 Aug 2021 14:15:17 GMT\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: " + ss.str() + "\r\n\r\n";
+		// if (method == "GET")
+		// 	getMethod(request, server_config);
+		// else if (method == "POST")
+		// 	postMethod(request, server_config);
+		// else if (method == "DELETE")
+		// 	deleteMethod(request, server_config);
 	}
-	
 }
 
 std::string Response::getResponse(void)

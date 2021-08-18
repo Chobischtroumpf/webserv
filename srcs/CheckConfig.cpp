@@ -76,6 +76,28 @@ bool	errorServer(std::list<std::string> element, Config::server *ret_serv)
 		|| checkRoot(element, ret_serv)));
 }
 
+static void makeErrorPages(Config::server *&retval)
+{
+	std::string root;
+	int length_root = retval->root.length();
+	int pos = retval->root.rfind('/');
+	if (length_root == pos + 1)
+		root = retval->root;
+	else
+		root = retval->root + "/";
+	int error_code[13] = {400, 403, 404, 405, 406, 411, 413, 500, 501, 502, 503, 504, 505};
+	for (size_t i = 0; i < 13; i++)
+	{
+		std::ostringstream ss;
+		ss << error_code[i];
+		if (retval->error_pages[error_code[i]].empty())
+			retval->error_pages[error_code[i]] = root + "default/error_pages/error_" + ss.str() + ".html";
+		else
+			retval->error_pages[error_code[i]] = root + retval->error_pages[error_code[i]];
+		
+	}
+}
+
 void	Config::checkServer(Config::server *retval)
 {
 	//DEBUG("checkServer")
@@ -87,14 +109,7 @@ void	Config::checkServer(Config::server *retval)
 			throw ParsingException(0, "Host has no port.");
 	if (retval->root.empty())
 		retval->root = "./";
-	int error_code[13] = {400, 403, 404, 405, 406, 411, 413, 500, 501, 502, 503, 504, 505};
-	for (size_t i = 0; i < 13; i++)
-	{
-		std::ostringstream ss;
-		ss << error_code[i];
-		if (retval->error_pages[error_code[i]].empty())
-			retval->error_pages[error_code[i]] = "./default/error_pages/error_" + ss.str() + ".html";
-	}
+	makeErrorPages(retval);
 }
 
 void	Config::checkLocation(Config::location retval)
