@@ -28,6 +28,14 @@ Server::Server(Server &Other)
 	this->timeout= Other.timeout;
 }
 
+void	Server::removeClient(std::list<Client>::iterator &client, SubServ sub_srv)
+{
+	FD_CLR((*client).getSocketDesc(), &server_read_fd);
+	FD_CLR((*client).getSocketDesc(), &server_write_fd);
+	close((*client).getSocketDesc());
+	client = sub_srv.getClientList().erase(client);
+}
+
 void Server::checkConnections(void)
 {
 	char c[1];
@@ -88,10 +96,7 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			HttpRequest test = HttpRequest((*client).getRequest(), sub_srv.getConf());
 			//send request
 			(*client).sendRequest();
-			FD_CLR((*client).getSocketDesc(), &server_read_fd);
-			FD_CLR((*client).getSocketDesc(), &server_write_fd);
-			close((*client).getSocketDesc());
-			client = sub_srv.getClientList().erase(client);
+			removeClient(client, sub_srv);
 		}
 		if (FD_ISSET((*client).getSocketDesc(), &readfds))
 		{
@@ -99,8 +104,7 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			if ((ret_val = (*client).receiveRequest()) < 0)
 			{
 				DEBUG("--> deleting client")
-				close((*client).getSocketDesc());
-				client = sub_srv.getClientList().erase(client);
+				removeClient(client, sub_srv);
 			}
 			else if (ret_val == 0)
 			{
