@@ -16,7 +16,7 @@ class Request
 		std::list<std::string>				_available_locations;	// locations from config file
 		Config::location					_location;
 		Config::server 						_conf;
-		int									_return_code;			// initialized at 200, changed properly if an error occurs
+		int									_status_code;			// initialized at 200, changed properly if an error occurs
 
 	public:
 		Request();
@@ -33,7 +33,7 @@ class Request
 
 		std::string							getMethod() const;
 		std::string							getVersion() const;
-		std::map<std::string, std::string>&	getHeaderFields();
+		std::map<std::string, std::string>	getHeaderFields() const;
 		std::string							getHeader() const;
 		std::string							getBody() const;
 		std::string							getRaw() const;

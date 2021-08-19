@@ -6,8 +6,7 @@ std::map<std::string, std::string>	g_env;
 Server *server;
 
 void	ctrl_c(int signal)
-{
-	
+{	
 	if (signal == SIGINT)
 	{
 		for (std::list<SubServ>::iterator subserver = server->sub_serv.begin(); subserver != server->sub_serv.end(); subserver++)
@@ -19,7 +18,6 @@ void	ctrl_c(int signal)
 		server->keep_going = false;
 		exit(-1);
 	}
-
 }
 
 int	main(int ac, char **av, char **env)
@@ -43,6 +41,5 @@ int	main(int ac, char **av, char **env)
 	{
 		throwError(e);
 	}
-
 	return (0);
 }

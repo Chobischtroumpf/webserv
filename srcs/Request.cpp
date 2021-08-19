@@ -16,7 +16,7 @@ Request&	Request::operator=(const Request & other) {
 	{
 		this->_method = other.getMethod();
 		this->_version = other.getVersion();
-		//this->_header_fields = other->GetHeaderFields();
+		this->_header_fields = other.getHeaderFields();
 		this->_header = other.getHeader();
 		this->_body = other.getBody();
 		this->_raw = other.getRaw();
@@ -26,7 +26,7 @@ Request&	Request::operator=(const Request & other) {
 
 Request::Request(std::string req, Config::server conf)
 {
-	this->_return_code = 200;
+	this->_status_code = 200;
 	this->_raw = req;
 	this->_method = "";
 	this->_version = "";
@@ -34,11 +34,15 @@ Request::Request(std::string req, Config::server conf)
 	this->_conf = conf; 
 	splitHeadBody();
 	parseHeader();
-	std::cout << "Request valid : " << validateRequest(conf) << std::endl;
+	std::cout << _raw << std::endl;
+	std::cout << _header_fields["Accept"] << std::endl;
+	if(validateRequest(conf))
+	{
+		std::cout << "request valid" << std::endl;
+	}
 	makePath(conf);
-	// DisplayRequest();
 	checkFile();
-	std::cout << "Path : " << _path << std::endl;
+	displayRequest();
 }
 
 void Request::parseHeader()
@@ -46,14 +50,14 @@ void Request::parseHeader()
 	std::list<std::string> splitted_header; 
 	std::list<std::string> line; 
 	splitted_header = splitString(_header, "\r\n");
-	line = splitString(splitted_header.front(), " "); // first_line[0] == Method, first_line[1] == Path, first_line[2] == version 
+	line = splitString(splitted_header.front(), " "); 
 
 	_method = line.front();
 	line.pop_front();
 	_path = line.front();
 	_version = line.back();
 
-	splitted_header.pop_front(); //Remove first line
+	splitted_header.pop_front();
 	
 	while (!splitted_header.empty())
 	{
@@ -73,14 +77,12 @@ void Request::displayRequest()
 	
 	std::map<std::string, std::string>::const_iterator	it;
 
-	std::cout << "Method : " << getMethod() << " |\t version : ";
-	std::cout << getVersion() << '\n';
+	std::cout << "Method : " << getMethod() << '\n';
+	std::cout  << "version : "<< getVersion() << '\n';
 	std::cout << "Path : " << getPath() << '\n';
-
-	for (it = getHeaderFields().begin(); it != getHeaderFields().end(); it++)
+	std::map<std::string, std::string> header_fields = getHeaderFields();
+	for (it = header_fields.begin(); it != header_fields.end(); it++)
 		std::cout << it->first << ": " << it->second << '\n';
-
-	std::cout << '\n' << "Request body :\n" << getBody() << '\n';
 }
 
 void Request::splitHeadBody()
@@ -102,9 +104,11 @@ std::string		Request::getBody() const
 	return this->_body;
 }
 
-std::map<std::string,std::string>& Request::getHeaderFields()
+std::map<std::string,std::string>	Request::getHeaderFields() const
 {
-	return this->_header_fields;
+	std::map<std::string,std::string> copy;
+	copy.insert(this->_header_fields.begin(), this->_header_fields.end());
+	return copy;
 }
 
 std::string		Request::getHeader() const
@@ -129,7 +133,7 @@ std::string		Request::getPath() const
 
 int				Request::getCode() const
 {
-	return this->_return_code;
+	return this->_status_code;
 }
 
 Config::server	Request::getConf() const
@@ -142,7 +146,7 @@ bool	Request::checkMethod()
 {
 	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))
 	{
-		_return_code = 400;
+		_status_code = 400;
 		return false;
 	}
 	return true;
@@ -152,7 +156,7 @@ bool	Request::checkVersion()
 {
 	if (_version.compare("HTTP/1.0") && _version.compare("HTTP/1.1"))
 	{
-		_return_code = 400;
+		_status_code = 400;
 		return false;
 	}
 	return true;
@@ -207,7 +211,7 @@ void	Request::makePath(Config::server serv_conf)
 	else
 		root = serv_conf.root;
 	std::string tmp = _path.substr(_location.name.length());
-	std::cout << "root : " << root << " location.root : " << _location.root << " tmp : " << tmp << std::endl;
+	//std::cout << "root : " << root << " location.root : " << _location.root << " tmp : " << tmp << std::endl;
 	_path = root +=  _location.root += tmp; 
 	// std::cout << _path << std::endl;
 }
@@ -223,12 +227,12 @@ bool			Request::checkFile()
 	{
 		if (S_ISREG(info.st_mode))
 		{
-			std::cout << "This is a file" << std::endl;
+			//std::cout << "This is a file" << std::endl;
 			return (1);
 		}
 		else if (S_ISDIR(info.st_mode))
 		{
-			std::cout << "This is a directory" << std::endl;
+			//std::cout << "This is a directory" << std::endl;
 			return (0);
 		}
 		else
@@ -240,9 +244,6 @@ bool			Request::checkFile()
 bool			Request::validateRequest(Config::server conf)
 {
 
-	std::cout << "checkmethod: : "<< checkMethod() << std::endl ;
-	std::cout << "checkversion: : "<< checkVersion()  << std::endl;
-	std::cout << "checkpath: : "<< checkPath(conf) << std::endl;
 	return (checkMethod() && checkVersion() && checkPath(conf));
 	//CheckHeaderFields();
 }

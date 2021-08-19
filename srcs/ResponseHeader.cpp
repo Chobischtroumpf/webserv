@@ -5,7 +5,7 @@ ResponseHeader::ResponseHeader(){}
 ResponseHeader::ResponseHeader(Request request)
 {	
 	setVersion(request.getVersion());
-	_return_code = request.getCode();
+	_status_code = request.getCode();
 	_server = "Adorigo and Ncolin's Webserv";
 
 }
@@ -29,7 +29,7 @@ std::string	ResponseHeader::getHeader(void)
 {
 	std::string header;
 
-	header = _http_version + " 200" + _return_code + " OK \r\n"  
+	header = _http_version + _status_code + " OK \r\n"  
 			 +	"Content-Language: " + _content_language + "\r\n"
 			 + "Content-Length: " + _content_length + "\r\n"
 			 + "Content-Location: " + _content_location + "\r\n"
@@ -99,7 +99,7 @@ std::string	ResponseHeader::getVersion(void) const
 
 std::string	ResponseHeader::getReturnCode(void) const
 {
-	return (this->_return_code );
+	return (this->_status_code );
 }
 
 std::map<int, std::string>	ResponseHeader::getErrors(void) const
@@ -124,7 +124,7 @@ ResponseHeader &ResponseHeader::operator=(const ResponseHeader &src)
 	this->_content_location = src.getContentLocation();
 	this->_content_type = src.getContentType();
 	this->_date = src.getDate();
-	this->_return_code = src.getReturnCode();
+	this->_status_code = src.getReturnCode();
 	this->_http_version = src.getVersion();
 	this->_location = src.getLocation();
 	this->_server = src.getServer();

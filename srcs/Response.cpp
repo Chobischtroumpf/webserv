@@ -78,16 +78,21 @@ ResponseHeader	&Response::getResponseHeaderObj(void)
 
 void	Response::getMethod(Request request, Config::server &server_config)
 {
+	DEBUG("GET")
+	//request.displayRequest();
 	(void)request;
+
 	(void)server_config;
 }
 void	Response::postMethod(Request request, Config::server &server_config)
 {
+	DEBUG("POST")
 	(void)request;
 	(void)server_config;
 }
 void	Response::deleteMethod(Request request, Config::server &server_config)
 {
+	DEBUG("DELETE")
 	(void)request;
 	(void)server_config;
 }

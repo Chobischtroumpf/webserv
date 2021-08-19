@@ -7,7 +7,7 @@
 class	ResponseHeader
 {
 	private:
-		std::string					_return_code;
+		std::string					_status_code;
 		std::string					_http_version;
 		std::string					_content_language;
 		std::string					_content_length;
