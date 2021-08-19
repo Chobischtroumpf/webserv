@@ -150,7 +150,7 @@ bool	Request::checkMethod()
 
 bool	Request::checkVersion()
 {
-	if (_version.compare("/1.0") && _version.compare("/1.1"))
+	if (_version.compare("HTTP/1.0") && _version.compare("HTTP/1.1"))
 	{
 		_return_code = 400;
 		return false;

@@ -80,10 +80,13 @@ int	Client::receiveRequest()
 
 int	Client::sendRequest(Request request)
 {
-	
 	Response res(request);
-	res.generate_datetime();
-	send(this->socket, "HTTP/1.1 200 OK\nContent-Type: text/html\n\r\n\rOUI", 47,0);
+	std::cout << "__________________________" << std::endl;
+	std::cout << res.getResponse() << std::endl;
+	std::cout << "__________________________" << std::endl;
+
+	//send(this->socket, "HTTP/1.1 200 OK\nContent-Type: text/html\n\r\n\rOUI", 47,0);
+	send(this->socket, (res.getResponse()).c_str(), res.getResponse().size(),0);
 	// create Response object with HttpRequest
 	// once created, get response string
 	// write response string into client's socket

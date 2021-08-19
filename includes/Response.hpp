@@ -8,11 +8,11 @@
 class Response
 {
 	private:
-		ResponseHeader	header;
-		std::string		datetime;
-		int				error_code;
-		std::string		response_body;
-		std::string		response_header;
+		ResponseHeader	_header;
+		std::string		_datetime;
+		int				_error_code;
+		std::string		_response_body;
+		std::string		_response_header;
 	public:
 		Response();
 		Response(Response &Other);
@@ -25,7 +25,6 @@ class Response
 		std::string		getResponseHeader(void);
 		ResponseHeader	&getResponseHeaderObj(void);
 
-		void			generate_datetime(void);
 		void			getMethod(Request request, Config::server &server_config);
 		void			postMethod(Request request, Config::server &server_config);
 		void			deleteMethod(Request request, Config::server &server_config);
