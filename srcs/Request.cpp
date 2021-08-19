@@ -150,7 +150,8 @@ bool	Request::checkMethod()
 
 bool	Request::checkVersion()
 {
-	if (_version.compare("/1.0") && _version.compare("/1.1"))
+	std::cout << "VERSION: " << _version << std::endl;
+	if (_version.compare("HTTP/1.0") && _version.compare("HTTP/1.1"))
 	{
 		_return_code = 400;
 		return false;
@@ -184,7 +185,7 @@ bool	Request::checkPath(Config::server conf)
 			std::cout << "2 tmp_path : " << tmp_path << std::endl;
 			if (tmp_path == it->first)
 			{
-
+					
 				_location = it->second;
 				//_path = tmp_path;
 				std::cout << "A part of the path corresponds" << std::endl;
@@ -194,26 +195,22 @@ bool	Request::checkPath(Config::server conf)
 		tmp_path = _path.substr(0, pos);
 	}
 	std::cout << "Couldn't find a corresponding location" << std::endl;
-	_return_code = 404;
-
 	return false;
 }
 
 void	Request::makePath(Config::server serv_conf)
 {
-	std::string root_without_final_slash;
+	std::string root;
 	int length_root = serv_conf.root.length();
 	int pos = serv_conf.root.rfind('/');
 	if ((length_root - 1) == pos)
-		root_without_final_slash = serv_conf.root.substr(0, length_root - 1);
+		root = serv_conf.root.substr(0, length_root - 1);
 	else
-		root_without_final_slash = serv_conf.root;
-	std::string path_no_file = _path.substr(0, _path.rfind('/')+1);
-	std::string file = _path.substr(_path.rfind('/')+1);
-	_path = root_without_final_slash;
-	_path += serv_conf.locations[path_no_file].root;
-	_path += file; 
-	std::cout << _path << std::endl;
+		root = serv_conf.root;
+	std::string tmp = _path.substr(_location.name.length());
+	std::cout << "root : " << root << " location.root : " << _location.root << " tmp : " << tmp << std::endl;
+	_path = root +=  _location.root += tmp; 
+	// std::cout << _path << std::endl;
 }
 
 bool			Request::checkFile()
@@ -243,6 +240,10 @@ bool			Request::checkFile()
 
 bool			Request::validateRequest(Config::server conf)
 {
+
+	std::cout << "checkmethod: : "<< checkMethod() << std::endl ;
+	std::cout << "checkversion: : "<< checkVersion()  << std::endl;
+	std::cout << "checkpath: : "<< checkPath(conf) << std::endl;
 	return (checkMethod() && checkVersion() && checkPath(conf));
 	//CheckHeaderFields();
 }

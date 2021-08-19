@@ -83,7 +83,7 @@ int	Client::sendRequest(Request request)
 	
 	Response res(request);
 	res.generate_datetime();
-	send(this->socket, "HTTP/1.1 200 OK\nContent-Type: text/html\n\r\n\rOUI", 47,0);
+	send(this->socket, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\nOUI\n", 49,0);
 	// create Response object with HttpRequest
 	// once created, get response string
 	// write response string into client's socket
