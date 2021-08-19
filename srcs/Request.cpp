@@ -195,8 +195,6 @@ bool	Request::checkPath(Config::server conf)
 		tmp_path = _path.substr(0, pos);
 	}
 	std::cout << "Couldn't find a corresponding location" << std::endl;
-	_return_code = 404;
-
 	return false;
 }
 
