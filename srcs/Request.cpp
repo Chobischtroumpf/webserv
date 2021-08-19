@@ -150,7 +150,8 @@ bool	Request::checkMethod()
 
 bool	Request::checkVersion()
 {
-	if (_version.compare("/1.0") && _version.compare("/1.1"))
+	std::cout << "VERSION: " << _version << std::endl;
+	if (_version.compare("HTTP/1.0") && _version.compare("HTTP/1.1"))
 	{
 		_return_code = 400;
 		return false;
@@ -184,7 +185,7 @@ bool	Request::checkPath(Config::server conf)
 			std::cout << "2 tmp_path : " << tmp_path << std::endl;
 			if (tmp_path == it->first)
 			{
-
+					
 				_location = it->second;
 				//_path = tmp_path;
 				std::cout << "A part of the path corresponds" << std::endl;
@@ -241,6 +242,10 @@ bool			Request::checkFile()
 
 bool			Request::validateRequest(Config::server conf)
 {
+
+	std::cout << "checkmethod: : "<< checkMethod() << std::endl ;
+	std::cout << "checkversion: : "<< checkVersion()  << std::endl;
+	std::cout << "checkpath: : "<< checkPath(conf) << std::endl;
 	return (checkMethod() && checkVersion() && checkPath(conf));
 	//CheckHeaderFields();
 }
