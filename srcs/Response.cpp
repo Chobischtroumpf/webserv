@@ -20,7 +20,7 @@ void	Response::setError(Config::server server_config)
 	_header.setContentLength(this->_response_body.size());
 }
 
-Response::Response(Request request)
+Response::Response(Request &request)
 {
 	// std::map<std::string, std::string> headers = request.GetHeaderFields();
 	// check Request for method
@@ -31,8 +31,8 @@ Response::Response(Request request)
 	this->_header = ResponseHeader(request);
 	_header.generate_datetime();
 	this->_response_header = _header.getHeader();
-		// if (method == "GET")
-		// getMethod(request, server_config);
+	if (method == "GET")
+		getMethod(request, server_config);
 		// else if (method == "POST")
 		// 	postMethod(request, server_config);
 		// else if (method == "DELETE")
@@ -42,7 +42,7 @@ Response::Response(Request request)
 }
 
 std::string Response::getResponse(void)
-{
+{	
 	return (_response_header + _response_body);
 }
 
@@ -61,21 +61,23 @@ ResponseHeader	&Response::getResponseHeaderObj(void)
 	return (_header);
 }
 
-void	Response::getMethod(Request request, Config::server &server_config)
+void	Response::getMethod(Request &request, Config::server &server_config)
 {
 	DEBUG("GET")
 	//request.displayRequest();
+	std::cout << "PATH " << request.getPath() << std::endl;
+	_response_body = readFile(request.getPath());
+	std::cout << "BODY" << _response_body << std::endl;
 	(void)request;
-
 	(void)server_config;
 }
-void	Response::postMethod(Request request, Config::server &server_config)
+void	Response::postMethod(Request &request, Config::server &server_config)
 {
 	DEBUG("POST")
 	(void)request;
 	(void)server_config;
 }
-void	Response::deleteMethod(Request request, Config::server &server_config)
+void	Response::deleteMethod(Request &request, Config::server &server_config)
 {
 	DEBUG("DELETE")
 	(void)request;

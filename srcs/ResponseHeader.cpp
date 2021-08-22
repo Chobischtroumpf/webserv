@@ -2,12 +2,12 @@
 
 ResponseHeader::ResponseHeader(){}
 
-ResponseHeader::ResponseHeader(Request request)
+ResponseHeader::ResponseHeader(Request &request)
 {	
+	initErrorMap();
 	setVersion(request.getVersion());
-	_status_code = request.getCode();
+	setErrorCode(request.getCode());
 	_server = "Adorigo and Ncolin's Webserv";
-
 }
 
 ResponseHeader::ResponseHeader(ResponseHeader &Other)
@@ -22,18 +22,16 @@ ResponseHeader::ResponseHeader(ResponseHeader &Other)
 	this->_server = Other.getServer();
 	this->_transfer_encoding = Other.getTransferEncoding();
 	this->_errors = Other.getErrors(); 
-	
 }
 
 void ResponseHeader::generate_datetime(void)
 {
-	std::time_t t = std::time(0);   // get time now
+	std::time_t t = std::time(0);
    	tm *ltm = localtime(&t);
 	char buffer[80];
 	strftime(buffer,80,"%a, %d %b %Y %H:%M:%S CEST",ltm);
 	std::string str_buf(buffer);
 	setDate(trim(str_buf, " "));
-  	std::cout << getDate() << std::endl;
 }
 
 //getters
@@ -42,8 +40,10 @@ std::string	ResponseHeader::getHeader(void)
 {
 	std::string header;
 
-	header = _http_version + _status_code + _errors[atoi(_status_code.c_str())] + "\r\n" 
-			 +	"Content-Language: " + _content_language + "\r\n"
+
+	
+	header = _http_version + " " + std::to_string(_status_code) + " " + _errors[_status_code] + "\r\n" 
+			 + "Content-Language: " + _content_language + "\r\n"
 			 + "Content-Length: " + _content_length + "\r\n"
 			 + "Content-Location: " + _content_location + "\r\n"
 			 + "Content-Type: " + _content_type + "\r\n"
@@ -100,7 +100,7 @@ std::string	ResponseHeader::getVersion(void) const
 	return (this->_http_version);
 }
 
-std::string	ResponseHeader::getReturnCode(void) const
+int			ResponseHeader::getReturnCode(void) const
 {
 	return (this->_status_code );
 }
@@ -136,6 +136,11 @@ void		ResponseHeader::setContentType(std::string type, std::string path)
 void		ResponseHeader::setDate(std::string date)
 {
 	this->_date = date;
+}
+
+void		ResponseHeader::setErrorCode(int code)
+{
+	this->_status_code = code;
 }
 
 void		ResponseHeader::setLocation(int code, const std::string&redirect)

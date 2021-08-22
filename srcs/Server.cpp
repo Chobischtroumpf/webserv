@@ -103,7 +103,6 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			}
 			else if (ret_val == 0)
 			{
-				std::cout << "Set received" << std::endl;
 				(*client).setReceived(true);
 			}
 		}

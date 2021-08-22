@@ -16,7 +16,7 @@ class Response
 	public:
 		Response();
 		Response(Response &Other);
-		Response(Request request);
+		Response(Request &request);
 
 		std::string		getErrorPage(Config::server server_config);
 		std::string		setErrorCode(Config::server server_config);
@@ -26,9 +26,9 @@ class Response
 		ResponseHeader	&getResponseHeaderObj(void);
 		void			setError(Config::server server_config);
 
-		void			getMethod(Request request, Config::server &server_config);
-		void			postMethod(Request request, Config::server &server_config);
-		void			deleteMethod(Request request, Config::server &server_config);
+		void			getMethod(Request &request, Config::server &server_config);
+		void			postMethod(Request &request, Config::server &server_config);
+		void			deleteMethod(Request &request, Config::server &server_config);
 };
 
 #endif 

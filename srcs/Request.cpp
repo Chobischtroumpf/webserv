@@ -27,7 +27,7 @@ Request&	Request::operator=(const Request & other) {
 Request::Request(std::string req, Config::server &conf)
 {
 	//init request
-	this->_status_code = 0;
+	this->_status_code = 200;
 	this->_raw = req;
 	this->_conf = conf;
 	this->_method = "";
@@ -40,14 +40,14 @@ Request::Request(std::string req, Config::server &conf)
 	//build request
 	splitHeadBody();
 	parseHeader();
-	if(!validateRequest(conf))
+	if(validateRequest(conf))
 	{
 		
 		std::cout << "request valid" << std::endl;
 	}
 	makePath(conf);
 	checkFile();
-	displayRequest();
+	//displayRequest();
 }
 
 void Request::parseHeader()
@@ -171,11 +171,8 @@ bool	Request::checkVersion()
 bool	Request::checkPath(Config::server conf)
 {
 	int pos = _path.rfind("/");
-	std::string tmp_path = _path.substr(0, pos + 1); // Right trim up to '/'
-	// set une variable config::server.locations correct_location
-	// OpTiMiSeR lE cOdE -> rEfErEnCe 
+	std::string tmp_path = _path.substr(0, pos + 1);
 	std::cout << "1 tmp_path : " << tmp_path << std::endl;
-
 	for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
 	{
 		if (tmp_path == it->first)
@@ -193,7 +190,6 @@ bool	Request::checkPath(Config::server conf)
 			std::cout << "2 tmp_path : " << tmp_path << std::endl;
 			if (tmp_path == it->first)
 			{
-					
 				_location = it->second;
 				//_path = tmp_path;
 				std::cout << "A part of the path corresponds" << std::endl;
@@ -233,6 +229,7 @@ bool			Request::checkFile()
 		if (S_ISREG(info.st_mode))
 		{
 			//std::cout << "This is a file" << std::endl;
+			
 			return (1);
 		}
 		else if (S_ISDIR(info.st_mode))

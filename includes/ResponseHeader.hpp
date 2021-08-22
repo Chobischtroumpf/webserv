@@ -7,7 +7,7 @@
 class	ResponseHeader
 {
 	private:
-		std::string					_status_code;
+		int							_status_code;
 		std::string					_http_version;
 		std::string					_content_language;
 		std::string					_content_length;
@@ -21,13 +21,13 @@ class	ResponseHeader
 		void						initErrorMap();
 	public:
 		ResponseHeader();
-		ResponseHeader(Request request);
+		ResponseHeader(Request &request);
 		ResponseHeader(ResponseHeader &Other);
 		~ResponseHeader(void){};
 		
 		ResponseHeader &operator=(const ResponseHeader &src);
 
-		std::string	setErrorCode(int code, Config::server server_config);
+		void		setErrorCode(int code);
 		void		setContentLanguage(const std::string& lang = "");
 		void		setContentLength(size_t size);
 		void		setContentLocation(int code, const std::string& path = "");
@@ -44,7 +44,7 @@ class	ResponseHeader
 		std::string	getContentLocation(void) const;
 		std::string	getContentType(void) const;
 		std::string	getDate(void) const;
-		std::string getReturnCode(void) const;
+		int			getReturnCode(void) const;
 		std::string	getLocation(void) const;
 		std::string	getServer(void) const;
 		std::string	getTransferEncoding(void) const;
