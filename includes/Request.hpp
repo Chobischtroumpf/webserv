@@ -20,7 +20,7 @@ class Request
 
 	public:
 		Request();
-		Request(std::string req, Config::server conf);
+		Request(std::string req, Config::server &conf);
 		Request(const Request &other);
 		~Request();
 		
@@ -39,7 +39,7 @@ class Request
 		std::string							getRaw() const;
 		std::string							getPath() const;
 		int									getCode() const;
-		Config::server						getConf() const;
+		Config::server const				&getConf() const;
 
 		bool								checkMethod();
 		bool								checkVersion();

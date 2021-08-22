@@ -18,12 +18,13 @@ class Response
 		Response(Response &Other);
 		Response(Request request);
 
-		std::string		getErrorPage(int code, Config::server server_config);
+		std::string		getErrorPage(Config::server server_config);
 		std::string		setErrorCode(Config::server server_config);
 		std::string		getResponse(void);
 		std::string		getResponseBody(void);
 		std::string		getResponseHeader(void);
 		ResponseHeader	&getResponseHeaderObj(void);
+		void			setError(Config::server server_config);
 
 		void			getMethod(Request request, Config::server &server_config);
 		void			postMethod(Request request, Config::server &server_config);

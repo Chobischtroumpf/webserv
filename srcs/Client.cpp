@@ -78,7 +78,7 @@ int	Client::receiveRequest()
 	return (1);
 }
 
-int	Client::sendRequest(Request request)
+int	Client::sendRequest(Request &request)
 {
 	Response response(request);
 	std::cout << "header : " << response.getResponseHeader() << std::endl;

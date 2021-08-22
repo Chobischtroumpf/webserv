@@ -24,7 +24,7 @@ Request&	Request::operator=(const Request & other) {
     return *this;
 }
 
-Request::Request(std::string req, Config::server conf)
+Request::Request(std::string req, Config::server &conf)
 {
 	this->_status_code = 200;
 	this->_raw = req;
@@ -136,9 +136,9 @@ int				Request::getCode() const
 	return this->_status_code;
 }
 
-Config::server	Request::getConf() const
+Config::server const	&Request::getConf() const
 {
-	return this->_conf;
+	return _conf;
 }
 
 

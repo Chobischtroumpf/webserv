@@ -38,7 +38,7 @@ Response::Response(Request request)
 		// else if (method == "DELETE")
 		// 	deleteMethod(request, server_config);
 	if (_error_code >= 400)
-		setError();
+		setError(server_config);
 }
 
 std::string Response::getResponse(void)

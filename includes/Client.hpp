@@ -17,7 +17,7 @@ class Client
 		bool		requestReceived(void);
 		int			receiveRequest(void);
 		void		printClient(void);
-		int			sendRequest(Request req);
+		int			sendRequest(Request &req);
 
 		Client &operator=(const Client& Other);
 		friend bool operator==(const Client& lhs, const Client& rhs);
