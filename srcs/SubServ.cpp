@@ -80,7 +80,7 @@ sockaddr_in		SubServ::getAddress()
 	return(this->srv_address);
 }
 		
-Config::server	SubServ::getConf()
+Config::server	&SubServ::getConf()
 {
 	//DEBUG("getConf")
 	return(this->server_conf);

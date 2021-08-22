@@ -7,33 +7,17 @@ Response::Response(Response &Other)
 	this->_header = Other.getResponseHeaderObj();
 }
 
-std::string			Response::getErrorFile(int code ,Config::server server_config)
+std::string			Response::getErrorPage(Config::server server_config)
 {
-	(void) code;
-	(void) server_config;
-	std::string ret = std::string("Temporary error handling");
-	return (ret);
+	if (!server_config.error_pages[_error_code].empty())
+		return(readFile(server_config.error_pages[_error_code]));
+	return ("");
 }
 
-std::string	Response::setErrorCode(Config::server server_config)
+void	Response::setError(Config::server server_config)
 {
-	std::string string = "";
-	switch (_error_code)
-	{
-		case 400:
-			return(getErrorFile(400, server_config));
-		case 403:
-			return(getErrorFile(403, server_config));
-		case 404:
-			return(getErrorFile(404, server_config));
-		case 405:
-			return(getErrorFile(405, server_config));
-		case 413:
-			return(getErrorFile(413, server_config));
-		default:
-			break;
-	}
-	return (string);
+	this->_response_body = getErrorPage(server_config);
+	_header.setContentLength(this->_response_body.size());
 }
 
 Response::Response(Request request)
@@ -42,18 +26,19 @@ Response::Response(Request request)
 	// check Request for method
 	Config::server server_config = request.getConf();
 	std::string method = request.getMethod();
+
+	_error_code = request.getCode();
 	this->_header = ResponseHeader(request);
 	_header.generate_datetime();
 	this->_response_header = _header.getHeader();
-	if ((this->_response_body = setErrorCode(server_config)) == "")
-	{
-		if (method == "GET")
-			getMethod(request, server_config);
-		else if (method == "POST")
-			postMethod(request, server_config);
-		else if (method == "DELETE")
-			deleteMethod(request, server_config);
-	}
+		// if (method == "GET")
+		// getMethod(request, server_config);
+		// else if (method == "POST")
+		// 	postMethod(request, server_config);
+		// else if (method == "DELETE")
+		// 	deleteMethod(request, server_config);
+	if (_error_code >= 400)
+		setError(server_config);
 }
 
 std::string Response::getResponse(void)

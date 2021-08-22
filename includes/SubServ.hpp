@@ -19,7 +19,7 @@ class SubServ
 		SubServ(Config::server serv, Server *main_serv);
 		int					getSocketDesc();
 		sockaddr_in			getAddress();
-		Config::server		getConf();
+		Config::server		&getConf();
 		std::list<Client>	&getClientList();
 
 		Server			&getMainServer();

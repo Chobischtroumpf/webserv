@@ -16,7 +16,7 @@ void	ctrl_c(int signal)
 			close((*subserver).getSocketDesc());
 		}
 		server->keep_going = false;
-		exit(-1);
+		// exit(-1);
 	}
 }
 
