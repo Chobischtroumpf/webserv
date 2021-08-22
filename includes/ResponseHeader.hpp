@@ -10,7 +10,7 @@ class	ResponseHeader
 		int							_status_code;
 		std::string					_http_version;
 		std::string					_content_language;
-		std::string					_content_length;
+		int							_content_length;
 		std::string					_content_location;
 		std::string					_content_type;
 		std::string					_date;
@@ -40,7 +40,7 @@ class	ResponseHeader
 
 		std::string	getHeader(void);
 		std::string	getContentLanguage(void) const;
-		std::string	getContentLength(void) const;
+		int getContentLength(void) const;
 		std::string	getContentLocation(void) const;
 		std::string	getContentType(void) const;
 		std::string	getDate(void) const;

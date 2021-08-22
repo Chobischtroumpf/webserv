@@ -70,13 +70,10 @@ void Server::acceptConnection(SubServ &s_srv)
 	}
 	Client c = Client(new_sd, ipBytesToIpv4(client.sin_addr));
 	s_srv.setClientList(c);
-	
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
-
 	FD_SET(new_sd, &server_read_fd);
 	FD_SET(new_sd, &server_write_fd);
-	
 }
 
 void Server::upAndDownLoad(SubServ &sub_srv)

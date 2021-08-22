@@ -22,23 +22,24 @@ void	Response::setError(Config::server server_config)
 
 Response::Response(Request &request)
 {
-	// std::map<std::string, std::string> headers = request.GetHeaderFields();
-	// check Request for method
 	Config::server server_config = request.getConf();
 	std::string method = request.getMethod();
-
 	_error_code = request.getCode();
 	this->_header = ResponseHeader(request);
 	_header.generate_datetime();
-	this->_response_header = _header.getHeader();
-	if (method == "GET")
+	if (_error_code >= 400)
+		setError(server_config);
+	if (method == "GET" && _error_code == 200)
 		getMethod(request, server_config);
 		// else if (method == "POST")
 		// 	postMethod(request, server_config);
 		// else if (method == "DELETE")
 		// 	deleteMethod(request, server_config);
-	if (_error_code >= 400)
-		setError(server_config);
+	
+	_header.setContentLength(_response_body.length());
+	std::cout << "LENGTH" << _header.getContentLength() << std::endl;
+	this->_response_header = _header.getHeader();
+	std::cout << getResponseHeader() << std::endl << getResponseBody() << std::endl;
 }
 
 std::string Response::getResponse(void)

@@ -29,7 +29,7 @@ class Request
 		void								splitHeadBody();
 		void								parseHeader();
 		void								displayRequest();
-		bool								validateRequest(Config::server serv_conf);
+		bool								validateRequest(Config::server &serv_conf);
 		void								initRequest();
 
 
@@ -45,9 +45,9 @@ class Request
 
 		bool								checkMethod();
 		bool								checkVersion();
-		bool								checkPath(Config::server serv_conf);
+		bool								checkPath(Config::server &serv_conf);
 		bool								checkFile();
-		void								makePath(Config::server serv_conf);
+		void								makePath(Config::server &serv_conf);
 
 };
 

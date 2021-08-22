@@ -39,12 +39,9 @@ void ResponseHeader::generate_datetime(void)
 std::string	ResponseHeader::getHeader(void)
 {
 	std::string header;
-
-
-	
 	header = _http_version + " " + std::to_string(_status_code) + " " + _errors[_status_code] + "\r\n" 
 			 + "Content-Language: " + _content_language + "\r\n"
-			 + "Content-Length: " + _content_length + "\r\n"
+			 + "Content-Length: " + std::to_string(_content_length) + "\r\n"
 			 + "Content-Location: " + _content_location + "\r\n"
 			 + "Content-Type: " + _content_type + "\r\n"
 			 + "Date: " + _date + "\r\n"
@@ -60,7 +57,7 @@ std::string	ResponseHeader::getContentLanguage(void) const
 	return (this->_content_language);
 }
 
-std::string	ResponseHeader::getContentLength(void) const
+int	ResponseHeader::getContentLength(void) const
 {
 	return (this->_content_length);
 }

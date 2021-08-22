@@ -1,17 +1,20 @@
 #include "Request.hpp"
 
 Request::Request()
-{}
+{
+}
 
 Request::~Request()
-{}
+{
+}
 
-Request::Request(const Request& other)
+Request::Request(const Request &other)
 {
 	*this = other;
 }
 
-Request&	Request::operator=(const Request & other) {
+Request &Request::operator=(const Request &other)
+{
 	if (this != &other)
 	{
 		this->_method = other.getMethod();
@@ -21,7 +24,7 @@ Request&	Request::operator=(const Request & other) {
 		this->_body = other.getBody();
 		this->_raw = other.getRaw();
 	}
-    return *this;
+	return *this;
 }
 
 Request::Request(std::string req, Config::server &conf)
@@ -40,9 +43,8 @@ Request::Request(std::string req, Config::server &conf)
 	//build request
 	splitHeadBody();
 	parseHeader();
-	if(validateRequest(conf))
+	if (validateRequest(conf))
 	{
-		
 		std::cout << "request valid" << std::endl;
 	}
 	makePath(conf);
@@ -52,10 +54,10 @@ Request::Request(std::string req, Config::server &conf)
 
 void Request::parseHeader()
 {
-	std::list<std::string> splitted_header; 
-	std::list<std::string> line; 
+	std::list<std::string> splitted_header;
+	std::list<std::string> line;
 	splitted_header = splitString(_header, "\r\n");
-	line = splitString(splitted_header.front(), " "); 
+	line = splitString(splitted_header.front(), " ");
 
 	_method = line.front();
 	line.pop_front();
@@ -63,7 +65,7 @@ void Request::parseHeader()
 	_version = line.back();
 
 	splitted_header.pop_front();
-	
+
 	while (!splitted_header.empty())
 	{
 		std::string key;
@@ -79,11 +81,10 @@ void Request::parseHeader()
 
 void Request::displayRequest()
 {
-	
-	std::map<std::string, std::string>::const_iterator	it;
+	std::map<std::string, std::string>::const_iterator it;
 
 	std::cout << "Method : " << getMethod() << '\n';
-	std::cout  << "Version : "<< getVersion() << '\n';
+	std::cout << "Version : " << getVersion() << '\n';
 	std::cout << "Path : " << getPath() << '\n';
 	std::map<std::string, std::string> header_fields = getHeaderFields();
 	for (it = header_fields.begin(); it != header_fields.end(); it++)
@@ -99,55 +100,54 @@ void Request::splitHeadBody()
 	this->_body = trim(head_body.back(), " \r\n");
 }
 
-std::string		Request::getMethod() const
+std::string Request::getMethod() const
 {
 	return this->_method;
 }
 
-std::string		Request::getBody() const
+std::string Request::getBody() const
 {
 	return this->_body;
 }
 
-std::map<std::string,std::string>	Request::getHeaderFields() const
+std::map<std::string, std::string> Request::getHeaderFields() const
 {
-	std::map<std::string,std::string> copy;
+	std::map<std::string, std::string> copy;
 	copy.insert(this->_header_fields.begin(), this->_header_fields.end());
 	return copy;
 }
 
-std::string		Request::getHeader() const
+std::string Request::getHeader() const
 {
 	return this->_header;
 }
 
-std::string		Request::getVersion() const
+std::string Request::getVersion() const
 {
 	return this->_version;
 }
 
-std::string		Request::getRaw() const
+std::string Request::getRaw() const
 {
 	return this->_raw;
 }
 
-std::string		Request::getPath() const
+std::string Request::getPath() const
 {
 	return this->_path;
 }
 
-int				Request::getCode() const
+int Request::getCode() const
 {
 	return this->_status_code;
 }
 
-Config::server const	&Request::getConf() const
+Config::server const &Request::getConf() const
 {
 	return _conf;
 }
 
-
-bool	Request::checkMethod()
+bool Request::checkMethod()
 {
 	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))
 	{
@@ -157,7 +157,7 @@ bool	Request::checkMethod()
 	return true;
 }
 
-bool	Request::checkVersion()
+bool Request::checkVersion()
 {
 	if (_version.compare("HTTP/1.0") && _version.compare("HTTP/1.1"))
 	{
@@ -167,42 +167,35 @@ bool	Request::checkVersion()
 	return true;
 }
 
-
-bool	Request::checkPath(Config::server conf)
+bool Request::checkPath(Config::server &conf)
 {
 	int pos = _path.rfind("/");
 	std::string tmp_path = _path.substr(0, pos + 1);
-	std::cout << "1 tmp_path : " << tmp_path << std::endl;
 	for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
 	{
 		if (tmp_path == it->first)
 		{
 			_location = it->second;
-			std::cout << "The whole path corresponds" << std::endl;
 			return true;
 		}
 	}
-	while((pos = tmp_path.rfind("/")))
+	while ((pos = tmp_path.rfind("/")))
 	{
 		tmp_path = _path.substr(0, pos + 1);
 		for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
 		{
-			std::cout << "2 tmp_path : " << tmp_path << std::endl;
 			if (tmp_path == it->first)
 			{
 				_location = it->second;
-				//_path = tmp_path;
-				std::cout << "A part of the path corresponds" << std::endl;
 				return true;
 			}
 		}
 		tmp_path = _path.substr(0, pos);
 	}
-	std::cout << "Couldn't find a corresponding location" << std::endl;
 	return false;
 }
 
-void	Request::makePath(Config::server serv_conf)
+void Request::makePath(Config::server &serv_conf)
 {
 	std::string root;
 	int length_root = serv_conf.root.length();
@@ -212,38 +205,38 @@ void	Request::makePath(Config::server serv_conf)
 	else
 		root = serv_conf.root;
 	std::string tmp = _path.substr(_location.name.length());
-	//std::cout << "root : " << root << " location.root : " << _location.root << " tmp : " << tmp << std::endl;
-	_path = root +=  _location.root += tmp; 
-	// std::cout << _path << std::endl;
+	_path = root += _location.root += tmp;
 }
 
-bool			Request::checkFile()
+bool Request::checkFile()
 {
-	// It only works if the path given in the config file is absolute
 	struct stat info;
-	std::cout << stat(_path.c_str(), &info) << std::endl;
 	if (stat(_path.c_str(), &info) != 0)
-		return (-1);
+		{
+			_status_code = 404;
+			return (-1);
+		}
 	else
 	{
 		if (S_ISREG(info.st_mode))
 		{
-			//std::cout << "This is a file" << std::endl;
-			
+			_status_code = 200;
 			return (1);
 		}
 		else if (S_ISDIR(info.st_mode))
 		{
-			//std::cout << "This is a directory" << std::endl;
+			_status_code = 404;
 			return (0);
 		}
 		else
+		{
+			_status_code = 404;
 			return (-1);
+		}
 	}
-
 }
 
-bool			Request::validateRequest(Config::server conf)
+bool Request::validateRequest(Config::server &conf)
 {
 	return (checkMethod() && checkVersion() && checkPath(conf));
 	//CheckHeaderFields();
