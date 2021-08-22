@@ -27,8 +27,7 @@ Response::Response(HttpRequest request, Config::server server_config)
 	// std::map<std::string, std::string> headers = request.GetHeaderFields();
 	// check httpRequest for method
 	std::string method = request.getMethod();
-	//error handling must happen before this
-	error_code = 404;
+	error_code = request.getCode();
 	this->response_body = getErrorPage(error_code, server_config);
 	if (!response_body.empty())
 	{
