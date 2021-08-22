@@ -30,7 +30,7 @@ std::string	ResponseHeader::getHeader(void)
 	std::string header;
 
 	header = _http_version + _status_code + " OK \r\n"  
-			 +	"Content-Language: " + _content_language + "\r\n"
+			 + "Content-Language: " + _content_language + "\r\n"
 			 + "Content-Length: " + _content_length + "\r\n"
 			 + "Content-Location: " + _content_location + "\r\n"
 			 + "Content-Type: " + _content_type + "\r\n"

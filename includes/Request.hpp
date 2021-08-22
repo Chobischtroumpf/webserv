@@ -30,6 +30,8 @@ class Request
 		void								parseHeader();
 		void								displayRequest();
 		bool								validateRequest(Config::server serv_conf);
+		void								initRequest();
+
 
 		std::string							getMethod() const;
 		std::string							getVersion() const;

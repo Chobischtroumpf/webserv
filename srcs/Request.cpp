@@ -26,18 +26,23 @@ Request&	Request::operator=(const Request & other) {
 
 Request::Request(std::string req, Config::server conf)
 {
-	this->_status_code = 200;
+	//init request
+	this->_status_code = 0;
 	this->_raw = req;
+	this->_conf = conf;
 	this->_method = "";
 	this->_version = "";
+	this->_header = "";
 	this->_body = "";
-	this->_conf = conf; 
+	this->_path = "";
+	this->_header_fields.clear();
+	this->_available_locations.clear();
+	//build request
 	splitHeadBody();
 	parseHeader();
-	std::cout << _raw << std::endl;
-	std::cout << _header_fields["Accept"] << std::endl;
-	if(validateRequest(conf))
+	if(!validateRequest(conf))
 	{
+		
 		std::cout << "request valid" << std::endl;
 	}
 	makePath(conf);
@@ -78,7 +83,7 @@ void Request::displayRequest()
 	std::map<std::string, std::string>::const_iterator	it;
 
 	std::cout << "Method : " << getMethod() << '\n';
-	std::cout  << "version : "<< getVersion() << '\n';
+	std::cout  << "Version : "<< getVersion() << '\n';
 	std::cout << "Path : " << getPath() << '\n';
 	std::map<std::string, std::string> header_fields = getHeaderFields();
 	for (it = header_fields.begin(); it != header_fields.end(); it++)
@@ -243,7 +248,6 @@ bool			Request::checkFile()
 
 bool			Request::validateRequest(Config::server conf)
 {
-
 	return (checkMethod() && checkVersion() && checkPath(conf));
 	//CheckHeaderFields();
 }
