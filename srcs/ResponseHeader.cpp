@@ -1,20 +1,27 @@
 #include "ResponseHeader.hpp"
 
-ResponseHeader::ResponseHeader()
-{
+ResponseHeader::ResponseHeader(){}
+
+ResponseHeader::ResponseHeader(Request request)
+{	
+	setVersion(request.getVersion());
+	_status_code = request.getCode();
+	_server = "Adorigo and Ncolin's Webserv";
+
 }
 
 ResponseHeader::ResponseHeader(ResponseHeader &Other)
 {
-	this->content_language = Other.getContentLanguage();
-	this->content_length = Other.getContentLength();
-	this->content_location = Other.getContentLocation();
-	this->content_type = Other.getContentType();
-	this->date = Other.getDate();
-	this->location = Other.getLocation();
-	this->server = Other.getServer();
-	this->transfer_encoding = Other.getTransferEncoding();
-	this->errors = Other.getErrors(); 
+	this->_content_language = Other.getContentLanguage();
+	this->_content_length = Other.getContentLength();
+	this->_content_location = Other.getContentLocation();
+	this->_content_type = Other.getContentType();
+	this->_http_version = Other.getVersion();
+	this->_date = Other.getDate();
+	this->_location = Other.getLocation();
+	this->_server = Other.getServer();
+	this->_transfer_encoding = Other.getTransferEncoding();
+	this->_errors = Other.getErrors(); 
 	
 }
 
@@ -22,73 +29,107 @@ std::string	ResponseHeader::getHeader(void)
 {
 	std::string header;
 
-	header = "Content-Language: " + content_language + "\r\n"
-			 + "Content-Length: " + content_length + "\r\n"
-			 + "Content-Location: " + content_location + "\r\n"
-			 + "Content-Type: " + content_type + "\r\n"
-			 + "Date: " + date + "\r\n"
-			 + "Location: " + location + "\r\n"
-			 + "Server: " + server + "\r\n"
-			 + "Transfer-Encoding: " + transfer_encoding + "\r\n\r\n";
+	header = _http_version + _status_code + " OK \r\n"  
+			 +	"Content-Language: " + _content_language + "\r\n"
+			 + "Content-Length: " + _content_length + "\r\n"
+			 + "Content-Location: " + _content_location + "\r\n"
+			 + "Content-Type: " + _content_type + "\r\n"
+			 + "Date: " + _date + "\r\n"
+			 + "Location: " + _location + "\r\n"
+			 + "Server: " + _server + "\r\n"
+			 + "Transfer-Encoding: " + _transfer_encoding + "\r\n\r\n";
 	return (header);
+}
+
+void ResponseHeader::generate_datetime(void)
+{
+	std::time_t t = std::time(0);   // get time now
+   	tm *ltm = localtime(&t);
+	char buffer[80];
+	strftime(buffer,80,"%a, %d %b %Y %H:%M:%S CEST",ltm);
+	std::string str_buf(buffer);
+	setDate(trim(str_buf, " "));
+  	std::cout << getDate() << std::endl;
 }
 
 std::string	ResponseHeader::getContentLanguage(void) const
 {
-	return (this->content_language);
+	return (this->_content_language);
 }
 
 std::string	ResponseHeader::getContentLength(void) const
 {
-	return (this->content_length);
+	return (this->_content_length);
 }
 
 std::string	ResponseHeader::getContentLocation(void) const
 {
-	return (this->content_location);
+	return (this->_content_location);
 }
 
 std::string	ResponseHeader::getContentType(void) const
 {
-	return (this->content_type);
+	return (this->_content_type);
 }
 
 std::string	ResponseHeader::getDate(void) const
 {
-	return (this->date);
+	return (this->_date);
 }
 
 std::string	ResponseHeader::getLocation(void) const
 {
-	return (this->location);
+	return (this->_location);
 }
 
 std::string	ResponseHeader::getServer(void) const
 {
-	return (this->server);
+	return (this->_server);
 }
 
 std::string	ResponseHeader::getTransferEncoding(void) const
 {
-	return (this->transfer_encoding);
+	return (this->_transfer_encoding);
+}
+
+std::string	ResponseHeader::getVersion(void) const
+{
+	return (this->_http_version);
+}
+
+std::string	ResponseHeader::getReturnCode(void) const
+{
+	return (this->_status_code );
 }
 
 std::map<int, std::string>	ResponseHeader::getErrors(void) const
 {
-	return (this->errors);
+	return (this->_errors);
+}
+
+void		ResponseHeader::setDate(std::string date)
+{
+	this->_date = date;
+}
+
+void		ResponseHeader::setVersion(std::string version)
+{
+	this->_http_version = version;
 }
 
 ResponseHeader &ResponseHeader::operator=(const ResponseHeader &src)
 {
-	this->content_language = src.getContentLanguage();
-	this->content_length = src.getContentLength();
-	this->content_location = src.getContentLocation();
-	this->content_type = src.getContentType();
-	this->date = src.getDate();
-	this->location = src.getLocation();
-	this->server = src.getServer();
-	this->transfer_encoding = src.getTransferEncoding();
-	this->errors = src.getErrors(); 
+	this->_content_language = src.getContentLanguage();
+	this->_content_length = src.getContentLength();
+	this->_content_location = src.getContentLocation();
+	this->_content_type = src.getContentType();
+	this->_date = src.getDate();
+	this->_status_code = src.getReturnCode();
+	this->_http_version = src.getVersion();
+	this->_location = src.getLocation();
+	this->_server = src.getServer();
+	this->_transfer_encoding = src.getTransferEncoding();
+	this->_errors = src.getErrors(); 
 	return (*this);
 }
 

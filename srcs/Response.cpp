@@ -1,80 +1,83 @@
 #include "Response.hpp"
 
-Response::Response()
-{}
+Response::Response(){}
 
 Response::Response(Response &Other)
 {
-	this->header = Other.getResponseHeaderObj();
+	this->_header = Other.getResponseHeaderObj();
 }
 
-std::string			Response::getErrorPage(int code ,Config::server server_config)
+std::string			Response::getErrorPage(Config::server server_config)
 {
-	if (!server_config.error_pages[code].empty())
-		return(readFile(server_config.error_pages[code]));
+	if (!server_config.error_pages[_error_code].empty())
+		return(readFile(server_config.error_pages[_error_code]));
 	return ("");
 }
 
-// std::string	Response::setErrorCode(Config::server server_config)
-// {
-// 	// std::string string = "";
-// 	// return ()
-// 	// return (string);
-// }
+void	Response::setError(Config::server server_config)
+{
+	this->_response_body = getErrorPage(server_config);
+	_header.setContentLength(this->_response_body.size());
+}
 
-Response::Response(HttpRequest request, Config::server server_config)
+Response::Response(Request request)
 {
 	// std::map<std::string, std::string> headers = request.GetHeaderFields();
-	// check httpRequest for method
+	// check Request for method
+	Config::server server_config = request.getConf();
 	std::string method = request.getMethod();
-	error_code = request.getCode();
-	this->response_body = getErrorPage(error_code, server_config);
-	if (!response_body.empty())
-	{
-		std::ostringstream ss;
-		ss << response_body.size();
-		this->response_header = "HTTP/1.1 404 Not Found\r\nDate: Wed, 18 Aug 2021 14:15:17 GMT\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Length: " + ss.str() + "\r\n\r\n";
+
+	_error_code = request.getCode();
+	this->_header = ResponseHeader(request);
+	_header.generate_datetime();
+	this->_response_header = _header.getHeader();
 		// if (method == "GET")
-		// 	getMethod(request, server_config);
+		// getMethod(request, server_config);
 		// else if (method == "POST")
 		// 	postMethod(request, server_config);
 		// else if (method == "DELETE")
 		// 	deleteMethod(request, server_config);
-	}
+	if (_error_code >= 400)
+		setError();
 }
 
 std::string Response::getResponse(void)
 {
-	return (response_header + response_body);
+	return (_response_header + _response_body);
 }
 
 std::string Response::getResponseBody(void)
 {
-	return (response_body);
+	return (_response_body);
 }
 
 std::string Response::getResponseHeader(void)
 {
-	return (response_header);
+	return (_response_header);
 }
 
 ResponseHeader	&Response::getResponseHeaderObj(void)
 {
-	return (header);
+	return (_header);
 }
 
-void	Response::getMethod(HttpRequest request, Config::server &server_config)
+void	Response::getMethod(Request request, Config::server &server_config)
 {
+	DEBUG("GET")
+	//request.displayRequest();
+	(void)request;
+
+	(void)server_config;
+}
+void	Response::postMethod(Request request, Config::server &server_config)
+{
+	DEBUG("POST")
 	(void)request;
 	(void)server_config;
 }
-void	Response::postMethod(HttpRequest request, Config::server &server_config)
+void	Response::deleteMethod(Request request, Config::server &server_config)
 {
-	(void)request;
-	(void)server_config;
-}
-void	Response::deleteMethod(HttpRequest request, Config::server &server_config)
-{
+	DEBUG("DELETE")
 	(void)request;
 	(void)server_config;
 }

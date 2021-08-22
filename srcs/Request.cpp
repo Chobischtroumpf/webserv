@@ -1,22 +1,22 @@
 #include "Request.hpp"
 
-HttpRequest::HttpRequest()
+Request::Request()
 {}
 
-HttpRequest::~HttpRequest()
+Request::~Request()
 {}
 
-HttpRequest::HttpRequest(const HttpRequest& other)
+Request::Request(const Request& other)
 {
 	*this = other;
 }
 
-HttpRequest&	HttpRequest::operator=(const HttpRequest & other) {
+Request&	Request::operator=(const Request & other) {
 	if (this != &other)
 	{
 		this->_method = other.getMethod();
 		this->_version = other.getVersion();
-		//this->_header_fields = other->GetHeaderFields();
+		this->_header_fields = other.getHeaderFields();
 		this->_header = other.getHeader();
 		this->_body = other.getBody();
 		this->_raw = other.getRaw();
@@ -24,39 +24,40 @@ HttpRequest&	HttpRequest::operator=(const HttpRequest & other) {
     return *this;
 }
 
-HttpRequest::HttpRequest(std::string req, Config::server conf)
+Request::Request(std::string req, Config::server conf)
 {
-	this->_return_code = 200;
+	this->_status_code = 200;
 	this->_raw = req;
 	this->_method = "";
 	this->_version = "";
 	this->_body = "";
-	//for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
-	//{
-	//	this->_available_locations.push_back(it->first);
-	//}
+	this->_conf = conf; 
 	splitHeadBody();
 	parseHeader();
-	std::cout << "Request valid : " << validateRequest(conf) << std::endl;
+	std::cout << _raw << std::endl;
+	std::cout << _header_fields["Accept"] << std::endl;
+	if(validateRequest(conf))
+	{
+		std::cout << "request valid" << std::endl;
+	}
 	makePath(conf);
-	// DisplayRequest();
 	checkFile();
-	std::cout << "Path : " << _path << std::endl;
+	displayRequest();
 }
 
-void HttpRequest::parseHeader()
+void Request::parseHeader()
 {
 	std::list<std::string> splitted_header; 
 	std::list<std::string> line; 
 	splitted_header = splitString(_header, "\r\n");
-	line = splitString(splitted_header.front(), " "); // first_line[0] == Method, first_line[1] == Path, first_line[2] == version 
+	line = splitString(splitted_header.front(), " "); 
 
 	_method = line.front();
 	line.pop_front();
 	_path = line.front();
 	_version = line.back();
 
-	splitted_header.pop_front(); //Remove first line
+	splitted_header.pop_front();
 	
 	while (!splitted_header.empty())
 	{
@@ -71,22 +72,20 @@ void HttpRequest::parseHeader()
 	}
 }
 
-void HttpRequest::displayRequest()
+void Request::displayRequest()
 {
 	
 	std::map<std::string, std::string>::const_iterator	it;
 
-	std::cout << "Method : " << getMethod() << " |\tHTTP version : ";
-	std::cout << getVersion() << '\n';
+	std::cout << "Method : " << getMethod() << '\n';
+	std::cout  << "version : "<< getVersion() << '\n';
 	std::cout << "Path : " << getPath() << '\n';
-
-	for (it = getHeaderFields().begin(); it != getHeaderFields().end(); it++)
+	std::map<std::string, std::string> header_fields = getHeaderFields();
+	for (it = header_fields.begin(); it != header_fields.end(); it++)
 		std::cout << it->first << ": " << it->second << '\n';
-
-	std::cout << '\n' << "Request body :\n" << getBody() << '\n';
 }
 
-void HttpRequest::splitHeadBody()
+void Request::splitHeadBody()
 {
 	std::list<std::string> head_body;
 
@@ -95,68 +94,76 @@ void HttpRequest::splitHeadBody()
 	this->_body = trim(head_body.back(), " \r\n");
 }
 
-std::string		HttpRequest::getMethod() const
+std::string		Request::getMethod() const
 {
 	return this->_method;
 }
 
-std::string		HttpRequest::getBody() const
+std::string		Request::getBody() const
 {
 	return this->_body;
 }
 
-std::map<std::string,std::string>& HttpRequest::getHeaderFields()
+std::map<std::string,std::string>	Request::getHeaderFields() const
 {
-	return this->_header_fields;
+	std::map<std::string,std::string> copy;
+	copy.insert(this->_header_fields.begin(), this->_header_fields.end());
+	return copy;
 }
 
-std::string		HttpRequest::getHeader() const
+std::string		Request::getHeader() const
 {
 	return this->_header;
 }
 
-std::string		HttpRequest::getVersion() const
+std::string		Request::getVersion() const
 {
 	return this->_version;
 }
 
-std::string		HttpRequest::getRaw() const
+std::string		Request::getRaw() const
 {
 	return this->_raw;
 }
 
-std::string		HttpRequest::getPath() const
+std::string		Request::getPath() const
 {
 	return this->_path;
 }
 
-int				HttpRequest::getCode() const
+int				Request::getCode() const
 {
-	return this->_return_code;
+	return this->_status_code;
 }
 
-bool	HttpRequest::checkMethod()
+Config::server	Request::getConf() const
+{
+	return this->_conf;
+}
+
+
+bool	Request::checkMethod()
 {
 	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))
 	{
-		_return_code = 400;
+		_status_code = 400;
 		return false;
 	}
 	return true;
 }
 
-bool	HttpRequest::checkVersion()
+bool	Request::checkVersion()
 {
 	if (_version.compare("HTTP/1.0") && _version.compare("HTTP/1.1"))
 	{
-		_return_code = 400;
+		_status_code = 400;
 		return false;
 	}
 	return true;
 }
 
 
-bool	HttpRequest::checkPath(Config::server conf)
+bool	Request::checkPath(Config::server conf)
 {
 	int pos = _path.rfind("/");
 	std::string tmp_path = _path.substr(0, pos + 1); // Right trim up to '/'
@@ -181,7 +188,7 @@ bool	HttpRequest::checkPath(Config::server conf)
 			std::cout << "2 tmp_path : " << tmp_path << std::endl;
 			if (tmp_path == it->first)
 			{
-
+					
 				_location = it->second;
 				//_path = tmp_path;
 				std::cout << "A part of the path corresponds" << std::endl;
@@ -191,29 +198,25 @@ bool	HttpRequest::checkPath(Config::server conf)
 		tmp_path = _path.substr(0, pos);
 	}
 	std::cout << "Couldn't find a corresponding location" << std::endl;
-	_return_code = 404;
-
 	return false;
 }
 
-void	HttpRequest::makePath(Config::server serv_conf)
+void	Request::makePath(Config::server serv_conf)
 {
-	std::string root_without_final_slash;
+	std::string root;
 	int length_root = serv_conf.root.length();
 	int pos = serv_conf.root.rfind('/');
 	if ((length_root - 1) == pos)
-		root_without_final_slash = serv_conf.root.substr(0, length_root - 1);
+		root = serv_conf.root.substr(0, length_root - 1);
 	else
-		root_without_final_slash = serv_conf.root;
-	std::string path_no_file = _path.substr(0, _path.rfind('/')+1);
-	std::string file = _path.substr(_path.rfind('/')+1);
-	_path = root_without_final_slash;
-	_path += serv_conf.locations[path_no_file].root;
-	_path += file; 
-	std::cout << _path << std::endl;
+		root = serv_conf.root;
+	std::string tmp = _path.substr(_location.name.length());
+	//std::cout << "root : " << root << " location.root : " << _location.root << " tmp : " << tmp << std::endl;
+	_path = root +=  _location.root += tmp; 
+	// std::cout << _path << std::endl;
 }
 
-bool			HttpRequest::checkFile()
+bool			Request::checkFile()
 {
 	// It only works if the path given in the config file is absolute
 	struct stat info;
@@ -224,12 +227,12 @@ bool			HttpRequest::checkFile()
 	{
 		if (S_ISREG(info.st_mode))
 		{
-			std::cout << "This is a file" << std::endl;
+			//std::cout << "This is a file" << std::endl;
 			return (1);
 		}
 		else if (S_ISDIR(info.st_mode))
 		{
-			std::cout << "This is a directory" << std::endl;
+			//std::cout << "This is a directory" << std::endl;
 			return (0);
 		}
 		else
@@ -238,8 +241,9 @@ bool			HttpRequest::checkFile()
 
 }
 
-bool			HttpRequest::validateRequest(Config::server conf)
+bool			Request::validateRequest(Config::server conf)
 {
+
 	return (checkMethod() && checkVersion() && checkPath(conf));
 	//CheckHeaderFields();
 }

@@ -87,15 +87,10 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 	}
 	for (std::list<Client>::iterator client = sub_srv.getClientList().begin(); client != sub_srv.getClientList().end(); client++)
 	{
-		std::cout << "writefd isset: " << (FD_ISSET((*client).getSocketDesc(), &writefds)) << std::endl;
-		std::cout << "readfd isset: " << (FD_ISSET((*client).getSocketDesc(), &readfds)) << std::endl;
-		std::cout << "request received: " << ((*client).requestReceived() == true) << std::endl;
 		if (FD_ISSET((*client).getSocketDesc(), &writefds) && (*client).requestReceived() == true)
 		{
-			DEBUG("PARSE HEADER")
-			HttpRequest test = HttpRequest((*client).getRequest(), sub_srv.getConf());
-			//send request
-			(*client).sendRequest(sub_srv.getConf());
+			Request test = Request((*client).getRequest(), sub_srv.getConf());
+			(*client).sendRequest(test);
 			removeClient(client, sub_srv);
 		}
 		if (FD_ISSET((*client).getSocketDesc(), &readfds))
@@ -138,10 +133,8 @@ void	Server::listenIt()
 		FD_ZERO(&writefds);
 		FD_COPY(&server_read_fd, &readfds);
 		FD_COPY(&server_write_fd, &writefds);
-
 		try
 		{	
-			DEBUG("ON SELECT")
 			if ((ret_sel = select(max_sd + 1, &readfds, &writefds, NULL, NULL/*&timeout*/)) < 0 && errno!=EINTR)
 				ServerException("Select Failed");
 			else 
