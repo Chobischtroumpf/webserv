@@ -9,7 +9,7 @@
 # include <list>
 # include <algorithm>
 
-std::string readFile(std::string file);
+int readFile(std::string file, std::string *content);
 
 class Config
 {

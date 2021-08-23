@@ -5,7 +5,14 @@ Config::Config(std::string file)
 	DEBUG("##### CONFIG #####\n")
 	if (file.compare(file.size() - 5, 5, ".conf") != 0)
 		throw ParsingException(0, "Config file needs .conf extention");
-	std::string file_content = skipComment(readFile(file));
+	std::string file_content;
+	int tmp;
+	tmp = readFile(file, &file_content);
+	if (tmp == -1)
+		throw ParsingException(0, "the file " + file + " does not exist.");
+	else if (tmp == -2)
+		throw ParsingException(0, "Error while Reading " + file + ".");
+	file_content = skipComment(file_content);
 	size_t starting_pos, pos = 0;
 	Config::server serveur;
 	// this->location_values = populateLocationValue();

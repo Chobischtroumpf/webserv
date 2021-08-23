@@ -12,26 +12,25 @@ void		parseEnv(char **env)
 	// ft::logEnv();
 }
 
-std::string readFile(std::string file)
+int readFile(std::string file, std::string *content)
 {
 	char buff[BUFFER_SIZE + 1] = {0};
 	int	fd;
 	int	res;
 	int i;
-	std::string result;
 
 	fd = open(file.c_str(), O_RDONLY);
 	if (fd == -1)
-		throw ParsingException(0, "the file " + file + " does not exist.");
+		return (-1);
 	while ((res = read(fd, buff, BUFFER_SIZE)) > 0)
 	{
-		result += buff;
+		*content += buff;
 		i = 0;
 		while (i < res)
 			buff[i++] = 0;
 	}
 	if (res < 0)
-		throw ParsingException(0, "Error while Reading " + file + ".");
+		return (-2);
 	close(fd);
-	return (result);
+	return (1);
 }

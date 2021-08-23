@@ -9,9 +9,11 @@ Response::Response(Response &Other)
 
 std::string			Response::getErrorPage(Config::server server_config)
 {
+	std::string ret_val;
 	if (!server_config.error_pages[_error_code].empty())
-		return(readFile(server_config.error_pages[_error_code]));
-	return ("");
+		if (readFile(server_config.error_pages[_error_code], &ret_val) < 0)
+			return ("<html>the file you were looking for does not exist</html>");
+	return (ret_val);
 }
 
 void	Response::setError(Config::server server_config)
@@ -67,7 +69,7 @@ void	Response::getMethod(Request &request, Config::server &server_config)
 	DEBUG("GET")
 	//request.displayRequest();
 	std::cout << "PATH " << request.getPath() << std::endl;
-	_response_body = readFile(request.getPath());
+	readFile(request.getPath(), &_response_body);
 	std::cout << "BODY" << _response_body << std::endl;
 	(void)request;
 	(void)server_config;
