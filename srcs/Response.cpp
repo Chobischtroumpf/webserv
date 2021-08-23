@@ -86,3 +86,21 @@ void	Response::deleteMethod(Request &request, Config::server &server_config)
 	(void)request;
 	(void)server_config;
 }
+
+std::string	Response::makeIndex(std::string path)
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string retval = "<html><head></head><body> Webserv's autoindex:" + std::endl;
+
+	if ((dir = opendir(path.c_str())) != NULL);
+	{
+		while ((ent = readdir (dir)) != NULL)
+			retval += "<p><a href=\"" + ent->d_name + "\">" + ent->d_name + "</a></p>\n";
+	}
+	else
+	{
+		_error_code = 403;
+		return ("");
+	}
+}
