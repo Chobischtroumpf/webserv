@@ -45,7 +45,7 @@ Request::Request(std::string req, Config::server &conf)
 	parseHeader();
 	if (validateRequest(conf))
 	{
-		std::cout << "request valid" << std::endl;
+		//std::cout << "request valid" << std::endl;
 	}
 	makePath(conf);
 	checkFile();
@@ -211,11 +211,12 @@ void Request::makePath(Config::server &serv_conf)
 bool Request::checkFile()
 {
 	struct stat info;
+	//std::cout << _path << std::endl;
 	if (stat(_path.c_str(), &info) != 0)
-		{
-			_status_code = 500;
+	{
+			_status_code = 404;
 			return (-1);
-		}
+	}
 	else
 	{
 		if (S_ISREG(info.st_mode))

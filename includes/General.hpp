@@ -10,6 +10,7 @@
 # include <sys/resource.h>
 # include <signal.h>
 # include <dirent.h>
+# include <stdio.h>
 # include <errno.h>
 # include <sys/select.h>
 # include <sys/socket.h>

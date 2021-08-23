@@ -30,7 +30,7 @@ int readFile(std::string file, std::string *content)
 			buff[i++] = 0;
 	}
 	if (res < 0)
-		return (-2);
+		return (-2); // request error_code -> 500
 	close(fd);
 	return (1);
 }
