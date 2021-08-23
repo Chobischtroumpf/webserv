@@ -16,6 +16,7 @@ class Request
 		std::list<std::string>				_available_locations;	// locations from config file
 		Config::location					_location;
 		Config::server 						_conf;
+		bool								_has_autoindex;
 		int									_status_code;			// initialized at 200, changed properly if an error occurs
 
 	public:
@@ -41,13 +42,15 @@ class Request
 		std::string							getRaw() const;
 		std::string							getPath() const;
 		int									getCode() const;
+		bool								getAutoIndex() const;
 		Config::server const				&getConf() const;
 
 		bool								checkMethod();
 		bool								checkVersion();
 		bool								checkPath(Config::server &serv_conf);
 		bool								checkFile();
-		void								makePath(Config::server &serv_conf);
+		void								checkAutoIndex();
+		void								makePath();
 
 };
 

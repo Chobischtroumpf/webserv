@@ -81,8 +81,8 @@ int	Client::receiveRequest()
 int	Client::sendRequest(Request &request)
 {
 	Response response(request);
-	std::cout << "header : " << response.getResponseHeader() << std::endl;
-	std::cout << "body : " << response.getResponseBody() << std::endl;
+	// std::cout << "header : " << response.getResponseHeader() << std::endl;
+	// std::cout << "body : " << response.getResponseBody() << std::endl;
 	send(socket, response.getResponse().c_str(),response.getResponse().size(), 0);
 
 	// create Response object with HttpRequest
@@ -133,5 +133,5 @@ std::ostream &operator<<(std::ostream &os, Client &other)
 
 
 Client::~Client(){
-	//DEBUG("Client destructor")
+	DEBUG("Client destructor")
 	}

@@ -39,9 +39,9 @@ Response::Response(Request &request)
 		// 	deleteMethod(request, server_config);
 	
 	_header.setContentLength(_response_body.length());
-	std::cout << "LENGTH" << _header.getContentLength() << std::endl;
+	// std::cout << "LENGTH" << _header.getContentLength() << std::endl;
 	this->_response_header = _header.getHeader();
-	std::cout << getResponseHeader() << std::endl << getResponseBody() << std::endl;
+	// std::cout << getResponseHeader() << std::endl << getResponseBody() << std::endl;
 }
 
 std::string Response::getResponse(void)
@@ -68,9 +68,9 @@ void	Response::getMethod(Request &request, Config::server &server_config)
 {
 	DEBUG("GET")
 	//request.displayRequest();
-	std::cout << "PATH " << request.getPath() << std::endl;
+	// std::cout << "PATH " << request.getPath() << std::endl;
 	readFile(request.getPath(), &_response_body);
-	std::cout << "BODY" << _response_body << std::endl;
+	// std::cout << "BODY" << _response_body << std::endl;
 	(void)request;
 	(void)server_config;
 }

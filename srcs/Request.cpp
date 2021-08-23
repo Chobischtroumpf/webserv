@@ -45,10 +45,10 @@ Request::Request(std::string req, Config::server &conf)
 	parseHeader();
 	if (validateRequest(conf))
 	{
-		std::cout << "request valid" << std::endl;
+		// std::cout << "request valid" << std::endl;
+		makePath();
+		checkFile();
 	}
-	makePath(conf);
-	checkFile();
 	//displayRequest();
 }
 
@@ -100,6 +100,10 @@ void Request::splitHeadBody()
 	this->_body = trim(head_body.back(), " \r\n");
 }
 
+///////////
+//getters//
+///////////
+
 std::string Request::getMethod() const
 {
 	return this->_method;
@@ -147,11 +151,15 @@ Config::server const &Request::getConf() const
 	return _conf;
 }
 
+////////////
+//checkers//
+////////////
+
 bool Request::checkMethod()
 {
 	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))
 	{
-		_status_code = 400;
+		_status_code = 405;
 		return false;
 	}
 	return true;
@@ -195,24 +203,12 @@ bool Request::checkPath(Config::server &conf)
 	return false;
 }
 
-void Request::makePath(Config::server &serv_conf)
-{
-	std::string root;
-	int length_root = serv_conf.root.length();
-	int pos = serv_conf.root.rfind('/');
-	if ((length_root - 1) == pos)
-		root = serv_conf.root.substr(0, length_root - 1);
-	else
-		root = serv_conf.root;
-	std::string tmp = _path.substr(_location.name.length());
-	_path = root += _location.root += tmp;
-}
-
 bool Request::checkFile()
 {
 	struct stat info;
 	if (stat(_path.c_str(), &info) != 0)
 		{
+			std::cout << strerror(errno) << std::endl;
 			_status_code = 500;
 			return (-1);
 		}
@@ -225,7 +221,24 @@ bool Request::checkFile()
 		}
 		else if (S_ISDIR(info.st_mode))
 		{
-			_status_code = 404;
+			if (!_location.index.empty())
+			{
+				std::string tmp = _path + _location.index;
+				struct stat inf;
+				if (stat(tmp.c_str(), &inf) == 0 && S_ISREG(inf.st_mode))
+				{
+					_path = tmp;
+					_status_code = 200;
+					return (1);
+				}
+			}
+			if (_location.is_autoindex)
+			{
+				_status_code = 200;
+				DEBUG("autoindex on")
+			}
+			else
+				_status_code = 403;
 			return (0);
 		}
 		else
@@ -234,6 +247,19 @@ bool Request::checkFile()
 			return (-1);
 		}
 	}
+}
+
+void Request::makePath()
+{
+	std::string root;
+	int length_root = _conf.root.length();
+	int pos = _conf.root.rfind('/');
+	if ((length_root - 1) == pos)
+		root = _conf.root.substr(0, length_root - 1);
+	else
+		root = _conf.root;
+	std::string tmp = _path.substr(_location.name.length());
+	_path = root += _location.root += tmp;
 }
 
 bool Request::validateRequest(Config::server &conf)
