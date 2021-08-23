@@ -213,7 +213,7 @@ bool Request::checkFile()
 	struct stat info;
 	if (stat(_path.c_str(), &info) != 0)
 		{
-			_status_code = 404;
+			_status_code = 500;
 			return (-1);
 		}
 	else
