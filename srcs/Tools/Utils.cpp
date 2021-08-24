@@ -208,7 +208,7 @@ Config::location	&getLocationConfig(Config::server server_config, Request reques
 	return (server_config.locations[request.getPath()]);
 }
 
-bool	isFile(std::string str)
+bool	isFile(const std::string &str)
 {
 	struct stat info;
 	if (stat(str.c_str(), &info) == 0)
@@ -219,7 +219,7 @@ bool	isFile(std::string str)
 	return (false);
 }
 
-bool	isDir(std::string str)
+bool	isDir(const std::string &str)
 {
 	struct stat info;
 	if (stat(str.c_str(), &info) == 0)

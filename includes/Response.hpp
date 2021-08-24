@@ -5,6 +5,7 @@
 # include "Request.hpp"
 # include "ResponseHeader.hpp"
 
+
 class Response
 {
 	private:
@@ -28,7 +29,7 @@ class Response
 
 		void			getMethod(Request &request, Config::server &server_config);
 		void			postMethod(Request &request, Config::server &server_config);
-		void			deleteMethod(Request &request, Config::server &server_config);
+		void			deleteMethod(Request &request);
 
 		std::string		makeIndex(Request &request);
 		void 		    fillHeader();

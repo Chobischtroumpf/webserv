@@ -167,12 +167,20 @@ bool	Request::getAutoIndex() const
 
 bool Request::checkMethod()
 {
+	std::list<std::string>::iterator it;
+
+	for (it = _location.method.begin(); it != _location.method.end(); ++it)
+		if (!_method.compare(*it))
+			return true;
 	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))
+		_status_code = 400;
+	else
 	{
+		if (_location.method.empty())
+			return true;
 		_status_code = 405;
-		return false;
 	}
-	return true;
+	return false;
 }
 
 bool Request::checkVersion()
@@ -204,6 +212,7 @@ bool Request::checkPath(Config::server &conf)
 	}
 	return false;
 }
+
 bool Request::checkFile()
 {
 
@@ -256,6 +265,6 @@ void Request::makePathOnMachine()
 
 bool Request::validateRequest(Config::server &conf)
 {
-	return (checkMethod() && checkVersion() && checkPath(conf));
+	return (checkPath(conf) && checkMethod() && checkVersion());
 	//CheckHeaderFields();
 }
