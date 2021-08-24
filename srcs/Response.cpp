@@ -29,12 +29,14 @@ Response::Response(Request &request)
 	_error_code = request.getCode();
 	DEBUG(request.getPathOnMachine())
 	this->_header = ResponseHeader(request);
-	if (method == "GET")
+	if (_error_code >= 400)
+		setError(server_config);
+	else if (method == "GET")
 		getMethod(request, server_config);
 	else if (method == "POST")
 		postMethod(request, server_config);
 	else if (method == "DELETE")
-		deleteMethod(request, server_config);
+		deleteMethod(request);
 	fillHeader();
 	this->_response_header = _header.getHeader();
 }
@@ -82,18 +84,20 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 	(void)request;
 	(void)server_config;
 }
-void	Response::deleteMethod(Request &request, Config::server &server_config)
+void	Response::deleteMethod(Request &request)
 {
 	DEBUG("DELETE")
 
 	//check if file exist . If not -> 204
-	
-	remove(request.getPathOnMachine().c_str());
-	// if remove fails -> 202
-	// if remove succeed -> 200
-	
-	(void)request;
-	(void)server_config;
+	if (!file_exists(request.getPathOnMachine()))
+		_error_code = 204;
+	else
+	{
+		if (remove(request.getPathOnMachine().c_str()))
+			_error_code = 202; // request accepted but not executed
+		else
+			_error_code = 200;
+	}
 }
 
 std::string	Response::makeIndex(Request &request)

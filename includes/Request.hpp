@@ -3,6 +3,7 @@
 
 #include "General.hpp"
 #include "Config.hpp"
+//#include "response.hpp"
 class Request
 {
 	private:

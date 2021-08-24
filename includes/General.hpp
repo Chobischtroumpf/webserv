@@ -67,7 +67,8 @@
 	size_t		countChar(char c, std::string str);
 	int			contentType(std::string clientRequest);
 	size_t		contentLength(std::string client_request);
-	bool		isFile(std::string str);
-	bool		isDir(std::string str);
+	bool		isFile(const std::string& str);
+	bool		file_exists(const std::string& str);
+	bool		isDir(const std::string& str);
 
 #endif
