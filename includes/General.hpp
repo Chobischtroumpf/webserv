@@ -30,6 +30,8 @@
 # include <algorithm>
 # include <iterator>
 # include <iomanip>
+# include <fstream>
+# include <iostream>
 
 # include "Exceptions.hpp"
 # include "Config.hpp"
