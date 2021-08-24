@@ -208,7 +208,30 @@ Config::location	&getLocationConfig(Config::server server_config, Request reques
 	return (server_config.locations[request.getPath()]);
 }
 
-bool file_exists (const std::string& name) {
-  struct stat buffer;   
-  return (stat (name.c_str(), &buffer) == 0); 
+bool	isFile(std::string str)
+{
+	struct stat info;
+	if (stat(str.c_str(), &info) == 0)
+	{
+		if (S_ISREG(info.st_mode))
+			return (true);
+	}
+	return (false);
+}
+
+bool	isDir(std::string str)
+{
+	struct stat info;
+	if (stat(str.c_str(), &info) == 0)
+	{
+		if (S_ISDIR(info.st_mode))
+			return (true);
+	}
+	return (false);
+}
+
+bool file_exists (const std::string& name)
+{
+	struct stat buffer;
+	return (stat (name.c_str(), &buffer) == 0);
 }

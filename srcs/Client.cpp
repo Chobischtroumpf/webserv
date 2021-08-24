@@ -133,5 +133,5 @@ std::ostream &operator<<(std::ostream &os, Client &other)
 
 
 Client::~Client(){
-	//DEBUG("Client destructor")
+	DEBUG("Client destructor")
 	}

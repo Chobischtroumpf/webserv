@@ -29,6 +29,8 @@ class Response
 		void			getMethod(Request &request, Config::server &server_config);
 		void			postMethod(Request &request, Config::server &server_config);
 		void			deleteMethod(Request &request, Config::server &server_config);
+
+		std::string		makeIndex(Request &request);
 		void 		    fillHeader();
 };
 

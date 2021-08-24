@@ -45,10 +45,9 @@ Request::Request(std::string req, Config::server &conf)
 	parseHeader();
 	if (validateRequest(conf))
 	{
-		//std::cout << "request valid" << std::endl;
+		makePathOnMachine();
+		checkFile();
 	}
-	makePath(conf);
-	isFile();
 	//displayRequest();
 }
 
@@ -86,6 +85,7 @@ void Request::displayRequest()
 	std::cout << "Method : " << getMethod() << '\n';
 	std::cout << "Version : " << getVersion() << '\n';
 	std::cout << "Path : " << getPath() << '\n';
+	std::cout << "Path : " << getPathOnMachine() << '\n';
 	std::map<std::string, std::string> header_fields = getHeaderFields();
 	for (it = header_fields.begin(); it != header_fields.end(); it++)
 		std::cout << it->first << ": " << it->second << '\n';
@@ -100,41 +100,50 @@ void Request::splitHeadBody()
 	this->_body = trim(head_body.back(), " \r\n");
 }
 
-std::string Request::getMethod() const
+///////////
+//getters//
+///////////
+
+std::string const &Request::getMethod() const
 {
 	return this->_method;
 }
 
-std::string Request::getBody() const
+std::string const &Request::getBody() const
 {
 	return this->_body;
 }
 
-std::map<std::string, std::string> Request::getHeaderFields() const
+std::map<std::string, std::string> const &Request::getHeaderFields() const
 {
-	std::map<std::string, std::string> copy;
-	copy.insert(this->_header_fields.begin(), this->_header_fields.end());
-	return copy;
+	// std::map<std::string, std::string> copy;
+	// copy.insert(this->_header_fields.begin(), this->_header_fields.end());
+	return _header_fields;
 }
 
-std::string Request::getHeader() const
+std::string const &Request::getHeader() const
 {
 	return this->_header;
 }
 
-std::string Request::getVersion() const
+std::string const &Request::getVersion() const
 {
 	return this->_version;
 }
 
-std::string Request::getRaw() const
+std::string const &Request::getRaw() const
 {
 	return this->_raw;
 }
 
-std::string Request::getPath() const
+std::string const &Request::getPath() const
 {
 	return this->_path;
+}
+
+std::string const &Request::getPathOnMachine() const
+{
+	return this->_path_on_machine;
 }
 
 int Request::getCode() const
@@ -147,11 +156,20 @@ Config::server const &Request::getConf() const
 	return _conf;
 }
 
+bool	Request::getAutoIndex() const
+{
+	return _location.is_autoindex;
+}
+
+////////////
+//checkers//
+////////////
+
 bool Request::checkMethod()
 {
 	if (_method.compare("GET") && _method.compare("DELETE") && _method.compare("POST"))
 	{
-		_status_code = 400;
+		_status_code = 405;
 		return false;
 	}
 	return true;
@@ -186,48 +204,55 @@ bool Request::checkPath(Config::server &conf)
 	}
 	return false;
 }
-
-void Request::makePath(Config::server &serv_conf)
+bool Request::checkFile()
 {
-	std::string root;
-	int length_root = serv_conf.root.length();
-	int pos = serv_conf.root.rfind('/');
-	if ((length_root - 1) == pos)
-		root = serv_conf.root.substr(0, length_root - 1);
-	else
-		root = serv_conf.root;
-	std::string tmp = _path.substr(_location.name.length());
-	_path = root += _location.root += tmp;
-}
 
-bool Request::isFile()
-{
-	struct stat info;
-	//std::cout << _path << std::endl;
-	if (stat(_path.c_str(), &info) != 0)
+	if (isFile(_path_on_machine))
 	{
-			_status_code = 404;
-			return false;
+		_status_code = 200;
+		return (1);
 	}
-	else
+	else if (isDir(_path_on_machine))
 	{
-		if (S_ISREG(info.st_mode))
+		if (!_location.index.empty())
+		{
+			std::string tmp = _path_on_machine + _location.index;
+			if (isFile(tmp))
+			{
+				_path_on_machine = tmp;
+				_status_code = 200;
+				return (1);
+			}
+		}
+		if (_location.is_autoindex)
 		{
 			_status_code = 200;
-			return true;
-		}
-		else if (S_ISDIR(info.st_mode))
-		{
-			_status_code = 404;
-			return false;
+			DEBUG("autoindex on")
 		}
 		else
-		{
-			_status_code = 404;
-			return false;
-		}
+			_status_code = 403;
+		return (0);
+	}
+	else
+	{
+		_status_code = 404;
+		return (-1);
 	}
 }
+
+void Request::makePathOnMachine()
+{
+	std::string root;
+	int length_root = _conf.root.length();
+	int pos = _conf.root.rfind('/');
+	if ((length_root - 1) == pos)
+		root = _conf.root.substr(0, length_root - 1);
+	else
+		root = _conf.root;
+	std::string tmp = _path.substr(_location.name.length());
+	_path_on_machine = root += _location.root += tmp;
+}
+
 
 bool Request::validateRequest(Config::server &conf)
 {
