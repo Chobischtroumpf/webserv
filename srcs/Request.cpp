@@ -46,7 +46,9 @@ Request::Request(std::string req, Config::server &conf)
 	if (validateRequest(conf))
 	{
 		// std::cout << "request valid" << std::endl;
+		std::cout << "path before makepath" << _path << std::endl;
 		makePath();
+		std::cout << _path << std::endl;
 		checkFile();
 	}
 	//displayRequest();
@@ -104,39 +106,39 @@ void Request::splitHeadBody()
 //getters//
 ///////////
 
-std::string Request::getMethod() const
+std::string const &Request::getMethod() const
 {
 	return this->_method;
 }
 
-std::string Request::getBody() const
+std::string const &Request::getBody() const
 {
 	return this->_body;
 }
 
-std::map<std::string, std::string> Request::getHeaderFields() const
+std::map<std::string, std::string> const &Request::getHeaderFields() const
 {
-	std::map<std::string, std::string> copy;
-	copy.insert(this->_header_fields.begin(), this->_header_fields.end());
-	return copy;
+	// std::map<std::string, std::string> copy;
+	// copy.insert(this->_header_fields.begin(), this->_header_fields.end());
+	return _header_fields;
 }
 
-std::string Request::getHeader() const
+std::string const &Request::getHeader() const
 {
 	return this->_header;
 }
 
-std::string Request::getVersion() const
+std::string const &Request::getVersion() const
 {
 	return this->_version;
 }
 
-std::string Request::getRaw() const
+std::string const &Request::getRaw() const
 {
 	return this->_raw;
 }
 
-std::string Request::getPath() const
+std::string const &Request::getPath() const
 {
 	return this->_path;
 }
@@ -149,6 +151,11 @@ int Request::getCode() const
 Config::server const &Request::getConf() const
 {
 	return _conf;
+}
+
+bool	Request::getAutoIndex() const
+{
+	return _location.is_autoindex;
 }
 
 ////////////
@@ -224,8 +231,7 @@ bool Request::checkFile()
 			if (!_location.index.empty())
 			{
 				std::string tmp = _path + _location.index;
-				struct stat inf;
-				if (stat(tmp.c_str(), &inf) == 0 && S_ISREG(inf.st_mode))
+				if (isFile(tmp))
 				{
 					_path = tmp;
 					_status_code = 200;

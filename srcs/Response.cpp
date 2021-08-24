@@ -27,6 +27,7 @@ Response::Response(Request &request)
 	Config::server server_config = request.getConf();
 	std::string method = request.getMethod();
 	_error_code = request.getCode();
+	DEBUG(request.getPath())
 	this->_header = ResponseHeader(request);
 	_header.generate_datetime();
 	if (_error_code >= 400)
@@ -69,7 +70,11 @@ void	Response::getMethod(Request &request, Config::server &server_config)
 	DEBUG("GET")
 	//request.displayRequest();
 	// std::cout << "PATH " << request.getPath() << std::endl;
-	readFile(request.getPath(), &_response_body);
+	std::cout << "path: " << request.getPath() << std::endl;
+	if (request.getAutoIndex() && isDir(request.getPath()))
+		_response_body = makeIndex(request.getPath());
+	else
+		readFile(request.getPath(), &_response_body);
 	// std::cout << "BODY" << _response_body << std::endl;
 	(void)request;
 	(void)server_config;
@@ -91,16 +96,36 @@ std::string	Response::makeIndex(std::string path)
 {
 	DIR *dir;
 	struct dirent *ent;
-	std::string retval = "<html><head></head><body> Webserv's autoindex:" + std::endl;
+	std::string retval = "<html><head></head><body> <h1>Webserv's autoindex:</h1>\n";
 
-	if ((dir = opendir(path.c_str())) != NULL);
+	std::cout << path << std::endl;
+	if ((dir = opendir(path.c_str())) != NULL)
 	{
 		while ((ent = readdir (dir)) != NULL)
-			retval += "<p><a href=\"" + ent->d_name + "\">" + ent->d_name + "</a></p>\n";
+		{
+			if (isFile((path+"/"+ent->d_name).c_str()))
+			{
+				retval += "<p><a href=\"";
+				retval += path + ent->d_name;
+				retval += "\">";
+				retval += ent->d_name;
+				retval += "</a></p>\n";
+			}
+			else if (isDir((path+"/"+ent->d_name).c_str()))
+			{
+				retval += "<p><a href=\"";
+				retval += path + ent->d_name;
+				retval += "/\">";
+				retval += ent->d_name;
+				retval += "</a></p>\n";
+			}
+		}
+		retval += "</body></html>";
 	}
 	else
 	{
-		_error_code = 403;
+		_error_code = 500;
 		return ("");
 	}
+	return (retval);
 }

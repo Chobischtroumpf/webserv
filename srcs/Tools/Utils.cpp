@@ -207,3 +207,24 @@ Config::location	&getLocationConfig(Config::server server_config, Request reques
 {
 	return (server_config.locations[request.getPath()]);
 }
+
+bool	isFile(std::string str)
+{
+	struct stat info;
+	if (stat(str.c_str(), &info) == 0)
+	{
+		if (S_ISREG(info.st_mode))
+			return (true);
+	}
+	return (false);
+}
+bool	isDir(std::string str)
+{
+	struct stat info;
+	if (stat(str.c_str(), &info) == 0)
+	{
+		if (S_ISDIR(info.st_mode))
+			return (true);
+	}
+	return (false);
+}

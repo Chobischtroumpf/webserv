@@ -13,6 +13,7 @@ class Request
 		std::string							_body;					// Everything after CRLF 
 		std::string							_raw;					// Whole request
 		std::string							_path;					// Path to requested
+		std::string							_path_on_machine;		// Path for machine to requested
 		std::list<std::string>				_available_locations;	// locations from config file
 		Config::location					_location;
 		Config::server 						_conf;
@@ -25,32 +26,32 @@ class Request
 		Request(const Request &other);
 		~Request();
 		
-		Request& 						operator=(const Request &other);
+		Request& 									operator=(const Request &other);
 
-		void								splitHeadBody();
-		void								parseHeader();
-		void								displayRequest();
-		bool								validateRequest(Config::server &serv_conf);
-		void								initRequest();
+		void										splitHeadBody();
+		void										parseHeader();
+		void										displayRequest();
+		bool										validateRequest(Config::server &serv_conf);
+		void										initRequest();
 
 
-		std::string							getMethod() const;
-		std::string							getVersion() const;
-		std::map<std::string, std::string>	getHeaderFields() const;
-		std::string							getHeader() const;
-		std::string							getBody() const;
-		std::string							getRaw() const;
-		std::string							getPath() const;
-		int									getCode() const;
-		bool								getAutoIndex() const;
-		Config::server const				&getConf() const;
+		std::string	const							&getMethod() const;
+		std::string	const							&getVersion() const;
+		std::map<std::string, std::string> const	&getHeaderFields() const;
+		std::string const							&getHeader() const;
+		std::string const							&getBody() const;
+		std::string const							&getRaw() const;
+		std::string const							&getPath() const;
+		int											getCode() const;
+		Config::server const						&getConf() const;
+		bool 										getAutoIndex() const;
 
-		bool								checkMethod();
-		bool								checkVersion();
-		bool								checkPath(Config::server &serv_conf);
-		bool								checkFile();
-		void								checkAutoIndex();
-		void								makePath();
+		bool										checkMethod();
+		bool										checkVersion();
+		bool										checkPath(Config::server &serv_conf);
+		bool										checkFile();
+		void										checkAutoIndex();
+		void										makePath();
 
 };
 
