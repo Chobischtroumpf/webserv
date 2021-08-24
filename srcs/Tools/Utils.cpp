@@ -207,3 +207,8 @@ Config::location	&getLocationConfig(Config::server server_config, Request reques
 {
 	return (server_config.locations[request.getPath()]);
 }
+
+bool file_exists (const std::string& name) {
+  struct stat buffer;   
+  return (stat (name.c_str(), &buffer) == 0); 
+}

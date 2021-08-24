@@ -46,7 +46,7 @@ class Request
 		bool								checkMethod();
 		bool								checkVersion();
 		bool								checkPath(Config::server &serv_conf);
-		bool								checkFile();
+		bool								isFile();
 		void								makePath(Config::server &serv_conf);
 
 };

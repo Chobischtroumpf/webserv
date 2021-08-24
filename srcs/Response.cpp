@@ -83,8 +83,10 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 void	Response::deleteMethod(Request &request, Config::server &server_config)
 {
 	DEBUG("DELETE")
+
 	//check if file exist . If not -> 204
-	std::cout << remove(request.getPath().c_str()) << std::endl;
+	
+	remove(request.getPath().c_str());
 	// if remove fails -> 202
 	// if remove succeed -> 200
 	

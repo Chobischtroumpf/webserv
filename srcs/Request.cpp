@@ -48,7 +48,7 @@ Request::Request(std::string req, Config::server &conf)
 		//std::cout << "request valid" << std::endl;
 	}
 	makePath(conf);
-	checkFile();
+	isFile();
 	//displayRequest();
 }
 
@@ -169,17 +169,9 @@ bool Request::checkVersion()
 
 bool Request::checkPath(Config::server &conf)
 {
-	int pos = _path.rfind("/");
-	std::string tmp_path = _path.substr(0, pos + 1);
-	for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
-	{
-		if (tmp_path == it->first)
-		{
-			_location = it->second;
-			return true;
-		}
-	}
-	while ((pos = tmp_path.rfind("/")))
+	size_t pos;
+	std::string tmp_path = _path;
+	while ((pos = tmp_path.rfind("/")) != std::string::npos)
 	{
 		tmp_path = _path.substr(0, pos + 1);
 		for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
@@ -208,31 +200,31 @@ void Request::makePath(Config::server &serv_conf)
 	_path = root += _location.root += tmp;
 }
 
-bool Request::checkFile()
+bool Request::isFile()
 {
 	struct stat info;
 	//std::cout << _path << std::endl;
 	if (stat(_path.c_str(), &info) != 0)
 	{
 			_status_code = 404;
-			return (-1);
+			return false;
 	}
 	else
 	{
 		if (S_ISREG(info.st_mode))
 		{
 			_status_code = 200;
-			return (1);
+			return true;
 		}
 		else if (S_ISDIR(info.st_mode))
 		{
 			_status_code = 404;
-			return (0);
+			return false;
 		}
 		else
 		{
 			_status_code = 404;
-			return (-1);
+			return false;
 		}
 	}
 }
