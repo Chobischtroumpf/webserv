@@ -218,6 +218,7 @@ bool	isFile(std::string str)
 	}
 	return (false);
 }
+
 bool	isDir(std::string str)
 {
 	struct stat info;
@@ -227,4 +228,10 @@ bool	isDir(std::string str)
 			return (true);
 	}
 	return (false);
+}
+
+bool file_exists (const std::string& name)
+{
+	struct stat buffer;
+	return (stat (name.c_str(), &buffer) == 0);
 }

@@ -31,6 +31,7 @@ class Response
 		void			deleteMethod(Request &request, Config::server &server_config);
 
 		std::string		makeIndex(std::string path);
+		void 		    fillHeader();
 };
 
 #endif 

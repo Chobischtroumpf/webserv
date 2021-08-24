@@ -45,10 +45,7 @@ Request::Request(std::string req, Config::server &conf)
 	parseHeader();
 	if (validateRequest(conf))
 	{
-		// std::cout << "request valid" << std::endl;
-		std::cout << "path before makepath" << _path << std::endl;
 		makePath();
-		std::cout << _path << std::endl;
 		checkFile();
 	}
 	//displayRequest();
@@ -184,17 +181,9 @@ bool Request::checkVersion()
 
 bool Request::checkPath(Config::server &conf)
 {
-	int pos = _path.rfind("/");
-	std::string tmp_path = _path.substr(0, pos + 1);
-	for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
-	{
-		if (tmp_path == it->first)
-		{
-			_location = it->second;
-			return true;
-		}
-	}
-	while ((pos = tmp_path.rfind("/")))
+	size_t pos;
+	std::string tmp_path = _path;
+	while ((pos = tmp_path.rfind("/")) != std::string::npos)
 	{
 		tmp_path = _path.substr(0, pos + 1);
 		for (std::map<std::string, Config::location>::iterator it = conf.locations.begin(); it != conf.locations.end(); it++)
@@ -209,49 +198,39 @@ bool Request::checkPath(Config::server &conf)
 	}
 	return false;
 }
-
 bool Request::checkFile()
 {
-	struct stat info;
-	if (stat(_path.c_str(), &info) != 0)
-		{
-			std::cout << strerror(errno) << std::endl;
-			_status_code = 500;
-			return (-1);
-		}
-	else
+
+	if (isFile(_path))
 	{
-		if (S_ISREG(info.st_mode))
+		_status_code = 200;
+		return (1);
+	}
+	else if (isDir(_path))
+	{
+		if (!_location.index.empty())
+		{
+			std::string tmp = _path + _location.index;
+			if (isFile(tmp))
+			{
+				_path = tmp;
+				_status_code = 200;
+				return (1);
+			}
+		}
+		if (_location.is_autoindex)
 		{
 			_status_code = 200;
-			return (1);
-		}
-		else if (S_ISDIR(info.st_mode))
-		{
-			if (!_location.index.empty())
-			{
-				std::string tmp = _path + _location.index;
-				if (isFile(tmp))
-				{
-					_path = tmp;
-					_status_code = 200;
-					return (1);
-				}
-			}
-			if (_location.is_autoindex)
-			{
-				_status_code = 200;
-				DEBUG("autoindex on")
-			}
-			else
-				_status_code = 403;
-			return (0);
+			DEBUG("autoindex on")
 		}
 		else
-		{
-			_status_code = 404;
-			return (-1);
-		}
+			_status_code = 403;
+		return (0);
+	}
+	else
+	{
+		_status_code = 404;
+		return (-1);
 	}
 }
 
@@ -267,6 +246,7 @@ void Request::makePath()
 	std::string tmp = _path.substr(_location.name.length());
 	_path = root += _location.root += tmp;
 }
+
 
 bool Request::validateRequest(Config::server &conf)
 {

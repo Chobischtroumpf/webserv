@@ -29,20 +29,20 @@ Response::Response(Request &request)
 	_error_code = request.getCode();
 	DEBUG(request.getPath())
 	this->_header = ResponseHeader(request);
-	_header.generate_datetime();
-	if (_error_code >= 400)
-		setError(server_config);
-	if (method == "GET" && _error_code == 200)
+	if (method == "GET")
 		getMethod(request, server_config);
-		// else if (method == "POST")
-		// 	postMethod(request, server_config);
-		// else if (method == "DELETE")
-		// 	deleteMethod(request, server_config);
-	
-	_header.setContentLength(_response_body.length());
-	// std::cout << "LENGTH" << _header.getContentLength() << std::endl;
+	else if (method == "POST")
+		postMethod(request, server_config);
+	else if (method == "DELETE")
+		deleteMethod(request, server_config);
+	fillHeader();
 	this->_response_header = _header.getHeader();
-	// std::cout << getResponseHeader() << std::endl << getResponseBody() << std::endl;
+}
+
+void 		Response::fillHeader()
+{
+	_header.setContentLength(_response_body.length());
+	_header.generate_datetime();
 }
 
 std::string Response::getResponse(void)
@@ -73,11 +73,12 @@ void	Response::getMethod(Request &request, Config::server &server_config)
 	std::cout << "path: " << request.getPath() << std::endl;
 	if (request.getAutoIndex() && isDir(request.getPath()))
 		_response_body = makeIndex(request.getPath());
-	else
+	else if (_error_code == 200)
 		readFile(request.getPath(), &_response_body);
-	// std::cout << "BODY" << _response_body << std::endl;
-	(void)request;
-	(void)server_config;
+	else
+		setError(server_config);
+	if (_error_code == 500) // if first readfile fails, we have to put _error_code to 500
+		setError(server_config);
 }
 void	Response::postMethod(Request &request, Config::server &server_config)
 {
@@ -88,6 +89,13 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 void	Response::deleteMethod(Request &request, Config::server &server_config)
 {
 	DEBUG("DELETE")
+
+	//check if file exist . If not -> 204
+	
+	remove(request.getPath().c_str());
+	// if remove fails -> 202
+	// if remove succeed -> 200
+	
 	(void)request;
 	(void)server_config;
 }
