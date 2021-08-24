@@ -30,7 +30,7 @@ class Response
 		void			postMethod(Request &request, Config::server &server_config);
 		void			deleteMethod(Request &request, Config::server &server_config);
 
-		std::string		makeIndex(std::string path);
+		std::string		makeIndex(Request &request);
 		void 		    fillHeader();
 };
 

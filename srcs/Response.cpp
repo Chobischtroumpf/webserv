@@ -27,7 +27,7 @@ Response::Response(Request &request)
 	Config::server server_config = request.getConf();
 	std::string method = request.getMethod();
 	_error_code = request.getCode();
-	DEBUG(request.getPath())
+	DEBUG(request.getPathOnMachine())
 	this->_header = ResponseHeader(request);
 	if (method == "GET")
 		getMethod(request, server_config);
@@ -66,15 +66,11 @@ ResponseHeader	&Response::getResponseHeaderObj(void)
 }
 
 void	Response::getMethod(Request &request, Config::server &server_config)
-{
-	DEBUG("GET")
-	//request.displayRequest();
-	// std::cout << "PATH " << request.getPath() << std::endl;
-	std::cout << "path: " << request.getPath() << std::endl;
+{DEBUG("GET")
 	if (request.getAutoIndex() && isDir(request.getPath()))
-		_response_body = makeIndex(request.getPath());
+		_response_body = makeIndex(request);
 	else if (_error_code == 200)
-		readFile(request.getPath(), &_response_body);
+		readFile(request.getPathOnMachine(), &_response_body);
 	else
 		setError(server_config);
 	if (_error_code == 500) // if first readfile fails, we have to put _error_code to 500
@@ -92,7 +88,7 @@ void	Response::deleteMethod(Request &request, Config::server &server_config)
 
 	//check if file exist . If not -> 204
 	
-	remove(request.getPath().c_str());
+	remove(request.getPathOnMachine().c_str());
 	// if remove fails -> 202
 	// if remove succeed -> 200
 	
@@ -100,12 +96,12 @@ void	Response::deleteMethod(Request &request, Config::server &server_config)
 	(void)server_config;
 }
 
-std::string	Response::makeIndex(std::string path)
+std::string	Response::makeIndex(Request &request)
 {
 	DIR *dir;
 	struct dirent *ent;
 	std::string retval = "<html><head></head><body> <h1>Webserv's autoindex:</h1>\n";
-
+	std::string path = request.getPathOnMachine();
 	std::cout << path << std::endl;
 	if ((dir = opendir(path.c_str())) != NULL)
 	{
@@ -114,7 +110,7 @@ std::string	Response::makeIndex(std::string path)
 			if (isFile((path+"/"+ent->d_name).c_str()))
 			{
 				retval += "<p><a href=\"";
-				retval += path + ent->d_name;
+				retval += request.getPath() + ent->d_name;
 				retval += "\">";
 				retval += ent->d_name;
 				retval += "</a></p>\n";
@@ -122,7 +118,7 @@ std::string	Response::makeIndex(std::string path)
 			else if (isDir((path+"/"+ent->d_name).c_str()))
 			{
 				retval += "<p><a href=\"";
-				retval += path + ent->d_name;
+				retval += request.getPath() + ent->d_name;
 				retval += "/\">";
 				retval += ent->d_name;
 				retval += "</a></p>\n";

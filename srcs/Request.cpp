@@ -45,7 +45,7 @@ Request::Request(std::string req, Config::server &conf)
 	parseHeader();
 	if (validateRequest(conf))
 	{
-		makePath();
+		makePathOnMachine();
 		checkFile();
 	}
 	//displayRequest();
@@ -85,6 +85,7 @@ void Request::displayRequest()
 	std::cout << "Method : " << getMethod() << '\n';
 	std::cout << "Version : " << getVersion() << '\n';
 	std::cout << "Path : " << getPath() << '\n';
+	std::cout << "Path : " << getPathOnMachine() << '\n';
 	std::map<std::string, std::string> header_fields = getHeaderFields();
 	for (it = header_fields.begin(); it != header_fields.end(); it++)
 		std::cout << it->first << ": " << it->second << '\n';
@@ -138,6 +139,11 @@ std::string const &Request::getRaw() const
 std::string const &Request::getPath() const
 {
 	return this->_path;
+}
+
+std::string const &Request::getPathOnMachine() const
+{
+	return this->_path_on_machine;
 }
 
 int Request::getCode() const
@@ -201,19 +207,19 @@ bool Request::checkPath(Config::server &conf)
 bool Request::checkFile()
 {
 
-	if (isFile(_path))
+	if (isFile(_path_on_machine))
 	{
 		_status_code = 200;
 		return (1);
 	}
-	else if (isDir(_path))
+	else if (isDir(_path_on_machine))
 	{
 		if (!_location.index.empty())
 		{
-			std::string tmp = _path + _location.index;
+			std::string tmp = _path_on_machine + _location.index;
 			if (isFile(tmp))
 			{
-				_path = tmp;
+				_path_on_machine = tmp;
 				_status_code = 200;
 				return (1);
 			}
@@ -234,7 +240,7 @@ bool Request::checkFile()
 	}
 }
 
-void Request::makePath()
+void Request::makePathOnMachine()
 {
 	std::string root;
 	int length_root = _conf.root.length();
@@ -244,7 +250,7 @@ void Request::makePath()
 	else
 		root = _conf.root;
 	std::string tmp = _path.substr(_location.name.length());
-	_path = root += _location.root += tmp;
+	_path_on_machine = root += _location.root += tmp;
 }
 
 

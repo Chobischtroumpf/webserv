@@ -42,6 +42,7 @@ class Request
 		std::string const							&getBody() const;
 		std::string const							&getRaw() const;
 		std::string const							&getPath() const;
+		std::string const							&getPathOnMachine() const;
 		int											getCode() const;
 		Config::server const						&getConf() const;
 		bool 										getAutoIndex() const;
@@ -51,7 +52,7 @@ class Request
 		bool										checkPath(Config::server &serv_conf);
 		bool										checkFile();
 		void										checkAutoIndex();
-		void										makePath();
+		void										makePathOnMachine();
 
 };
 
