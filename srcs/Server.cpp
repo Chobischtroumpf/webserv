@@ -1,15 +1,20 @@
 #include "Server.hpp"
 #include "General.hpp"
 
+///////////////////////////////////
+///	Constructor and Destructors ///
+///////////////////////////////////
+
 Server::Server()
-{DEBUG("Server default constructor")
+{
 	keep_going = true;
 	this->timeout.tv_sec = 1;
 	this->timeout.tv_usec = 0;
 }
 
 Server::Server(Config config)
-{DEBUG("##### SERVER INIT #####")
+{
+	DEBUG("##### SERVER INIT #####")
 	for (std::list<Config::server>::iterator i = config.getServers().begin(); i != config.getServers().end(); i++)
 		sub_serv.push_back(SubServ(*i, this));
 	keep_going = true;
@@ -19,7 +24,6 @@ Server::Server(Config config)
 
 Server::Server(Server &Other)
 {
-	//DEBUG("Server copy constructor")
 	this->readfds = Other.readfds;
 	this->writefds = Other.writefds;
 	this->sub_serv = Other.sub_serv;
@@ -27,6 +31,16 @@ Server::Server(Server &Other)
 	this->keep_going = true;
 	this->timeout= Other.timeout;
 }
+
+Server::~Server()
+{
+	sub_serv.clear();
+}
+
+
+///////////////////////////////////
+///			  Methods			///
+///////////////////////////////////
 
 void	Server::removeClient(std::list<Client>::iterator &client, SubServ sub_srv)
 {
@@ -121,11 +135,10 @@ void	Server::listenIt()
 		FD_SET((*i).getSocketDesc(), &server_read_fd);
 		max_sd = (*i).getSocketDesc(); //what if the last subserv as a smaller sd ?
 	}
-
 	FD_COPY(&server_read_fd, &readfds);
 	int ret_sel = 1;
 	while(keep_going)
-	{//boucle infinie
+	{
 		FD_ZERO(&writefds);
 		FD_COPY(&server_read_fd, &readfds);
 		FD_COPY(&server_write_fd, &writefds);
@@ -145,6 +158,10 @@ void	Server::listenIt()
 	}
 }
 
+///////////////////////////////////
+///			Overloads			///
+///////////////////////////////////
+
 Server &Server::operator=(const Server& Other)
 {
 	this->readfds = Other.readfds;
@@ -154,8 +171,3 @@ Server &Server::operator=(const Server& Other)
 	return (*this);
 }
 
-Server::~Server()
-{
-	//DEBUG("Server destructor")
-	sub_serv.clear();
-}

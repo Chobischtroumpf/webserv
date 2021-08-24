@@ -1,5 +1,9 @@
 #include "Request.hpp"
 
+///////////////////////////////////
+///	Constructor and Destructors ///
+///////////////////////////////////
+
 Request::Request()
 {
 }
@@ -29,7 +33,6 @@ Request &Request::operator=(const Request &other)
 
 Request::Request(std::string req, Config::server &conf)
 {
-	//init request
 	this->_status_code = 200;
 	this->_raw = req;
 	this->_conf = conf;
@@ -40,7 +43,7 @@ Request::Request(std::string req, Config::server &conf)
 	this->_path = "";
 	this->_header_fields.clear();
 	this->_available_locations.clear();
-	//build request
+
 	splitHeadBody();
 	parseHeader();
 	if (validateRequest(conf))
@@ -51,119 +54,9 @@ Request::Request(std::string req, Config::server &conf)
 	//displayRequest();
 }
 
-void Request::parseHeader()
-{
-	std::list<std::string> splitted_header;
-	std::list<std::string> line;
-	splitted_header = splitString(_header, "\r\n");
-	line = splitString(splitted_header.front(), " ");
-
-	_method = line.front();
-	line.pop_front();
-	_path = line.front();
-	_version = line.back();
-
-	splitted_header.pop_front();
-
-	while (!splitted_header.empty())
-	{
-		std::string key;
-		std::string value;
-
-		int index = splitted_header.front().find(':');
-		key = splitted_header.front().substr(0, index);
-		value = splitted_header.front().substr(index + 1);
-		this->_header_fields[trim(key, " \r\n")] = trim(value, " \r\n");
-		splitted_header.pop_front();
-	}
-}
-
-void Request::displayRequest()
-{
-	std::map<std::string, std::string>::const_iterator it;
-
-	std::cout << "Method : " << getMethod() << '\n';
-	std::cout << "Version : " << getVersion() << '\n';
-	std::cout << "Path : " << getPath() << '\n';
-	std::cout << "Path : " << getPathOnMachine() << '\n';
-	std::map<std::string, std::string> header_fields = getHeaderFields();
-	for (it = header_fields.begin(); it != header_fields.end(); it++)
-		std::cout << it->first << ": " << it->second << '\n';
-}
-
-void Request::splitHeadBody()
-{
-	std::list<std::string> head_body;
-
-	head_body = splitString(this->_raw, "\r\n\r\n");
-	this->_header = head_body.front();
-	this->_body = trim(head_body.back(), " \r\n");
-}
-
-///////////
-//getters//
-///////////
-
-std::string const &Request::getMethod() const
-{
-	return this->_method;
-}
-
-std::string const &Request::getBody() const
-{
-	return this->_body;
-}
-
-std::map<std::string, std::string> const &Request::getHeaderFields() const
-{
-	// std::map<std::string, std::string> copy;
-	// copy.insert(this->_header_fields.begin(), this->_header_fields.end());
-	return _header_fields;
-}
-
-std::string const &Request::getHeader() const
-{
-	return this->_header;
-}
-
-std::string const &Request::getVersion() const
-{
-	return this->_version;
-}
-
-std::string const &Request::getRaw() const
-{
-	return this->_raw;
-}
-
-std::string const &Request::getPath() const
-{
-	return this->_path;
-}
-
-std::string const &Request::getPathOnMachine() const
-{
-	return this->_path_on_machine;
-}
-
-int Request::getCode() const
-{
-	return this->_status_code;
-}
-
-Config::server const &Request::getConf() const
-{
-	return _conf;
-}
-
-bool	Request::getAutoIndex() const
-{
-	return _location.is_autoindex;
-}
-
-////////////
-//checkers//
-////////////
+///////////////////////////////////
+///			  Methods			///
+///////////////////////////////////
 
 bool Request::checkMethod()
 {
@@ -249,6 +142,55 @@ bool Request::checkFile()
 	}
 }
 
+void Request::parseHeader()
+{
+	std::list<std::string> splitted_header;
+	std::list<std::string> line;
+	splitted_header = splitString(_header, "\r\n");
+	line = splitString(splitted_header.front(), " ");
+
+	_method = line.front();
+	line.pop_front();
+	_path = line.front();
+	_version = line.back();
+
+	splitted_header.pop_front();
+
+	while (!splitted_header.empty())
+	{
+		std::string key;
+		std::string value;
+
+		int index = splitted_header.front().find(':');
+		key = splitted_header.front().substr(0, index);
+		value = splitted_header.front().substr(index + 1);
+		this->_header_fields[trim(key, " \r\n")] = trim(value, " \r\n");
+		splitted_header.pop_front();
+	}
+}
+
+void Request::displayRequest()
+{
+	std::map<std::string, std::string>::const_iterator it;
+
+	std::cout << "Method : " << getMethod() << '\n';
+	std::cout << "Version : " << getVersion() << '\n';
+	std::cout << "Path : " << getPath() << '\n';
+	std::cout << "Path : " << getPathOnMachine() << '\n';
+	std::map<std::string, std::string> header_fields = getHeaderFields();
+	for (it = header_fields.begin(); it != header_fields.end(); it++)
+		std::cout << it->first << ": " << it->second << '\n';
+}
+
+void Request::splitHeadBody()
+{
+	std::list<std::string> head_body;
+
+	head_body = splitString(this->_raw, "\r\n\r\n");
+	this->_header = head_body.front();
+	this->_body = trim(head_body.back(), " \r\n");
+}
+
 void Request::makePathOnMachine()
 {
 	std::string root;
@@ -262,9 +204,66 @@ void Request::makePathOnMachine()
 	_path_on_machine = root += _location.root += tmp;
 }
 
-
 bool Request::validateRequest(Config::server &conf)
 {
 	return (checkPath(conf) && checkMethod() && checkVersion());
-	//CheckHeaderFields();
+}
+
+///////////////////////////////////
+///			  Getters			///
+///////////////////////////////////
+
+std::string const &Request::getMethod() const
+{
+	return this->_method;
+}
+
+std::string const &Request::getBody() const
+{
+	return this->_body;
+}
+
+std::map<std::string, std::string> const &Request::getHeaderFields() const
+{
+	return _header_fields;
+}
+
+std::string const &Request::getHeader() const
+{
+	return this->_header;
+}
+
+std::string const &Request::getVersion() const
+{
+	return this->_version;
+}
+
+std::string const &Request::getRaw() const
+{
+	return this->_raw;
+}
+
+std::string const &Request::getPath() const
+{
+	return this->_path;
+}
+
+std::string const &Request::getPathOnMachine() const
+{
+	return this->_path_on_machine;
+}
+
+int Request::getCode() const
+{
+	return this->_status_code;
+}
+
+Config::server const &Request::getConf() const
+{
+	return _conf;
+}
+
+bool	Request::getAutoIndex() const
+{
+	return _location.is_autoindex;
 }

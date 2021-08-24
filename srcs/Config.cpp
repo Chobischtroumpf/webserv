@@ -15,8 +15,6 @@ Config::Config(std::string file)
 	file_content = skipComment(file_content);
 	size_t starting_pos, pos = 0;
 	Config::server serveur;
-	// this->location_values = populateLocationValue();
-
 	if(countChar('{', file_content) != countChar('}', file_content))
 		throw ParsingException(0, "error in config file : unmatched bracket");
 	while ((starting_pos = file_content.find("server", pos)) != std::string::npos)
@@ -30,7 +28,6 @@ Config::Config(std::string file)
 
 size_t	Config::getScope(std::string file, size_t starting_pos)
 {
-	//DEBUG("getScope")
 	std::vector<size_t> pos(2, starting_pos);
 	int opening_brace = 1;
 	int	closing_brace = 0;

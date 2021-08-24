@@ -2,7 +2,6 @@
 
 bool	checkListen(std::list<std::string> element, Config::server *ret_serv)
 {
-	//DEBUG("checkListen")
 	if (element.front() == "listen")
 	{
 		if (element.size() != 3)
@@ -20,7 +19,6 @@ bool	checkListen(std::list<std::string> element, Config::server *ret_serv)
 
 bool	checkServerName(std::list<std::string> element, Config::server *ret_serv)
 {
-	//DEBUG("checkServerName")
 	if (element.front() == "server_name")
 	{
 		if (element.size() < 2)
@@ -34,7 +32,6 @@ bool	checkServerName(std::list<std::string> element, Config::server *ret_serv)
 
 bool	checkErrorPage(std::list<std::string> element, Config::server *ret_serv)
 {
-	//DEBUG("checkErrorPage")
 	ssize_t		tmp_err;
 	if (element.front() == "error_page")
 	{
@@ -53,7 +50,6 @@ bool	checkErrorPage(std::list<std::string> element, Config::server *ret_serv)
 
 bool	checkRoot(std::list<std::string> element, Config::server *ret_serv)
 {
-	//DEBUG("checkRoot")
 	if (element.front() == "root")
 	{
 		if (element.size() != 2)
@@ -69,7 +65,6 @@ bool	checkRoot(std::list<std::string> element, Config::server *ret_serv)
 
 bool	errorServer(std::list<std::string> element, Config::server *ret_serv)
 {
-	//DEBUG("errorServer")
 	return (!(checkListen(element, ret_serv)
 		|| checkServerName(element, ret_serv)
 		|| checkErrorPage(element, ret_serv)
@@ -100,7 +95,6 @@ static void makeErrorPages(Config::server *&retval)
 
 void	Config::checkServer(Config::server *retval)
 {
-	//DEBUG("checkServer")
 	if (retval->names.empty())
 		retval->names.push_back("default");
 	if (retval->host.empty())
@@ -114,7 +108,6 @@ void	Config::checkServer(Config::server *retval)
 
 void	Config::checkLocation(Config::location retval)
 {
-	//DEBUG("checkLocation")
 	if (retval.name.empty())
 		throw ParsingException(0,"missing location name");
 	if (retval.root.empty())
