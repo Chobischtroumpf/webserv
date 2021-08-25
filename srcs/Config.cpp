@@ -9,8 +9,6 @@ Config::Config(std::string file)
 	int tmp;
 	tmp = readFile(file, &file_content);
 	if (tmp == -1)
-		throw ParsingException(0, "the file " + file + " does not exist.");
-	else if (tmp == -2)
 		throw ParsingException(0, "Error while Reading " + file + ".");
 	file_content = skipComment(file_content);
 	size_t starting_pos, pos = 0;
@@ -94,8 +92,8 @@ Config::location	Config::parseLocation(std::string location_scope)
 			retval.root = tmp_list.front();
 		else if (name == "method")
 			retval.method = tmp_list;
-		else if (name == "redirections")
-			retval.redirections = tmp_list;
+		else if (name == "redirection")
+			retval.redirection = tmp_list;
 		else if (name == "index")
 			retval.index = tmp_list.front();
 		else if (name == "upload_path")
@@ -141,7 +139,7 @@ Config::~Config()
 			it1 != it->locations.end(); it1++)
 		{
 			it1->second.method.clear();
-			it1->second.redirections.clear();
+			it1->second.redirection.clear();
 		}
 		it->locations.clear();
 	}
