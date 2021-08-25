@@ -86,6 +86,34 @@ bool Request::checkVersion()
 	return true;
 }
 
+bool Request::checkSize()
+{
+	int max_bytes;
+	size_t scale;
+	std::string tmp;
+	
+	scale = 0;
+	tmp = _location.max_body_size;
+	if (tmp.empty())
+		max_bytes = 1000000;
+	else
+	{
+		if (tmp.back() == 'k' || tmp.back() == 'K')
+			scale = 1000;
+		else if (tmp.back() == 'm' || tmp.back() == 'M')
+			scale = 1000000;
+		else
+			DEBUG("Problem with max_body_size")
+		max_bytes = atoi((tmp.substr(0, tmp.length() - 1)).c_str()) * scale;
+	}
+	if (atoi(_header_fields["Content-Length"].c_str()) > max_bytes)
+	{
+		_status_code = 413;
+		return (false);
+	}
+	return (true);
+}
+
 bool Request::checkPath(Config::server &conf)
 {
 	size_t pos;
@@ -206,7 +234,7 @@ void Request::makePathOnMachine()
 
 bool Request::validateRequest(Config::server &conf)
 {
-	return (checkPath(conf) && checkMethod() && checkVersion());
+	return (checkPath(conf) && checkMethod() && checkVersion() && checkSize());
 }
 
 ///////////////////////////////////

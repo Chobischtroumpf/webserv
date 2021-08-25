@@ -53,6 +53,7 @@ class Request
 		bool										checkPath(Config::server &serv_conf);
 		bool										checkFile();
 		void										checkAutoIndex();
+		bool										checkSize();
 		void										makePathOnMachine();
 
 };

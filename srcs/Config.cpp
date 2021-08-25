@@ -100,6 +100,8 @@ Config::location	Config::parseLocation(std::string location_scope)
 			retval.index = tmp_list.front();
 		else if (name == "upload_path")
 			retval.upload_path = tmp_list.front();
+		else if (name == "client_max_body_size")
+			retval.max_body_size = tmp_list.front();
 		else if (name == "autoindex")
 			if (tmp_list.front() == "on")
 				retval.is_autoindex = true;

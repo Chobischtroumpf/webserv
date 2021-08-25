@@ -40,7 +40,7 @@ class	ResponseHeader
 
 		std::string	getHeader(void);
 		std::string	getContentLanguage(void) const;
-		int getContentLength(void) const;
+		int			getContentLength(void) const;
 		std::string	getContentLocation(void) const;
 		std::string	getContentType(void) const;
 		std::string	getDate(void) const;
