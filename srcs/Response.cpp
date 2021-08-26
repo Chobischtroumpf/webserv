@@ -16,9 +16,14 @@ Response::Response(Request &request)
 	Config::server server_config = request.getConf();
 	std::string method = request.getMethod();
 	_error_code = request.getCode();
-	DEBUG(request.getPathOnMachine())
 	this->_header = ResponseHeader(request);
-	if (_error_code >= 400)
+	DEBUG(request.getAutoIndex())
+	if (request.hasRedirection() && _error_code == 200)
+	{
+		_header.setLocation(request.getRedirectionCode(), request.getRedirection());
+		_error_code = request.getRedirectionCode();
+	}
+	if (_error_code >= 300)
 		setError(server_config);
 	else if (method == "GET")
 		getMethod(request, server_config);
@@ -46,7 +51,6 @@ void 		Response::fillHeader()
 	_header.setContentLength(_response_body.length());
 	_header.generate_datetime();
 }
-
 
 void	Response::getMethod(Request &request, Config::server &server_config)
 {DEBUG("GET")
@@ -129,7 +133,6 @@ std::string	Response::makeIndex(Request &request)
 	}
 	return (retval);
 }
-
 
 ///////////////////////////////////
 ///			  Getters			///

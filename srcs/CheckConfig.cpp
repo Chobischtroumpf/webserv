@@ -113,7 +113,7 @@ void	Config::checkLocation(Config::location retval)
 	if (retval.root.empty())
 		throw ParsingException(0,"missing root directory for location");
 	if (retval.index.empty())
-		retval.index = "./index.html";
+		retval.index = "./default.html";
 	if (retval.method.empty())
 	{
 		retval.method.push_back("GET");
@@ -126,5 +126,10 @@ void	Config::checkLocation(Config::location retval)
 		retval.cgi_extension = "php";
 	if (retval.cgi_path.empty())
 		retval.cgi_path = "/usr/bin/";
-
+	if (!retval.redirection.empty())
+	{
+		if (retval.redirection.size() != 2 ||
+			!(retval.redirection.front() == "301" || retval.redirection.front() == "302") )
+			throw ParsingException(0, "redirection is malformated");
+	}
 }
