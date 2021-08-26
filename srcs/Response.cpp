@@ -54,7 +54,7 @@ void 		Response::fillHeader()
 
 void	Response::getMethod(Request &request, Config::server &server_config)
 {DEBUG("GET")
-	if (request.getAutoIndex() && isDir(request.getPath()))
+	if (request.getAutoIndex() && isDir(request.getPathOnMachine()))
 		_response_body = makeIndex(request);
 	else if (_error_code == 200)
 		readFile(request.getPathOnMachine(), &_response_body);
