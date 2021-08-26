@@ -18,7 +18,9 @@ SubServ::SubServ(Config::server serv, Server *main_serv):
 	socketListener();
 }
 
-SubServ::~SubServ(){}
+SubServ::~SubServ(){
+	client_list.clear();
+}
 
 ///////////////////////////////////
 ///			  Methods			///
@@ -74,15 +76,16 @@ void SubServ::printSubserv(void)
 
 void	SubServ::printClientList(void)
 {
-	for (std::list<Client>::iterator i = getClientList().begin(); i != getClientList().end(); i++)
+	for (std::list<Client *>::iterator i = getClientList().begin(); i != getClientList().end(); i++)
 	{
-		(*i).printClient();
+		(*i)->printClient();
 	}
 }
 
-void	SubServ::popClient(const Client &client)
+void	SubServ::popClient(Client *client)
 {
 	this->client_list.remove(client);
+	delete client;
 }
 
 
@@ -110,7 +113,7 @@ Config::server	&SubServ::getConf()
 	return(this->server_conf);
 }
 
-std::list<Client> &SubServ::getClientList()
+std::list<Client *> &SubServ::getClientList()
 {
 	return (this->client_list);
 }
@@ -119,7 +122,7 @@ std::list<Client> &SubServ::getClientList()
 ///			  Setters			///
 ///////////////////////////////////
 
-void	SubServ::setClientList(const Client &client)
+void	SubServ::setClientList(Client *client)
 {
 	this->client_list.push_back(client);
 }

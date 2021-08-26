@@ -10,6 +10,8 @@ Request::Request()
 
 Request::~Request()
 {
+	_header_fields.clear();
+	_available_locations.clear();
 }
 
 Request::Request(const Request &other)
@@ -306,6 +308,11 @@ int	Request::getRedirectionCode() const
 	if (!_location.redirection.empty())
 		return (stoi(_location.redirection.front()));
 	return (200);
+}
+
+std::list<std::string> const				&Request::getAvailableLocations() const
+{
+	return (_available_locations);
 }
 
 bool	Request::hasRedirection() const

@@ -23,7 +23,7 @@ class	ResponseHeader
 		ResponseHeader();
 		ResponseHeader(Request &request);
 		ResponseHeader(ResponseHeader &Other);
-		~ResponseHeader(void){};
+		~ResponseHeader();
 		
 		ResponseHeader &operator=(const ResponseHeader &src);
 

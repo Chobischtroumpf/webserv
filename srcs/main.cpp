@@ -11,8 +11,8 @@ void	ctrl_c(int signal)
 	{
 		for (std::list<SubServ>::iterator subserver = server->sub_serv.begin(); subserver != server->sub_serv.end(); subserver++)
 		{
-			for (std::list<Client>::iterator client = (*subserver).getClientList().begin(); client != (*subserver).getClientList().end(); client++)
-				close((*client).getSocketDesc());
+			for (std::list<Client *>::iterator client = (*subserver).getClientList().begin(); client != (*subserver).getClientList().end(); client++)
+				close((*client)->getSocketDesc());
 			close((*subserver).getSocketDesc());
 		}
 		server->keep_going = false;

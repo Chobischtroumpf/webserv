@@ -28,6 +28,12 @@ ResponseHeader::ResponseHeader(ResponseHeader &Other)
 	this->_errors = Other.getErrors(); 
 }
 
+ResponseHeader::~ResponseHeader()
+{
+	_errors.clear();
+}
+
+
 ///////////////////////////////////
 ///			  Methods			///
 ///////////////////////////////////

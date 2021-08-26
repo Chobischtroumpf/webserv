@@ -7,6 +7,7 @@
 class Client
 {
 	public:
+		Client();
 		Client(int sd, std::string address);
 		int			getSocketDesc(void);
 		std::string	getRequest(void);
@@ -28,7 +29,7 @@ class Client
 		int				option_buffer;
 		std::string		raw_request;
 		bool			is_received;
-		Request		request;
+		Request			request;
 		std::string		response_header;
 		std::string		response;
 };
