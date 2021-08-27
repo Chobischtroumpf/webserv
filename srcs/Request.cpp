@@ -136,8 +136,8 @@ bool Request::checkPath(Config::server &conf)
 
 bool Request::checkFile()
 {
-
-	if (isFile(_path_on_machine))
+	std::cout << _path_on_machine << std::endl;
+	if (isFile(_path_on_machine) || !this->_method.compare("POST"))
 	{
 		_status_code = 200;
 		return (1);

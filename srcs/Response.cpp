@@ -63,6 +63,21 @@ void	Response::getMethod(Request &request, Config::server &server_config)
 void	Response::postMethod(Request &request, Config::server &server_config)
 {
 	DEBUG("POST")
+	std::cout << request.getPathOnMachine() << std::endl;
+	std::ofstream file;
+	file.open(request.getPathOnMachine());
+	if (!file.is_open())
+	{
+		file.close();
+		std::cout << "couldn't open file properly" << std::endl;
+		_error_code = 409;
+		setError(server_config);
+	}
+	else 
+	{
+		file << request.getBody() << std::endl;
+		file.close(); 
+	}
 	(void)request;
 	(void)server_config;
 }
