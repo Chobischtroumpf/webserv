@@ -16,8 +16,8 @@ Response::Response(Request &request)
 	Config::server server_config = request.getConf();
 	std::string method = request.getMethod();
 	_error_code = request.getCode();
-	this->_header = ResponseHeader(request);
 	DEBUG(request.getAutoIndex())
+	this->_header = ResponseHeader(request);
 	if (request.hasRedirection() && _error_code == 200)
 	{
 		_header.setLocation(request.getRedirectionCode(), request.getRedirection());
@@ -31,6 +31,8 @@ Response::Response(Request &request)
 		postMethod(request, server_config);
 	else if (method == "DELETE")
 		deleteMethod(request);
+	
+	std::cout << _error_code << std::endl;
 	fillHeader();
 	this->_response_header = _header.getHeader();
 }
@@ -42,6 +44,7 @@ Response::Response(Request &request)
 void	Response::setError(Config::server server_config)
 {
 	this->_response_body = getErrorPage(server_config);
+	this->_header.setErrorCode(_error_code);
 	_header.setContentLength(this->_response_body.size());
 }
 
@@ -68,13 +71,20 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 {
 	DEBUG("POST")
 	std::cout << request.getPathOnMachine() << std::endl;
+	if (isDir(request.getPathOnMachine()))
+	{
+		std::cout << "is dir" << std::endl;
+		_error_code = 404;
+		setError(server_config);
+		return ;
+	}
 	std::ofstream file;
 	file.open(request.getPathOnMachine());
 	if (!file.is_open())
 	{
 		file.close();
 		std::cout << "couldn't open file properly" << std::endl;
-		_error_code = 409;
+		_error_code = 404;
 		setError(server_config);
 	}
 	else 
