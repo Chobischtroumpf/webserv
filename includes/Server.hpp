@@ -24,11 +24,11 @@ class Server
 		Server(Config config);
 		Server(Server& other);
 
-		void	listenIt();
-		void	checkConnections();
-		void	acceptConnection(SubServ &s_srv);
-		void	upAndDownLoad(SubServ &s_srv);
-		void	removeClient(std::list<Client *>::iterator &client, SubServ sub_srv);
+		void							listenIt();
+		void							checkConnections();
+		void							acceptConnection(SubServ &s_srv);
+		void							upAndDownLoad(SubServ &s_srv);
+		std::list<Client *>::iterator	removeClient(std::list<Client *>::iterator &client, SubServ &sub_srv);
 
 //displays
 		fd_set						getReadfds();

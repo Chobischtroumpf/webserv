@@ -42,12 +42,15 @@ Server::~Server()
 ///			  Methods			///
 ///////////////////////////////////
 
-void	Server::removeClient(std::list<Client *>::iterator &client, SubServ sub_srv)
+std::list<Client *>::iterator	Server::removeClient(std::list<Client *>::iterator &client, SubServ &sub_srv)
 {
+	std::list<Client *>::iterator tmp;
 	FD_CLR((*client)->getSocketDesc(), &server_read_fd);
 	FD_CLR((*client)->getSocketDesc(), &server_write_fd);
 	close((*client)->getSocketDesc());
-	client = sub_srv.getClientList().erase(client);
+	delete (*client);
+	tmp = sub_srv.getClientList().erase(client);
+	return (tmp);
 }
 
 void Server::checkConnections(void)
@@ -63,6 +66,8 @@ void Server::checkConnections(void)
 			{
 				close((*client_it)->getSocketDesc());
 				(*subserv_it).popClient((*client_it));
+				FD_CLR((*client_it)->getSocketDesc(), &server_read_fd);
+				FD_CLR((*client_it)->getSocketDesc(), &server_write_fd);
 			}
 		}
 	}
@@ -93,28 +98,30 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 {
 	if (FD_ISSET(sub_srv.getSocketDesc(), &readfds))
 		acceptConnection(sub_srv);
-	for (std::list<Client *>::iterator client = sub_srv.getClientList().begin(); client != sub_srv.getClientList().end(); client++)
+	std::list<Client *>::iterator client = sub_srv.getClientList().begin();
+	while(client != sub_srv.getClientList().end())
 	{
 		if (FD_ISSET((*client)->getSocketDesc(), &writefds) && (*client)->requestReceived() == true)
 		{
 			Request test = Request((*client)->getRequest(), sub_srv.getConf());
 			(*client)->sendRequest(test);
-			removeClient(client, sub_srv);
+			client = removeClient(client, sub_srv);
 		}
-		if (FD_ISSET((*client)->getSocketDesc(), &readfds))
+		if (client != sub_srv.getClientList().end() && FD_ISSET((*client)->getSocketDesc(), &readfds))
 		{
 			int ret_val;
 			if ((ret_val = (*client)->receiveRequest()) < 0)
 			{
 				DEBUG("--> deleting client")
-				removeClient(client, sub_srv);
+				client = removeClient(client, sub_srv);
 			}
 			else if (ret_val == 0)
 			{
 				(*client)->setReceived(true);
 			}
 		}
-	
+		if (*client)
+			client++;
 	}
 }
 

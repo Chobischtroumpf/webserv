@@ -6,7 +6,7 @@
 		{
 			"label": "make",
 			"type": "shell",
-			"command": "make re"
+			"command": "make re DEBUG=1"
 		}
 	]
 }
