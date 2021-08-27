@@ -295,3 +295,20 @@ bool	Request::getAutoIndex() const
 {
 	return _location.is_autoindex;
 }
+
+std::string	const &Request::getRedirection() const
+{
+	return (_location.redirection.back());
+}
+
+int	Request::getRedirectionCode() const
+{
+	if (!_location.redirection.empty())
+		return (stoi(_location.redirection.front()));
+	return (200);
+}
+
+bool	Request::hasRedirection() const
+{
+	return (!_location.redirection.empty());
+}

@@ -35,8 +35,8 @@ void	logServConfig(Config::server config)
 		for (std::list<std::string>::iterator it2 = (*it).second.method.begin(); it2 != (*it).second.method.end(); it2++)
 			std::clog << "	\033[0;34m[" << (*it2) << "]\033[0m";
 		std::clog << "\033[0;32m]\033[0m" << std::endl;
-		std::clog << "	\033[0;34m[redirections]\033[0m = \033[0;32m[";
-		for (std::list<std::string>::iterator it2 = (*it).second.redirections.begin(); it2 != (*it).second.redirections.end(); it2++)
+		std::clog << "	\033[0;34m[redirection]\033[0m = \033[0;32m[";
+		for (std::list<std::string>::iterator it2 = (*it).second.redirection.begin(); it2 != (*it).second.redirection.end(); it2++)
 			std::clog << " \033[0;34m[" << (*it2) << "]\033[0m";
 		std::clog << "\033[0;32m]\033[0m" << std::endl;
 	}

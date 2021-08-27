@@ -40,7 +40,7 @@ int readFile(std::string filename, std::string *content)
 	std::ifstream file (filename, std::ifstream::binary);
 	// file.open(filename, std::ios::in);
 	if (!file.is_open())
-		return (-2);
+		return (-1);
 	content->assign((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
 	return (1);
 }
