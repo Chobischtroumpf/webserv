@@ -2,7 +2,6 @@
 
 Config::location::location()
 {
-	this->index = "./default.html";
 	this->is_upload_enable = false;
 	this->is_autoindex = false;
 	this->cgi_extension = "php";
