@@ -11,12 +11,15 @@ void	ctrl_c(int signal)
 	{
 		for (std::list<SubServ>::iterator subserver = server->sub_serv.begin(); subserver != server->sub_serv.end(); subserver++)
 		{
-			for (std::list<Client>::iterator client = (*subserver).getClientList().begin(); client != (*subserver).getClientList().end(); client++)
-				close((*client).getSocketDesc());
+			for (std::list<Client *>::iterator client = (*subserver).getClientList().begin(); client != (*subserver).getClientList().end(); client++)
+				client = server->removeClient(client, (*subserver));
 			close((*subserver).getSocketDesc());
+			subserver = server->getSubServ().erase(subserver);
+			if (subserver == server->sub_serv.end())
+			break;
 		}
 		server->keep_going = false;
-		// exit(-1);
+		exit(0);
 	}
 }
 

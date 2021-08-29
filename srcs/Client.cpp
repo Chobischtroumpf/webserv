@@ -6,18 +6,23 @@
 ///	Constructor and Destructors ///
 ///////////////////////////////////
 
+Client::Client()
+{
+}
+
+
 Client::Client(int sd, std::string address)
 {
-	DEBUG("##### CLIENT INIT #####")
 	this->socket = sd;
+	DEBUG("##### CLIENT INIT #####" << std::to_string(sd))
 	setClientNonBlock();
 	this->client_address = address;
 	this->is_received = false;
 }
 
 Client::~Client(){
-	DEBUG("Client destructor")
-	}
+	DEBUG("Client destructor " << std::to_string(this->socket))
+}
 
 ///////////////////////////////////
 ///			  Methods			///

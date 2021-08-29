@@ -37,6 +37,10 @@ Response::Response(Request &request)
 	this->_response_header = _header.getHeader();
 }
 
+Response::~Response()
+{
+}
+
 ///////////////////////////////////
 ///			  Methods			///
 ///////////////////////////////////

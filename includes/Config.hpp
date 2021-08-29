@@ -15,6 +15,7 @@ class Config
 {
 	public:
 		struct location {
+			location();
 			std::string					name;
 			std::string					root;
 			std::list<std::string>		method;

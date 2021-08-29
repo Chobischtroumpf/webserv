@@ -37,17 +37,25 @@ Server::~Server()
 	sub_serv.clear();
 }
 
+std::list<SubServ>			&Server::getSubServ()
+{
+	return (this->sub_serv);
+}
+
 
 ///////////////////////////////////
 ///			  Methods			///
 ///////////////////////////////////
 
-void	Server::removeClient(std::list<Client>::iterator &client, SubServ sub_srv)
+std::list<Client *>::iterator	Server::removeClient(std::list<Client *>::iterator &client, SubServ &sub_srv)
 {
-	FD_CLR((*client).getSocketDesc(), &server_read_fd);
-	FD_CLR((*client).getSocketDesc(), &server_write_fd);
-	close((*client).getSocketDesc());
-	client = sub_srv.getClientList().erase(client);
+	std::list<Client *>::iterator tmp;
+	FD_CLR((*client)->getSocketDesc(), &server_read_fd);
+	FD_CLR((*client)->getSocketDesc(), &server_write_fd);
+	close((*client)->getSocketDesc());
+	delete (*client);
+	tmp = sub_srv.getClientList().erase(client);
+	return (tmp);
 }
 
 void Server::checkConnections(void)
@@ -56,19 +64,21 @@ void Server::checkConnections(void)
 	for (std::list<SubServ>::iterator subserv_it = this->sub_serv.begin();
 			subserv_it != this->sub_serv.end(); subserv_it++)
 	{
-		for (std::list<Client>::iterator client_it = (*subserv_it).getClientList().begin();
+		for (std::list<Client *>::iterator client_it = (*subserv_it).getClientList().begin();
 				 client_it != (*subserv_it).getClientList().end(); client_it++)
 		{
-			if (recv((*client_it).getSocketDesc(), c, 1, MSG_PEEK) == 0)
+			if (recv((*client_it)->getSocketDesc(), c, 1, MSG_PEEK) == 0)
 			{
-				close((*client_it).getSocketDesc());
+				close((*client_it)->getSocketDesc());
 				(*subserv_it).popClient((*client_it));
+				FD_CLR((*client_it)->getSocketDesc(), &server_read_fd);
+				FD_CLR((*client_it)->getSocketDesc(), &server_write_fd);
 			}
 		}
 	}
 }
 
-void Server::acceptConnection(SubServ &s_srv)
+int	Server::acceptConnection(SubServ &s_srv)
 {
 	//DEBUG("acceptConnection")
 	sockaddr_in client;
@@ -76,48 +86,57 @@ void Server::acceptConnection(SubServ &s_srv)
 	int new_sd;
 	if ((new_sd = accept(s_srv.getSocketDesc(), (sockaddr *)&client, &size)) < 0)
 	{
+		std::cout << "here accept failed" << std::endl;
 		if (errno == EBADF)
-			return;
+			return -1;
 		if (errno != EWOULDBLOCK)
 			throw ServerException("Accept Failed");
-		return ;
+		return -1;
 	}
-	Client c = Client(new_sd, ipBytesToIpv4(client.sin_addr));
-	s_srv.setClientList(c);
+	s_srv.setClientList(new Client(new_sd, ipBytesToIpv4(client.sin_addr)));
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
 	FD_SET(new_sd, &server_read_fd);
 	FD_SET(new_sd, &server_write_fd);
+	return (0);
 }
 
 void Server::upAndDownLoad(SubServ &sub_srv)
 {
 	if (FD_ISSET(sub_srv.getSocketDesc(), &readfds))
-	{
-		acceptConnection(sub_srv);
-	}
-	for (std::list<Client>::iterator client = sub_srv.getClientList().begin(); client != sub_srv.getClientList().end(); client++)
-	{
-		if (FD_ISSET((*client).getSocketDesc(), &writefds) && (*client).requestReceived() == true)
+		try
 		{
-			Request test = Request((*client).getRequest(), sub_srv.getConf());
-			(*client).sendRequest(test);
-			removeClient(client, sub_srv);
+			std::cout << "in here tho" << std::endl;
+			acceptConnection(sub_srv);
 		}
-		if (FD_ISSET((*client).getSocketDesc(), &readfds))
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
+	std::list<Client *>::iterator client = sub_srv.getClientList().begin();
+	while(client != sub_srv.getClientList().end())
+	{
+		if (FD_ISSET((*client)->getSocketDesc(), &writefds) && (*client)->requestReceived() == true)
+		{
+			Request test = Request((*client)->getRequest(), sub_srv.getConf());
+			(*client)->sendRequest(test);
+			client = removeClient(client, sub_srv);
+		}
+		if (client != sub_srv.getClientList().end() && FD_ISSET((*client)->getSocketDesc(), &readfds))
 		{
 			int ret_val;
-			if ((ret_val = (*client).receiveRequest()) < 0)
+			if ((ret_val = (*client)->receiveRequest()) < 0)
 			{
 				DEBUG("--> deleting client")
-				removeClient(client, sub_srv);
+				client = removeClient(client, sub_srv);
 			}
 			else if (ret_val == 0)
 			{
-				(*client).setReceived(true);
+				(*client)->setReceived(true);
 			}
 		}
-	
+		if (*client)
+			client++;
 	}
 }
 
@@ -130,6 +149,7 @@ void	Server::listenIt()
 {
 	DEBUG("##### SERVER LISTENING #####")
 	FD_ZERO(&server_read_fd);
+	FD_ZERO(&server_write_fd);
 	for (std::list<SubServ>::iterator i = sub_serv.begin(); i != sub_serv.end(); i++)
 	{
 		FD_SET((*i).getSocketDesc(), &server_read_fd);

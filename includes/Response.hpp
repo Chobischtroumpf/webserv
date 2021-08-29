@@ -18,6 +18,7 @@ class Response
 		Response();
 		Response(Response &Other);
 		Response(Request &request);
+		~Response();
 
 		std::string		getErrorPage(Config::server server_config);
 		std::string		setErrorCode(Config::server server_config);
