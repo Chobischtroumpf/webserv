@@ -37,6 +37,11 @@ Server::~Server()
 	sub_serv.clear();
 }
 
+std::list<SubServ>			&Server::getSubServ()
+{
+	return (this->sub_serv);
+}
+
 
 ///////////////////////////////////
 ///			  Methods			///
@@ -73,7 +78,7 @@ void Server::checkConnections(void)
 	}
 }
 
-void Server::acceptConnection(SubServ &s_srv)
+int	Server::acceptConnection(SubServ &s_srv)
 {
 	//DEBUG("acceptConnection")
 	sockaddr_in client;
@@ -81,23 +86,33 @@ void Server::acceptConnection(SubServ &s_srv)
 	int new_sd;
 	if ((new_sd = accept(s_srv.getSocketDesc(), (sockaddr *)&client, &size)) < 0)
 	{
+		std::cout << "here accept failed" << std::endl;
 		if (errno == EBADF)
-			return;
+			return -1;
 		if (errno != EWOULDBLOCK)
 			throw ServerException("Accept Failed");
-		return ;
+		return -1;
 	}
 	s_srv.setClientList(new Client(new_sd, ipBytesToIpv4(client.sin_addr)));
 	if (new_sd > this->max_sd)
 		this->max_sd = new_sd;
 	FD_SET(new_sd, &server_read_fd);
 	FD_SET(new_sd, &server_write_fd);
+	return (0);
 }
 
 void Server::upAndDownLoad(SubServ &sub_srv)
 {
 	if (FD_ISSET(sub_srv.getSocketDesc(), &readfds))
-		acceptConnection(sub_srv);
+		try
+		{
+			std::cout << "in here tho" << std::endl;
+			acceptConnection(sub_srv);
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << '\n';
+		}
 	std::list<Client *>::iterator client = sub_srv.getClientList().begin();
 	while(client != sub_srv.getClientList().end())
 	{
@@ -134,6 +149,7 @@ void	Server::listenIt()
 {
 	DEBUG("##### SERVER LISTENING #####")
 	FD_ZERO(&server_read_fd);
+	FD_ZERO(&server_write_fd);
 	for (std::list<SubServ>::iterator i = sub_serv.begin(); i != sub_serv.end(); i++)
 	{
 		FD_SET((*i).getSocketDesc(), &server_read_fd);

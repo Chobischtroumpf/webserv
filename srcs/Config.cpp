@@ -1,5 +1,14 @@
 #include "Config.hpp"
 
+Config::location::location()
+{
+	this->index = "./default.html";
+	this->is_upload_enable = false;
+	this->is_autoindex = false;
+	this->cgi_extension = "php";
+	this->cgi_path = "/usr/bin/";
+}
+
 Config::Config(std::string file)
 {
 	DEBUG("##### CONFIG #####\n")
@@ -134,14 +143,15 @@ Config::~Config()
 
 	for (std::list<server>::iterator it = servers.begin(); it != servers.end(); it++)
 	{
+		it->names.clear();
 		it->error_pages.clear();
+		it->locations.clear();
 		for (std::map<std::string, Config::location>::iterator it1 = (it->locations).begin();
 			it1 != it->locations.end(); it1++)
 		{
 			it1->second.method.clear();
 			it1->second.redirection.clear();
 		}
-		it->locations.clear();
 	}
 	servers.clear();
 }

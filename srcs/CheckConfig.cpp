@@ -112,8 +112,6 @@ void	Config::checkLocation(Config::location retval)
 		throw ParsingException(0,"missing location name");
 	if (retval.root.empty())
 		throw ParsingException(0,"missing root directory for location");
-	if (retval.index.empty())
-		retval.index = "./default.html";
 	if (retval.method.empty())
 	{
 		retval.method.push_back("GET");
@@ -122,10 +120,6 @@ void	Config::checkLocation(Config::location retval)
 	}
 	if (retval.is_upload_enable && retval.upload_path.empty())
 		retval.upload_path = "./";
-	if (retval.cgi_extension.empty())
-		retval.cgi_extension = "php";
-	if (retval.cgi_path.empty())
-		retval.cgi_path = "/usr/bin/";
 	if (!retval.redirection.empty())
 	{
 		if (retval.redirection.size() != 2 ||

@@ -26,14 +26,16 @@ class Server
 
 		void							listenIt();
 		void							checkConnections();
-		void							acceptConnection(SubServ &s_srv);
 		void							upAndDownLoad(SubServ &s_srv);
+		int								acceptConnection(SubServ &s_srv);
 		std::list<Client *>::iterator	removeClient(std::list<Client *>::iterator &client, SubServ &sub_srv);
 
 //displays
 		fd_set						getReadfds();
 		sockaddr_in					getAddr();
 		std::string					getPass();
+		std::list<SubServ>			&getSubServ();
+
 	
 		Server &operator=(const Server& Other);
 		~Server();
