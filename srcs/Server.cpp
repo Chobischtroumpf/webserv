@@ -86,7 +86,7 @@ int	Server::acceptConnection(SubServ &s_srv)
 	int new_sd;
 	if ((new_sd = accept(s_srv.getSocketDesc(), (sockaddr *)&client, &size)) < 0)
 	{
-		std::cout << "here accept failed" << std::endl;
+		//std::cout << "here accept failed" << std::endl;
 		if (errno == EBADF)
 			return -1;
 		if (errno != EWOULDBLOCK)
@@ -106,7 +106,7 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 	if (FD_ISSET(sub_srv.getSocketDesc(), &readfds))
 		try
 		{
-			std::cout << "in here tho" << std::endl;
+			//std::cout << "in here tho" << std::endl;
 			acceptConnection(sub_srv);
 		}
 		catch(const std::exception& e)
@@ -127,7 +127,6 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 			int ret_val;
 			if ((ret_val = (*client)->receiveRequest()) < 0)
 			{
-				DEBUG("--> deleting client")
 				client = removeClient(client, sub_srv);
 			}
 			else if (ret_val == 0)

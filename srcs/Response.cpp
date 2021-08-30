@@ -16,7 +16,6 @@ Response::Response(Request &request)
 	Config::server server_config = request.getConf();
 	std::string method = request.getMethod();
 	_error_code = request.getCode();
-	DEBUG(request.getAutoIndex())
 	this->_header = ResponseHeader(request);
 	if (request.hasRedirection() && _error_code == 200)
 	{
@@ -32,7 +31,7 @@ Response::Response(Request &request)
 	else if (method == "DELETE")
 		deleteMethod(request);
 	
-	std::cout << _error_code << std::endl;
+	//std::cout << _error_code << std::endl;
 	fillHeader();
 	this->_response_header = _header.getHeader();
 }
@@ -78,18 +77,17 @@ std::string getFileDate(void)
 	char buffer[80];
 	strftime(buffer,80,"%d_%b_%Y_%Hh_%Mm_%Ss",ltm);
 	std::string str_buf(buffer);
-	return (std::string("file_") +trim(str_buf, " "));
+	return (std::string("file_") + trim(str_buf, " "));
 }
 
 void	Response::postMethod(Request &request, Config::server &server_config)
 {
-	DEBUG("POST")
 	int fd = 0;
 	std::string tmp_upload = server_config.root + ltrim(request.getLocation().upload_path, "./") + getFileDate(); 
-	std::cout << tmp_upload << std::endl;
+	//std::cout << tmp_upload << std::endl;
 	if (isDir(request.getPathOnMachine()))
 	{
-		std::cout << "is dir" << std::endl;
+		//std::cout << "is dir" << std::endl;
 		_error_code = 404;
 		setError(server_config);
 		return ;
@@ -99,7 +97,6 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 	{
 		_error_code = 500;
 		setError(server_config);
-		DEBUG("OPEN FAILED");
 	}
 	else 
 	{
@@ -113,8 +110,6 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 
 void	Response::deleteMethod(Request &request)
 {
-	DEBUG("DELETE")
-
 	//check if file exist . If not -> 204
 	if (!file_exists(request.getPathOnMachine()))
 		_error_code = 204;
@@ -142,7 +137,7 @@ std::string	Response::makeIndex(Request &request)
 	struct dirent *ent;
 	std::string retval = "<html><head></head><body> <h1>Webserv's autoindex:</h1>\n";
 	std::string path = request.getPathOnMachine();
-	std::cout << path << std::endl;
+	//std::cout << path << std::endl;
 	if ((dir = opendir(path.c_str())) != NULL)
 	{
 		while ((ent = readdir (dir)) != NULL)
