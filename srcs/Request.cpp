@@ -53,7 +53,7 @@ Request::Request(std::string req, Config::server &conf)
 		makePathOnMachine();
 		checkFile();
 	}
-	displayRequest();
+	// displayRequest();
 }
 
 ///////////////////////////////////
@@ -104,8 +104,6 @@ bool Request::checkSize()
 			scale = 1000;
 		else if (tmp.back() == 'm' || tmp.back() == 'M')
 			scale = 1000000;
-		else
-			DEBUG("Problem with max_body_size")
 		max_bytes = atoi((tmp.substr(0, tmp.length() - 1)).c_str()) * scale;
 	}
 	if (atoi(_header_fields["Content-Length"].c_str()) > max_bytes)
@@ -138,7 +136,6 @@ bool Request::checkPath(Config::server &conf)
 
 bool Request::checkFile()
 {
-	std::cout << _path_on_machine << std::endl;
 	if (isFile(_path_on_machine) || !this->_method.compare("POST"))
 	{
 		_status_code = 200;
@@ -157,12 +154,14 @@ bool Request::checkFile()
 			}
 		}
 		if (_location.is_autoindex)
-		{
 			_status_code = 200;
-			DEBUG("autoindex on")
-		}
 		else
-			_status_code = 403;
+		{
+			if (_location.redirection.empty())
+				_status_code = 403;
+			else
+				_status_code = 200;
+		}
 		return (0);
 	}
 	else
@@ -206,7 +205,7 @@ void Request::displayRequest()
 	std::cout << "Method : " << getMethod() << '\n';
 	std::cout << "Version : " << getVersion() << '\n';
 	std::cout << "Path : " << getPath() << '\n';
-	std::cout << "Path : " << getPathOnMachine() << '\n';
+	std::cout << "Path on machine : " << getPathOnMachine() << '\n';
 	std::map<std::string, std::string> header_fields = getHeaderFields();
 	for (it = header_fields.begin(); it != header_fields.end(); it++)
 		std::cout << it->first << ": " << it->second << '\n';

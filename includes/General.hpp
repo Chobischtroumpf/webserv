@@ -70,5 +70,6 @@
 	bool		isFile(const std::string& str);
 	bool		file_exists(const std::string& str);
 	bool		isDir(const std::string& str);
+	void		ctrl_c(int signal);
 
 #endif

@@ -121,9 +121,9 @@ void	Config::checkLocation(Config::location retval)
 	if (retval.is_upload_enable && retval.upload_path.empty())
 		retval.upload_path = "./";
 	if (!retval.redirection.empty())
-	{
 		if (retval.redirection.size() != 2 ||
-			!(retval.redirection.front() == "301" || retval.redirection.front() == "302") )
-			throw ParsingException(0, "redirection is malformated");
-	}
+			!(retval.redirection.front() == "301" || retval.redirection.front() == "302" || retval.redirection.front() == "307"))
+			throw ParsingException(0, "redirection is malformed");
+	if (!(retval.max_body_size.back() != 'k' || retval.max_body_size.back() != 'K' || retval.max_body_size.back() != 'm' || retval.max_body_size.back() != 'M'))
+		throw ParsingException(0, "max_body_size is malformed");
 }

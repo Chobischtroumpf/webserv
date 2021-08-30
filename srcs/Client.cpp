@@ -14,15 +14,12 @@ Client::Client()
 Client::Client(int sd, std::string address)
 {
 	this->socket = sd;
-	DEBUG("##### CLIENT INIT #####" << std::to_string(sd))
 	setClientNonBlock();
 	this->client_address = address;
 	this->is_received = false;
 }
 
-Client::~Client(){
-	DEBUG("Client destructor " << std::to_string(this->socket))
-}
+Client::~Client(){}
 
 ///////////////////////////////////
 ///			  Methods			///
@@ -69,7 +66,6 @@ int	Client::receiveRequest()
 int	Client::sendRequest(Request &request)
 {
 	Response response(request);
-	std::cout  << response.getResponse() << std::endl;
 	send(socket, response.getResponse().c_str(),response.getResponse().size(), 0);
 	return (0);
 }

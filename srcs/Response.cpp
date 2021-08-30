@@ -16,7 +16,6 @@ Response::Response(Request &request)
 	Config::server server_config = request.getConf();
 	std::string method = request.getMethod();
 	_error_code = request.getCode();
-	DEBUG(request.getAutoIndex())
 	this->_header = ResponseHeader(request);
 	if (request.hasRedirection() && _error_code == 200)
 	{
@@ -31,8 +30,6 @@ Response::Response(Request &request)
 		postMethod(request, server_config);
 	else if (method == "DELETE")
 		deleteMethod(request);
-	
-	std::cout << _error_code << std::endl;
 	fillHeader();
 	this->_response_header = _header.getHeader();
 }
@@ -99,7 +96,6 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 	{
 		_error_code = 500;
 		setError(server_config);
-		DEBUG("OPEN FAILED");
 	}
 	else 
 	{

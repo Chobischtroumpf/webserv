@@ -10,7 +10,6 @@ Config::location::location()
 
 Config::Config(std::string file)
 {
-	DEBUG("##### CONFIG #####\n")
 	if (file.compare(file.size() - 5, 5, ".conf") != 0)
 		throw ParsingException(0, "Config file needs .conf extention");
 	std::string file_content;
@@ -49,7 +48,6 @@ size_t	Config::getScope(std::string file, size_t starting_pos)
 
 Config::server	Config::parseServer(std::string server_scope)
 {
-	//DEBUG("parseServer")
 	size_t	starting_pos = 0;
 	size_t	closing_brace;
 	Config::server ret_server;
@@ -77,7 +75,6 @@ Config::server	Config::parseServer(std::string server_scope)
 
 Config::location	Config::parseLocation(std::string location_scope)
 {
-	//DEBUG("parseLocation")
 	std::string element;
 	size_t pos = 0;
 	size_t start_name;
@@ -137,7 +134,6 @@ std::list<Config::server>		&Config::getServers()
 
 Config::~Config()
 {
-	//DEBUG("config destructor")
 	std::map<std::string, location > locations;
 
 	for (std::list<server>::iterator it = servers.begin(); it != servers.end(); it++)

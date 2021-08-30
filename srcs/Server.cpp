@@ -80,13 +80,11 @@ void Server::checkConnections(void)
 
 int	Server::acceptConnection(SubServ &s_srv)
 {
-	//DEBUG("acceptConnection")
 	sockaddr_in client;
 	socklen_t size = sizeof(client);
-	int new_sd;
-	if ((new_sd = accept(s_srv.getSocketDesc(), (sockaddr *)&client, &size)) < 0)
+	int new_sd = accept(s_srv.getSocketDesc(), (sockaddr *)&client, &size);
+	if (new_sd < 0)
 	{
-		std::cout << "here accept failed" << std::endl;
 		if (errno == EBADF)
 			return -1;
 		if (errno != EWOULDBLOCK)
@@ -106,12 +104,12 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 	if (FD_ISSET(sub_srv.getSocketDesc(), &readfds))
 		try
 		{
-			std::cout << "in here tho" << std::endl;
 			acceptConnection(sub_srv);
 		}
 		catch(const std::exception& e)
 		{
 			std::cerr << e.what() << '\n';
+			ctrl_c(0);
 		}
 	std::list<Client *>::iterator client = sub_srv.getClientList().begin();
 	while(client != sub_srv.getClientList().end())
@@ -126,14 +124,9 @@ void Server::upAndDownLoad(SubServ &sub_srv)
 		{
 			int ret_val;
 			if ((ret_val = (*client)->receiveRequest()) < 0)
-			{
-				DEBUG("--> deleting client")
 				client = removeClient(client, sub_srv);
-			}
 			else if (ret_val == 0)
-			{
 				(*client)->setReceived(true);
-			}
 		}
 		if (*client)
 			client++;
