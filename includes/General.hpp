@@ -10,6 +10,7 @@
 # include <sys/resource.h>
 # include <signal.h>
 # include <dirent.h>
+# include <stdio.h>
 # include <errno.h>
 # include <sys/select.h>
 # include <sys/socket.h>
@@ -29,6 +30,8 @@
 # include <algorithm>
 # include <iterator>
 # include <iomanip>
+# include <fstream>
+# include <iostream>
 
 # include "Exceptions.hpp"
 # include "Config.hpp"
@@ -64,5 +67,8 @@
 	size_t		countChar(char c, std::string str);
 	int			contentType(std::string clientRequest);
 	size_t		contentLength(std::string client_request);
+	bool		isFile(const std::string& str);
+	bool		file_exists(const std::string& str);
+	bool		isDir(const std::string& str);
 
 #endif

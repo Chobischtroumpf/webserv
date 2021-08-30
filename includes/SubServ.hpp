@@ -14,18 +14,18 @@ class SubServ
 		int						option_buffer;
 		struct sockaddr_in		srv_address;
 		struct Config::server	server_conf;
-		std::list<Client>		client_list;
+		std::list<Client *>		client_list;
 	public:
 		SubServ(Config::server serv, Server *main_serv);
 		int					getSocketDesc();
 		sockaddr_in			getAddress();
-		Config::server		getConf();
-		std::list<Client>	&getClientList();
+		Config::server		&getConf();
+		std::list<Client *>	&getClientList();
 
 		Server			&getMainServer();
 		int				receiveRequest(int sd, Client client);
-		void			setClientList(const Client &client);
-		void			popClient(const Client &client);
+		void			setClientList(Client *client);
+		void			popClient(Client *client);
 		void			createSD();
 		void			setSockOption();
 		void			setSubServNonBlock();

@@ -71,6 +71,7 @@
 		"memory_resource": "cpp",
 		"clocale": "cpp",
 		"fstream": "cpp",
-		"iomanip": "cpp"
+		"iomanip": "cpp",
+		"__memory": "cpp"
 	}
 }

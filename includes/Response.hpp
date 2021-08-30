@@ -5,27 +5,36 @@
 # include "Request.hpp"
 # include "ResponseHeader.hpp"
 
+
 class Response
 {
 	private:
-		ResponseHeader	header;
-		int				error_code;
-		std::string		response_body;
-		std::string		response_header;
+		ResponseHeader	_header;
+		std::string		_datetime;
+		int				_error_code;
+		std::string		_response_body;
+		std::string		_response_header;
+		int				_file_counter;
 	public:
 		Response();
 		Response(Response &Other);
-		Response(HttpRequest request, Config::server server_config);
+		Response(Request &request);
+		~Response();
 
-		std::string		getErrorFile(int code, Config::server server_config);
+		std::string		getErrorPage(Config::server server_config);
 		std::string		setErrorCode(Config::server server_config);
 		std::string		getResponse(void);
 		std::string		getResponseBody(void);
 		std::string		getResponseHeader(void);
 		ResponseHeader	&getResponseHeaderObj(void);
-		void			getMethod(HttpRequest request, Config::server &server_config);
-		void			postMethod(HttpRequest request, Config::server &server_config);
-		void			deleteMethod(HttpRequest request, Config::server &server_config);
+		void			setError(Config::server server_config);
+
+		void			getMethod(Request &request, Config::server &server_config);
+		void			postMethod(Request &request, Config::server &server_config);
+		void			deleteMethod(Request &request);
+
+		std::string		makeIndex(Request &request);
+		void 		    fillHeader();
 };
 
 #endif 

@@ -1,93 +1,203 @@
 #include "Response.hpp"
 
-Response::Response()
-{}
+///////////////////////////////////
+///	Constructor and Destructors ///
+///////////////////////////////////
+
+Response::Response(){}
 
 Response::Response(Response &Other)
 {
-	this->header = Other.getResponseHeaderObj();
+	this->_header = Other.getResponseHeaderObj();
 }
 
-std::string			Response::getErrorFile(int code ,Config::server server_config)
+Response::Response(Request &request)
 {
-	(void) code;
-	(void) server_config;
-	std::string ret = std::string("Temporary error handling");
-	return (ret);
-}
-
-std::string	Response::setErrorCode(Config::server server_config)
-{
-	std::string string = "";
-	switch (error_code)
+	Config::server server_config = request.getConf();
+	std::string method = request.getMethod();
+	_error_code = request.getCode();
+	DEBUG(request.getAutoIndex())
+	this->_header = ResponseHeader(request);
+	if (request.hasRedirection() && _error_code == 200)
 	{
-		case 400:
-			return(getErrorFile(400, server_config));
-		case 403:
-			return(getErrorFile(403, server_config));
-		case 404:
-			return(getErrorFile(404, server_config));
-		case 405:
-			return(getErrorFile(405, server_config));
-		case 413:
-			return(getErrorFile(413, server_config));
-		default:
-			break;
+		_header.setLocation(request.getRedirectionCode(), request.getRedirection());
+		_error_code = request.getRedirectionCode();
 	}
-	return (string);
+	if (_error_code >= 300)
+		setError(server_config);
+	else if (method == "GET")
+		getMethod(request, server_config);
+	else if (method == "POST")
+		postMethod(request, server_config);
+	else if (method == "DELETE")
+		deleteMethod(request);
+	
+	std::cout << _error_code << std::endl;
+	fillHeader();
+	this->_response_header = _header.getHeader();
 }
 
-Response::Response(HttpRequest request, Config::server server_config)
+Response::~Response()
 {
-	// std::map<std::string, std::string> headers = request.GetHeaderFields();
-	// check httpRequest for method
-	std::string method = request.GetMethod();
-	error_code = request.GetCode();
-	
-	if ((this->response_body = setErrorCode(server_config)) == "")
+}
+
+///////////////////////////////////
+///			  Methods			///
+///////////////////////////////////
+
+void	Response::setError(Config::server server_config)
+{
+	this->_response_body = getErrorPage(server_config);
+	this->_header.setErrorCode(_error_code);
+	_header.setContentLength(this->_response_body.size());
+}
+
+
+void 		Response::fillHeader()
+{
+	_header.setContentLength(_response_body.length());
+	_header.generate_datetime();
+}
+
+void	Response::getMethod(Request &request, Config::server &server_config)
+{DEBUG("GET")
+	if (request.getAutoIndex() && isDir(request.getPathOnMachine()))
+		_response_body = makeIndex(request);
+	else if (_error_code == 200)
+		readFile(request.getPathOnMachine(), &_response_body);
+	else
+		setError(server_config);
+	if (_error_code == 500) // if first readfile fails, we have to put _error_code to 500
+		setError(server_config);
+}
+
+std::string getFileDate(void)
+{
+	std::time_t t = std::time(0);
+   	tm *ltm = localtime(&t);
+	char buffer[80];
+	strftime(buffer,80,"%d_%b_%Y_%Hh_%Mm_%Ss",ltm);
+	std::string str_buf(buffer);
+	return (std::string("file_") +trim(str_buf, " "));
+}
+
+void	Response::postMethod(Request &request, Config::server &server_config)
+{
+	DEBUG("POST")
+	int fd = 0;
+	std::string tmp_upload = server_config.root + ltrim(request.getLocation().upload_path, "./") + getFileDate(); 
+	std::cout << tmp_upload << std::endl;
+	if (isDir(request.getPathOnMachine()))
 	{
-		if (method == "GET")
-			getMethod(request, server_config);
-		else if (method == "POST")
-			postMethod(request, server_config);
-		else if (method == "DELETE")
-			deleteMethod(request, server_config);
+		std::cout << "is dir" << std::endl;
+		_error_code = 404;
+		setError(server_config);
+		return ;
 	}
 	
+	if ((fd = open(tmp_upload.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) == -1)
+	{
+		_error_code = 500;
+		setError(server_config);
+		DEBUG("OPEN FAILED");
+	}
+	else 
+	{
+		write(fd, request.getBody().c_str() , request.getBody().length() );
+		close(fd); 
+		readFile(request.getPathOnMachine(), &_response_body);
+	}
+	(void)request;
+	(void)server_config;
 }
+
+void	Response::deleteMethod(Request &request)
+{
+	DEBUG("DELETE")
+
+	//check if file exist . If not -> 204
+	if (!file_exists(request.getPathOnMachine()))
+		_error_code = 204;
+	else
+	{
+		if (remove(request.getPathOnMachine().c_str()))
+			_error_code = 202; // request accepted but not executed
+		else
+			_error_code = 200;
+	}
+}
+
+std::string			Response::getErrorPage(Config::server server_config)
+{
+	std::string ret_val;
+	if (!server_config.error_pages[_error_code].empty())
+		if (readFile(server_config.error_pages[_error_code], &ret_val) < 0)
+			return ("<html>the file you were looking for does not exist</html>");
+	return (ret_val);
+}
+
+std::string	Response::makeIndex(Request &request)
+{
+	DIR *dir;
+	struct dirent *ent;
+	std::string retval = "<html><head></head><body> <h1>Webserv's autoindex:</h1>\n";
+	std::string path = request.getPathOnMachine();
+	std::cout << path << std::endl;
+	if ((dir = opendir(path.c_str())) != NULL)
+	{
+		while ((ent = readdir (dir)) != NULL)
+		{
+			if (isFile((path+"/"+ent->d_name).c_str()))
+			{
+				retval += "<p><a href=\"";
+				retval += request.getPath() + ent->d_name;
+				retval += "\">";
+				retval += ent->d_name;
+				retval += "</a></p>\n";
+			}
+			else if (isDir((path+"/"+ent->d_name).c_str()))
+			{
+				retval += "<p><a href=\"";
+				retval += request.getPath() + ent->d_name;
+				retval += "/\">";
+				retval += ent->d_name;
+				retval += "</a></p>\n";
+			}
+		}
+		retval += "</body></html>";
+	}
+	else
+	{
+		_error_code = 500;
+		return ("");
+	}
+	return (retval);
+}
+
+///////////////////////////////////
+///			  Getters			///
+///////////////////////////////////
+
 
 std::string Response::getResponse(void)
-{
-	return (response_header + response_body);
+{	
+	return (_response_header + _response_body);
 }
 
 std::string Response::getResponseBody(void)
 {
-	return (response_body);
+	return (_response_body);
 }
 
 std::string Response::getResponseHeader(void)
 {
-	return (response_header);
+	return (_response_header);
 }
 
 ResponseHeader	&Response::getResponseHeaderObj(void)
 {
-	return (header);
+	return (_header);
 }
 
-void	Response::getMethod(HttpRequest request, Config::server &server_config)
-{
-	(void)request;
-	(void)server_config;
-}
-void	Response::postMethod(HttpRequest request, Config::server &server_config)
-{
-	(void)request;
-	(void)server_config;
-}
-void	Response::deleteMethod(HttpRequest request, Config::server &server_config)
-{
-	(void)request;
-	(void)server_config;
-}
+
+

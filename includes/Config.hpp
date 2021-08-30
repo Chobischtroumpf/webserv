@@ -9,16 +9,17 @@
 # include <list>
 # include <algorithm>
 
-std::string readFile(std::string file);
+int readFile(std::string filename, std::string *content);
 
 class Config
 {
 	public:
 		struct location {
+			location();
 			std::string					name;
 			std::string					root;
 			std::list<std::string>		method;
-			std::list<std::string>		redirections;
+			std::list<std::string>		redirection;
 			std::string					index;
 			std::string					upload_path;
 			bool						is_autoindex;
@@ -31,7 +32,7 @@ class Config
 				this->name = copied.name;
 				this->root = copied.root;
 				this->method = copied.method;
-				this->redirections = copied.redirections;
+				this->redirection = copied.redirection;
 				this->index = copied.index;
 				this->upload_path = copied.upload_path;
 				this->is_autoindex = copied.is_autoindex;

@@ -1,56 +1,46 @@
 #include "General.hpp"
 #include "Client.hpp"
+#include "Response.hpp"
+
+///////////////////////////////////
+///	Constructor and Destructors ///
+///////////////////////////////////
+
+Client::Client()
+{
+}
+
 
 Client::Client(int sd, std::string address)
 {
-	DEBUG("##### CLIENT INIT #####")
 	this->socket = sd;
+	DEBUG("##### CLIENT INIT #####" << std::to_string(sd))
 	setClientNonBlock();
 	this->client_address = address;
 	this->is_received = false;
 }
 
+Client::~Client(){
+	DEBUG("Client destructor " << std::to_string(this->socket))
+}
+
+///////////////////////////////////
+///			  Methods			///
+///////////////////////////////////
+
 void Client::setClientNonBlock()
 {
-	//DEBUG("setClientNonBlock")
 	if (fcntl(this->socket, F_SETFL, O_NONBLOCK) < 0)
 		throw ("Error setting Client to nonblocking");
 }
 
-int		Client::getSocketDesc()
-{
-	//DEBUG("getSocketDesc client")
-	return (this->socket);
-}
-
-std::string	Client::getRequest(void)
-{
-	//DEBUG("getRequest")
-	return (this->raw_request);
-}
-
-std::string	Client::getAddress(void)
-{
-	return (this->client_address);
-}
-
-void	Client::setReceived(bool received)
-{
-	//DEBUG("setReceived")
-	this->is_received = received;
-}
-
-
 bool	Client::requestReceived()
 {
-	//DEBUG("requestReceived")
 	return (this->is_received);
 }
 
-// return -1 == error, 0 == On a fini de lire, 1 == Il reste des choses a lire
 int	Client::receiveRequest()
 {
-	//DEBUG("receiveRequest")
 	size_t	pos;
 	int read_ret;
 	char buffer[BUFFER_SIZE + 1];
@@ -61,7 +51,6 @@ int	Client::receiveRequest()
 	raw_request.append(buffer);
 	int	type_content = contentType(raw_request);
 	std::string end_body = type_content == 2 ? "0\r\n\r\n" : "\r\n\r\n";
-	//check si on a tout le header
 	if ((pos = raw_request.find("\r\n\r\n")) != std::string::npos && type_content == 0)
 		return (0);
 	if (type_content > 0)
@@ -77,13 +66,11 @@ int	Client::receiveRequest()
 	return (1);
 }
 
-int	Client::sendRequest(void)
+int	Client::sendRequest(Request &request)
 {
-	// create Response object with HttpRequest
-	// once created, get response string
-	// write response string into client's socket
-	// if write = -1 client disconnected, call pop client
-	// set is_received to false
+	Response response(request);
+	std::cout  << response.getResponse() << std::endl;
+	send(socket, response.getResponse().c_str(),response.getResponse().size(), 0);
 	return (0);
 }
 
@@ -96,6 +83,38 @@ void Client::printClient(void)
 	std::cout << std::left << "|  - Request: " << getRequest() << std::endl;
 	std::cout << std::left << "+-" << std::endl ;
 }
+
+///////////////////////////////////
+///			  Getters			///
+///////////////////////////////////
+
+int		Client::getSocketDesc()
+{
+	return (this->socket);
+}
+
+std::string	Client::getRequest(void)
+{
+	return (this->raw_request);
+}
+
+std::string	Client::getAddress(void)
+{
+	return (this->client_address);
+}
+
+///////////////////////////////////
+///			  Setters			///
+///////////////////////////////////
+
+void	Client::setReceived(bool received)
+{
+	this->is_received = received;
+}
+
+///////////////////////////////////
+///			Overloads			///
+///////////////////////////////////
 
 Client &Client::operator=(const Client& Other)
 {
@@ -124,8 +143,3 @@ std::ostream &operator<<(std::ostream &os, Client &other)
 	<< "  - Request: " << other.getRequest() << std::endl;
 	return (os);
 }
-
-
-Client::~Client(){
-	//DEBUG("Client destructor")
-	}

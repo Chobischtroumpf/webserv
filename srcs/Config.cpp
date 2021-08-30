@@ -1,31 +1,26 @@
 #include "Config.hpp"
 
-// std::list<std::string> Config::populateLocationValue() 
-// {DEBUG("populateLocationValue")
-// 	std::list<std::string> ret;
-// 	ret.push_back("name");
-// 	ret.push_back("root");
-// 	ret.push_back("method");
-// 	ret.push_back("index");
-// 	ret.push_back("upload_path");
-// 	ret.push_back("autoindex");
-// 	ret.push_back("upload_enable");
-// 	ret.push_back("cgi_extension");
-// 	ret.push_back("cgi_path");
-// 	ret.push_back("client_max_body_size");
-// 	return (ret);
-// };
+Config::location::location()
+{
+	this->is_upload_enable = false;
+	this->is_autoindex = false;
+	this->cgi_extension = "php";
+	this->cgi_path = "/usr/bin/";
+}
 
 Config::Config(std::string file)
 {
 	DEBUG("##### CONFIG #####\n")
 	if (file.compare(file.size() - 5, 5, ".conf") != 0)
 		throw ParsingException(0, "Config file needs .conf extention");
-	std::string file_content = skipComment(readFile(file));
+	std::string file_content;
+	int tmp;
+	tmp = readFile(file, &file_content);
+	if (tmp == -1)
+		throw ParsingException(0, "Error while Reading " + file + ".");
+	file_content = skipComment(file_content);
 	size_t starting_pos, pos = 0;
 	Config::server serveur;
-	// this->location_values = populateLocationValue();
-
 	if(countChar('{', file_content) != countChar('}', file_content))
 		throw ParsingException(0, "error in config file : unmatched bracket");
 	while ((starting_pos = file_content.find("server", pos)) != std::string::npos)
@@ -39,7 +34,6 @@ Config::Config(std::string file)
 
 size_t	Config::getScope(std::string file, size_t starting_pos)
 {
-	//DEBUG("getScope")
 	std::vector<size_t> pos(2, starting_pos);
 	int opening_brace = 1;
 	int	closing_brace = 0;
@@ -106,12 +100,14 @@ Config::location	Config::parseLocation(std::string location_scope)
 			retval.root = tmp_list.front();
 		else if (name == "method")
 			retval.method = tmp_list;
-		else if (name == "redirections")
-			retval.redirections = tmp_list;
+		else if (name == "redirection")
+			retval.redirection = tmp_list;
 		else if (name == "index")
 			retval.index = tmp_list.front();
 		else if (name == "upload_path")
 			retval.upload_path = tmp_list.front();
+		else if (name == "client_max_body_size")
+			retval.max_body_size = tmp_list.front();
 		else if (name == "autoindex")
 			if (tmp_list.front() == "on")
 				retval.is_autoindex = true;
@@ -146,14 +142,15 @@ Config::~Config()
 
 	for (std::list<server>::iterator it = servers.begin(); it != servers.end(); it++)
 	{
+		it->names.clear();
 		it->error_pages.clear();
+		it->locations.clear();
 		for (std::map<std::string, Config::location>::iterator it1 = (it->locations).begin();
 			it1 != it->locations.end(); it1++)
 		{
 			it1->second.method.clear();
-			it1->second.redirections.clear();
+			it1->second.redirection.clear();
 		}
-		it->locations.clear();
 	}
 	servers.clear();
 }

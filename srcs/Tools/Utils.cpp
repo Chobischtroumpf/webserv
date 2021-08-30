@@ -27,6 +27,19 @@ void	logServConfig(Config::server config)
 		std::clog << "\033[0;34m[" << it->first << "]\033[0m = \033[0;32m[" << it->second << "]\033[0m" << std::endl;
 	std::clog << "\033[0;34m[server_port]\033[0m = \033[0;32m[" << config.port << "]\033[0m" << std::endl;
 	std::clog << "\033[0;34m[Locations]\033[0m = \033[0;32m" << std::endl << "{" << std::endl;
+	for (std::map<std::string, Config::location>::iterator it = config.locations.begin(); it != config.locations.end(); it++)
+	{
+		std::clog << "	\033[0;34m[location name]\033[0m = \033[0;32m[" << (*it).second.name << "]\033[0m" << std::endl;
+		std::clog << "	\033[0;34m[Root]\033[0m = \033[0;32m[" << (*it).second.root << "]\033[0m" << std::endl;
+		std::clog << "	\033[0;34m[methods]\033[0m = \033[0;32m[";
+		for (std::list<std::string>::iterator it2 = (*it).second.method.begin(); it2 != (*it).second.method.end(); it2++)
+			std::clog << "	\033[0;34m[" << (*it2) << "]\033[0m";
+		std::clog << "\033[0;32m]\033[0m" << std::endl;
+		std::clog << "	\033[0;34m[redirection]\033[0m = \033[0;32m[";
+		for (std::list<std::string>::iterator it2 = (*it).second.redirection.begin(); it2 != (*it).second.redirection.end(); it2++)
+			std::clog << " \033[0;34m[" << (*it2) << "]\033[0m";
+		std::clog << "\033[0;32m]\033[0m" << std::endl;
+	}
 	std::clog << "}\033[0m" << std::endl;
 }
 
@@ -188,7 +201,37 @@ size_t contentLength(std::string client_request)
 	return (0);
 }
 
-Config::location	&getLocationConfig(Config::server server_config, HttpRequest request)
+
+
+Config::location	&getLocationConfig(Config::server server_config, Request request)
 {
-	return (server_config.locations[request.GetPath()]);
+	return (server_config.locations[request.getPath()]);
+}
+
+bool	isFile(const std::string &str)
+{
+	struct stat info;
+	if (stat(str.c_str(), &info) == 0)
+	{
+		if (S_ISREG(info.st_mode))
+			return (true);
+	}
+	return (false);
+}
+
+bool	isDir(const std::string &str)
+{
+	struct stat info;
+	if (stat(str.c_str(), &info) == 0)
+	{
+		if (S_ISDIR(info.st_mode))
+			return (true);
+	}
+	return (false);
+}
+
+bool file_exists (const std::string& name)
+{
+	struct stat buffer;
+	return (stat (name.c_str(), &buffer) == 0);
 }
