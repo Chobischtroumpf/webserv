@@ -53,7 +53,7 @@ Request::Request(std::string req, Config::server &conf)
 		makePathOnMachine();
 		checkFile();
 	}
-	displayRequest();
+	//displayRequest();
 }
 
 ///////////////////////////////////
@@ -138,7 +138,7 @@ bool Request::checkPath(Config::server &conf)
 
 bool Request::checkFile()
 {
-	std::cout << _path_on_machine << std::endl;
+	//std::cout << _path_on_machine << std::endl;
 	if (isFile(_path_on_machine) || !this->_method.compare("POST"))
 	{
 		_status_code = 200;
@@ -159,7 +159,6 @@ bool Request::checkFile()
 		if (_location.is_autoindex)
 		{
 			_status_code = 200;
-			DEBUG("autoindex on")
 		}
 		else
 			_status_code = 403;

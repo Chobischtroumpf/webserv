@@ -62,7 +62,7 @@ void SubServ::bindSubServ()
 
 void SubServ::socketListener()
 {
-	if (listen(this->sock_desc, 500) < 0)
+	if (listen(this->sock_desc, 9999) < 0)
 		throw SubServException("Error while listening to socket");
 }
 
