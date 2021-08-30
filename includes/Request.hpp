@@ -44,6 +44,7 @@ class Request
 		std::string const							&getRaw() const;
 		std::string const							&getPath() const;
 		std::string const							&getPathOnMachine() const;
+		Config::location 							&getLocation();
 		Config::server const						&getConf() const;
 		std::string const							&getRedirection() const;
 		std::list<std::string> const				&getAvailableLocations() const;	// locations from config file

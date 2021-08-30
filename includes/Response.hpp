@@ -14,6 +14,7 @@ class Response
 		int				_error_code;
 		std::string		_response_body;
 		std::string		_response_header;
+		int				_file_counter;
 	public:
 		Response();
 		Response(Response &Other);

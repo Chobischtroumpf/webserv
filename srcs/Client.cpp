@@ -69,6 +69,7 @@ int	Client::receiveRequest()
 int	Client::sendRequest(Request &request)
 {
 	Response response(request);
+	std::cout  << response.getResponse() << std::endl;
 	send(socket, response.getResponse().c_str(),response.getResponse().size(), 0);
 	return (0);
 }

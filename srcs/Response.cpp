@@ -71,10 +71,22 @@ void	Response::getMethod(Request &request, Config::server &server_config)
 		setError(server_config);
 }
 
+std::string getFileDate(void)
+{
+	std::time_t t = std::time(0);
+   	tm *ltm = localtime(&t);
+	char buffer[80];
+	strftime(buffer,80,"%d_%b_%Y_%Hh_%Mm_%Ss",ltm);
+	std::string str_buf(buffer);
+	return (std::string("file_") +trim(str_buf, " "));
+}
+
 void	Response::postMethod(Request &request, Config::server &server_config)
 {
 	DEBUG("POST")
-	std::cout << request.getPathOnMachine() << std::endl;
+	int fd = 0;
+	std::string tmp_upload = server_config.root + ltrim(request.getLocation().upload_path, "./") + getFileDate(); 
+	std::cout << tmp_upload << std::endl;
 	if (isDir(request.getPathOnMachine()))
 	{
 		std::cout << "is dir" << std::endl;
@@ -82,19 +94,18 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 		setError(server_config);
 		return ;
 	}
-	std::ofstream file;
-	file.open(request.getPathOnMachine());
-	if (!file.is_open())
+	
+	if ((fd = open(tmp_upload.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) == -1)
 	{
-		file.close();
-		std::cout << "couldn't open file properly" << std::endl;
-		_error_code = 404;
+		_error_code = 500;
 		setError(server_config);
+		DEBUG("OPEN FAILED");
 	}
 	else 
 	{
-		file << request.getBody() << std::endl;
-		file.close(); 
+		write(fd, request.getBody().c_str() , request.getBody().length() );
+		close(fd); 
+		readFile(request.getPathOnMachine(), &_response_body);
 	}
 	(void)request;
 	(void)server_config;

@@ -53,7 +53,7 @@ Request::Request(std::string req, Config::server &conf)
 		makePathOnMachine();
 		checkFile();
 	}
-	//displayRequest();
+	displayRequest();
 }
 
 ///////////////////////////////////
@@ -297,6 +297,12 @@ bool	Request::getAutoIndex() const
 {
 	return _location.is_autoindex;
 }
+
+Config::location	&Request::getLocation()
+{
+	return _location;
+}
+
 
 std::string	const &Request::getRedirection() const
 {
