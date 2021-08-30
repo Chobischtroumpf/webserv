@@ -53,7 +53,6 @@ Request::Request(std::string req, Config::server &conf)
 		makePathOnMachine();
 		checkFile();
 	}
-	// displayRequest();
 }
 
 ///////////////////////////////////

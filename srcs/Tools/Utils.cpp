@@ -164,7 +164,6 @@ std::string	ipBytesToIpv4(struct in_addr in)
 // return 0 == rien, 1 == Content-Length defined, 2 == chunked (reception du message par paquet)
 int	contentType(std::string client_request)
 {
-	//DEBUG("contentType")
 	size_t pos = 0;
 	size_t pos_in_line = 0;
 	std::string line;

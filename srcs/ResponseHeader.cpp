@@ -224,7 +224,7 @@ void		ResponseHeader::setLocation(int code, const std::string&redirect)
 {
 	this->_status_code = code;
 	this->_location = redirect;
-	std::cout << "LOCATION :" << this->_location << std::endl;
+	//std::cout << "LOCATION :" << this->_location << std::endl;
 }
 
 void		ResponseHeader::setServer(void)

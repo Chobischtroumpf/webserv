@@ -28,7 +28,6 @@ SubServ::~SubServ(){
 
 void SubServ::createSD()
 {
-	//DEBUG("createSD")
 	if ((this->sock_desc = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 		throw SubServException("Creation of the SubServ descriptor failed");
 }
@@ -134,7 +133,6 @@ void	SubServ::setClientList(Client *client)
 
 SubServ &SubServ::operator=(const SubServ& Other)
 {
-	//DEBUG("Subserv =")
 		this->main_serv = Other.main_serv;
 		this->sock_desc = Other.sock_desc;
 		this->option_buffer = Other.option_buffer;
