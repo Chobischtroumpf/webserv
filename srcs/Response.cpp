@@ -80,25 +80,49 @@ std::string getFileDate(void)
 
 void	Response::postMethod(Request &request, Config::server &server_config)
 {
+	std::string filename;
+	std::string file_content;
+	if (request.getSplit())
+	{
+		DEBUG("POST")
+		std::list<std::string> parts = splitString(request.getBody(), request.getBoundary());
+		for (std::list<std::string>::iterator it = parts.begin(); it != parts.end(); it++)
+			if ((*it).find("filename") == std::string::npos)
+				parts.erase(it);
+		for (std::list<std::string>::iterator it = parts.begin(); it != parts.end(); it++)
+		{
+			size_t pos = (*it).find("filename") + 9;
+			size_t endl = (*it).find("\r\n", pos);
+			std::string tmp = (*it).substr(pos, endl - pos);
+			std::cout << "TMP:" << tmp << std::endl << std::endl << std::endl;
+			filename = trim(tmp, "\"");
+			std::cout << "FILE:" << filename << std::endl << std::endl << std::endl;
+			file_content = (*it).substr((*it).find("\r\n\r\n") + 4, (*it).length());
+			file_content = trim(file_content, "-");
+		}
+	}
 	int fd = 0;
-	std::string tmp_upload = server_config.root + ltrim(request.getLocation().upload_path, "./") + getFileDate(); 
-	//std::cout << tmp_upload << std::endl;
+	if (filename.empty())
+		filename = getFileDate();
+	std::string tmp_upload = server_config.root + ltrim(request.getLocation().upload_path, "./") + filename; 
+	std::cout << tmp_upload << std::endl;
 	if (isDir(request.getPathOnMachine()))
 	{
-		//std::cout << "is dir" << std::endl;
 		_error_code = 404;
 		setError(server_config);
 		return ;
 	}
-	
 	if ((fd = open(tmp_upload.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) == -1)
 	{
 		_error_code = 500;
 		setError(server_config);
 	}
 	else 
-	{
-		write(fd, request.getBody().c_str() , request.getBody().length() );
+	{	
+		if (request.getSplit())
+			write(fd, file_content.c_str() , file_content.length() );
+		else
+			write(fd, request.getBody().c_str() , request.getBody().length());
 		close(fd); 
 		readFile(request.getPathOnMachine(), &_response_body);
 	}

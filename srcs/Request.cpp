@@ -47,7 +47,6 @@ Request::Request(std::string req, Config::server &conf)
 	this->_available_locations.clear();
 
 	splitHeadBody();
-	std::cout << _body <<std::endl;
 	parseHeader();
 	if (validateRequest(conf))
 	{
@@ -213,11 +212,24 @@ void Request::displayRequest()
 
 void Request::splitHeadBody()
 {
-	std::list<std::string> head_body;
-
-	head_body = splitString(this->_raw, "\r\n\r\n");
-	this->_header = head_body.front();
-	this->_body = trim(head_body.back(), " \r\n");
+	size_t pos;
+	size_t endl;
+	pos = _raw.find("\r\n\r\n");
+	if (pos == std::string::npos)
+	{	
+		_status_code = 404;
+		return ;
+	}
+	_header = _raw.substr(0, pos);
+	_body = _raw.substr(pos + 4, _raw.length());
+	if (_header.find("multipart") != std::string::npos)
+	{
+		_is_split = true;
+		pos = _header.find("boundary") + 9;
+		endl = _header.find("\n", pos);
+		std::string tmp = _header.substr(pos, endl - pos);
+		_boundary = ltrim(tmp, "-");
+	}
 }
 
 void Request::makePathOnMachine()
@@ -302,6 +314,15 @@ Config::location	&Request::getLocation()
 	return _location;
 }
 
+std::string const							&Request::getBoundary() const
+{
+	return this->_boundary;
+}
+
+bool										Request::getSplit()
+{
+	return this->_is_split;
+}
 
 std::string	const &Request::getRedirection() const
 {

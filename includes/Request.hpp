@@ -18,6 +18,8 @@ class Request
 		std::list<std::string>				_available_locations;	// locations from config file
 		Config::location					_location;
 		Config::server 						_conf;
+		std::string							_boundary;
+		bool								_is_split;
 
 		int									_status_code;			// initialized at 200, changed properly if an error occurs
 
@@ -47,6 +49,8 @@ class Request
 		Config::location 							&getLocation();
 		Config::server const						&getConf() const;
 		std::string const							&getRedirection() const;
+		std::string const							&getBoundary() const;
+		bool										getSplit();
 		std::list<std::string> const				&getAvailableLocations() const;	// locations from config file
 
 		int											getRedirectionCode() const;
