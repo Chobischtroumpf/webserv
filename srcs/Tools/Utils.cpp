@@ -168,17 +168,13 @@ int	contentType(std::string client_request)
 	size_t pos_in_line = 0;
 	std::string line;
 
-	for (size_t end = client_request.find("\r\n"); end != std::string::npos; end = client_request.find("\r\n", pos))
+	for (size_t end = client_request.find("\n"); end != std::string::npos; end = client_request.find("\n", pos))
 	{
 		line = client_request.substr(pos, end - pos);
-		if (line.find("Transfer-Encoding: chunked") != std::string::npos )
+		if ((pos_in_line = line.find("Transfer-Encoding: chunked")) != std::string::npos )
 			return (2);
-		pos_in_line = 0;
-		if (line.find("Content-Length") != std::string::npos)
-		{
-			DEBUG("into content length")
+		if ((pos_in_line = line.find("Content-Length")) != std::string::npos)
 			return (1);
-		}
 		if ((pos_in_line = client_request.find("\r\n\r\n")) != std::string::npos && pos_in_line == pos)
 			break;
 		pos = end + 1;
@@ -196,7 +192,10 @@ size_t contentLength(std::string client_request)
 	{
 		line = client_request.substr(pos, end - pos);
 		if ((pos_in_line = line.find("Content-Length")) != std::string::npos && pos_in_line == 0)
-			return (atoi(line.substr(line.find(":") + 2, line.length()).c_str()));
+			{
+				int size = stoi(line.substr(line.find(":") + 2, line.length()));
+				return (size);
+			}
 		if ((pos_in_line = client_request.find("\r\n\r\n")) != std::string::npos && pos_in_line == pos)
 			break;
 		pos = end + 1;
