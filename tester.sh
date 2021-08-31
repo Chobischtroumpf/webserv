@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Reset
 Color_Off='\033[0m'       # Text Reset
@@ -73,7 +73,10 @@ On_IPurple='\033[0;105m'  # Purple
 On_ICyan='\033[0;106m'    # Cyan
 On_IWhite='\033[0;107m'   # White
 
-echo "Checking dependencies ..."
+clear
+
+echo -e $Blue
+echo "Checking dependencies ... "
 
 if ! command -v tree &> /dev/null
 then brew install tree
@@ -82,24 +85,59 @@ fi
 if ! command -v siege &> /dev/null
 then brew install siege
 fi
+sleep 1
 
-echo -n 'Moving test files to /tmp/www/ ...'
+echo -n 'Moving test files to /tmp/www/ ... '
 
 rm -r /tmp/www/ > /dev/null
 mkdir -p /tmp/www > /dev/null
 mkdir -p /tmp/www/upload/ > /dev/null
 cp -r ./default /tmp/www
+sleep 2
 
-echo -n "✔"
-
-echo "This is how our working directory looks like ⤵"
+echo "👍"
 
 sleep 1
+
+echo "This is how our working directory looks like ⤵"
+echo -e $Purple
+sleep 1
+
 tree /tmp/www/
+
+echo -e $White
+echo -e $On_Green
+read -n 1 -r -s -p $'Press enter to continue...'
 
 echo "Building webserv ..."
 
 make re
 
+echo "Webserv is reading to be launched\n"
+
+read -n 1 -r -s -p $'Press enter to continue...\n'
+
 ./webserv ./configs/conf-1.conf &
 
+echo;echo;echo
+echo -e $Blue
+echo "Let's do some tests"
+
+read -n 1 -r -s -p $'Press enter to continue...\n'
+
+echo "Opening root location in the browser"
+
+open http://127.0.0.1:8080
+
+sleep 3
+
+echo "Trying other locations"
+
+echo -e $Yellow
+
+echo "/default/"
+
+curl http://127.0.0.1:8080/default/
+
+
+pkill webserv
