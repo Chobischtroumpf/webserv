@@ -99,5 +99,7 @@ tree /tmp/www/
 
 echo "Building webserv ..."
 
-make re 
+make re
+
+./webserv ./configs/conf-1.conf &
 

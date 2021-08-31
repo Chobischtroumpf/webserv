@@ -47,7 +47,7 @@ int	Client::receiveRequest()
 		return (-1);
 	raw_request.append(buffer);
 	int	type_content = contentType(raw_request);
-	std::string end_body = type_content == 2 ? "0\r\n\r\n" : "\r\n\r\n";
+	std::string end_body = type_content == 2 ? "\0\r\n\r\n" : "\r\n\r\n";
 	if ((pos = raw_request.find("\r\n\r\n")) != std::string::npos && type_content == 0)
 		return (0);
 	if (type_content > 0)

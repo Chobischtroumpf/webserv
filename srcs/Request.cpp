@@ -214,6 +214,8 @@ void Request::splitHeadBody()
 {
 	size_t pos;
 	size_t endl;
+
+	std::cout << _raw << std::endl;
 	pos = _raw.find("\r\n\r\n");
 	if (pos == std::string::npos)
 	{	
@@ -226,10 +228,11 @@ void Request::splitHeadBody()
 	{
 		_is_split = true;
 		pos = _header.find("boundary") + 9;
-		endl = _header.find("\n", pos);
+		endl = _header.find("\r\n", pos);
 		std::string tmp = _header.substr(pos, endl - pos);
 		_boundary = ltrim(tmp, "-");
 	}
+	std::cout << "FILE:" << _body << std::endl << std::endl << std::endl;
 }
 
 void Request::makePathOnMachine()

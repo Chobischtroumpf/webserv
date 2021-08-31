@@ -94,11 +94,9 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 			size_t pos = (*it).find("filename") + 9;
 			size_t endl = (*it).find("\r\n", pos);
 			std::string tmp = (*it).substr(pos, endl - pos);
-			std::cout << "TMP:" << tmp << std::endl << std::endl << std::endl;
 			filename = trim(tmp, "\"");
-			std::cout << "FILE:" << filename << std::endl << std::endl << std::endl;
-			file_content = (*it).substr((*it).find("\r\n\r\n") + 4, (*it).length());
-			file_content = trim(file_content, "-");
+			file_content =(*it).substr((*it).find("\r\n\r\n") + 4, (*it).length());
+			trim(file_content, "-");
 		}
 	}
 	int fd = 0;
@@ -132,13 +130,12 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 
 void	Response::deleteMethod(Request &request)
 {
-	//check if file exist . If not -> 204
 	if (!file_exists(request.getPathOnMachine()))
 		_error_code = 204;
 	else
 	{
 		if (remove(request.getPathOnMachine().c_str()))
-			_error_code = 202; // request accepted but not executed
+			_error_code = 202;
 		else
 			_error_code = 200;
 	}
