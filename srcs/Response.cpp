@@ -103,7 +103,6 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 	if (filename.empty())
 		filename = getFileDate();
 	std::string tmp_upload = server_config.root + ltrim(request.getLocation().upload_path, "./") + filename; 
-	std::cout << tmp_upload << std::endl;
 	if (isDir(request.getPathOnMachine()))
 	{
 		_error_code = 404;
@@ -156,7 +155,6 @@ std::string	Response::makeIndex(Request &request)
 	struct dirent *ent;
 	std::string retval = "<html><head></head><body> <h1>Webserv's autoindex:</h1>\n";
 	std::string path = request.getPathOnMachine();
-	//std::cout << path << std::endl;
 	if ((dir = opendir(path.c_str())) != NULL)
 	{
 		while ((ent = readdir (dir)) != NULL)

@@ -54,12 +54,11 @@ int	Client::receiveRequest()
 	{
 		std::string body = raw_request.substr(pos + 4, raw_request.length() - (pos + 4));
 		if (type_content == 1 && contentLength(raw_request) <= body.length())
-			return (contentLength(raw_request) == body.length() ? 0 : -1);
+			return (contentLength(raw_request) == body.length() ? 0 : 1);
 		if ((pos = body.find(end_body)) != std::string::npos)
 			if (((type_content == 2 && (pos == 0 || (body[pos - 1] == '\n' && body[pos - 2] == '\r')))
 				|| type_content == 1))
 				return (0);
-		std::cout << body << std::endl;
 	}
 	return (1);
 }
