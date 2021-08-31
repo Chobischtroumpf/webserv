@@ -168,13 +168,16 @@ int	contentType(std::string client_request)
 	size_t pos_in_line = 0;
 	std::string line;
 
-	for (size_t end = client_request.find("\n"); end != std::string::npos; end = client_request.find("\n", pos))
+	for (size_t end = client_request.find("\r\n"); end != std::string::npos; end = client_request.find("\r\n", pos))
 	{
 		line = client_request.substr(pos, end - pos);
 		if ((pos_in_line = line.find("Transfer-Encoding: chunked")) != std::string::npos && pos_in_line == 0)
 			return (2);
 		else if ((pos_in_line = line.find("Content-Length")) != std::string::npos && pos_in_line == 0)
+		{
+			std::cout << "here" <<std::endl;
 			return (1);
+		}
 		if ((pos_in_line = client_request.find("\r\n\r\n")) != std::string::npos && pos_in_line == pos)
 			break;
 		pos = end + 1;

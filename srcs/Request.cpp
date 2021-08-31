@@ -47,6 +47,7 @@ Request::Request(std::string req, Config::server &conf)
 	this->_available_locations.clear();
 
 	splitHeadBody();
+	std::cout << _body <<std::endl;
 	parseHeader();
 	if (validateRequest(conf))
 	{

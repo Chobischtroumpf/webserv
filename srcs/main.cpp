@@ -19,7 +19,6 @@ void	ctrl_c(int signal)
 			break;
 		}
 		server->keep_going = false;
-		system("leaks webserv");
 		exit(0);
 	}
 }

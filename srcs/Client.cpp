@@ -59,6 +59,7 @@ int	Client::receiveRequest()
 			if (((type_content == 2 && (pos == 0 || (body[pos - 1] == '\n' && body[pos - 2] == '\r')))
 				|| type_content == 1))
 				return (0);
+		std::cout << body << std::endl;
 	}
 	return (1);
 }
