@@ -55,7 +55,6 @@ bool	checkRoot(std::list<std::string> element, Config::server *ret_serv)
 		if (element.size() != 2)
 			throw ParsingException(0, "wrong amount of arguments to root");
 		element.pop_front();
-		std:: cout << "root begins with / : " << (*(element.front().begin()) == '/') << std::endl;
 		if (*(element.front().begin()) == '/')
 			ret_serv->root = element.front();
 		return (true);

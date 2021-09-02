@@ -122,6 +122,8 @@ echo -e $On_Green
 read -n 1 -r -s -p $'Press enter to continue'
 echo -e $Color_Off
 
+clear
+
 ./webserv ./configs/conf-1.conf &
 
 sleep 3
@@ -130,16 +132,17 @@ echo -e $On_Green
 read -n 1 -r -s -p $'Press enter to continue'
 echo -e $Color_Off
 
-echo;echo;echo
+clear
+
 echo -e $Blue
 echo "Let's do some tests"
 
-echo -e $On_Green
-read -n 1 -r -s -p $'Press enter to continue'
-echo -e $Color_Off
+sleep 1
 
 echo -e $Blue
 echo "Opening root location in the browser (GET method)"
+
+sleep 2
 
 open http://127.0.0.1:8080/
 
@@ -149,26 +152,38 @@ echo -e $On_Green
 read -n 1 -r -s -p $'Press enter to continue'
 echo -e $Color_Off
 
+clear
+
 echo "Let's try deleting a file (DELETE method)"
 sleep 1
 echo "Let's browse to example.html"
 
-open http://127.0.0.1:8080/example.html
+open http://127.0.0.1:8080/delete/example.html
 
 echo -e $On_Green
 read -n 1 -r -s -p $'Press enter to continue'
 echo -e $Color_Off
+
+clear
 
 echo "You can delete this file by following the link to delete.html"
+sleep 5
+echo "Going back to the example page should get you a 404 error"
 
 echo -e $On_Green
 read -n 1 -r -s -p $'Press enter to continue'
 echo -e $Color_Off
+
+clear
 
 echo "You can also try uploading a file (POST method)"
 
 open http://127.0.0.1:8080/upload.html
 
+sleep 10
 
-echo ""
-#pkill webserv
+echo -e $On_Red
+read -n 1 -r -s -p $'When you are done testing, press enter to kill webserv process'
+echo -e $Color_Off
+
+pkill webserv

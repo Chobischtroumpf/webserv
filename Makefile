@@ -9,7 +9,7 @@ CFLAGS	= -Wall -Werror -Wextra -std=c++98
 
 # Debug, use with`make DEBUG=1`
 ifeq ($(DEBUG),1)
-CFLAGS	+= -g3 #-fsanitize=address
+CFLAGS	+= -g3 -fsanitize=address
 endif
 
 # Folder name
@@ -49,7 +49,6 @@ HEADERS =\
 	./includes/Request.hpp\
 	./includes/Response.hpp\
 	./includes/ResponseHeader.hpp\
-	# ./includes/Socket.hpp\
 
 ###▲▲▲<src-updater-do-not-edit-or-remove>▲▲▲
 
@@ -75,22 +74,17 @@ all : $(NAME)
 # Compiling
 $(OBJDIR)%.o : %.cpp
 	@mkdir -p $(OBJDIR)
-	#@printf "$(GR)+$(RC)"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 # Linking
 $(NAME)	: $(SRCS) $(HEADERS) $(OBJS)
-	#@printf "\n$(GR)=== Compiled [$(CC) $(CFLAGS)] ===\n--- $(SRC)$(RC)\n"
 	@$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $(NAME)
-	#@printf "$(YE)&&& Linked [$(CC) $(LDFLAGS)] &&&\n--- $(NAME)$(RC)\n"
 
 # Cleaning
 clean :
-	#@printf "$(RE)--- Removing $(OBJDIR)$(RC)"
 	@rm -rf $(OBJDIR)
 
 fclean : clean
-	#@printf "$(RE)--- Removing $(NAME)$(RC)\n"
 	@rm -f $(NAME)
 
 # Special rule to force to remake everything
