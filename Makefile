@@ -75,22 +75,22 @@ all : $(NAME)
 # Compiling
 $(OBJDIR)%.o : %.cpp
 	@mkdir -p $(OBJDIR)
-	@printf "$(GR)+$(RC)"
+	#@printf "$(GR)+$(RC)"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 # Linking
 $(NAME)	: $(SRCS) $(HEADERS) $(OBJS)
-	@printf "\n$(GR)=== Compiled [$(CC) $(CFLAGS)] ===\n--- $(SRC)$(RC)\n"
+	#@printf "\n$(GR)=== Compiled [$(CC) $(CFLAGS)] ===\n--- $(SRC)$(RC)\n"
 	@$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $(NAME)
-	@printf "$(YE)&&& Linked [$(CC) $(LDFLAGS)] &&&\n--- $(NAME)$(RC)\n"
+	#@printf "$(YE)&&& Linked [$(CC) $(LDFLAGS)] &&&\n--- $(NAME)$(RC)\n"
 
 # Cleaning
 clean :
-	@printf "$(RE)--- Removing $(OBJDIR)$(RC)"
+	#@printf "$(RE)--- Removing $(OBJDIR)$(RC)"
 	@rm -rf $(OBJDIR)
 
 fclean : clean
-	@printf "$(RE)--- Removing $(NAME)$(RC)\n"
+	#@printf "$(RE)--- Removing $(NAME)$(RC)\n"
 	@rm -f $(NAME)
 
 # Special rule to force to remake everything

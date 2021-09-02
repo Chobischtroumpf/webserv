@@ -85,10 +85,10 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 	if (request.getSplit())
 	{
 		DEBUG("POST")
-		std::list<std::string> parts = splitString(request.getBody(), request.getBoundary());
-		for (std::list<std::string>::iterator it = parts.begin(); it != parts.end(); it++)
-			if ((*it).find("filename") == std::string::npos)
-				parts.erase(it);
+		std::list<std::string> parts = splitString(request.getBody(), request.getBoundary());	
+		for (std::list<std::string>::iterator i = parts.begin(); i != parts.end(); i++)
+			if ((*i).find("filename") == std::string::npos)
+				parts.erase(i);
 		for (std::list<std::string>::iterator it = parts.begin(); it != parts.end(); it++)
 		{
 			size_t pos = (*it).find("filename") + 9;
@@ -181,8 +181,10 @@ std::string	Response::makeIndex(Request &request)
 	else
 	{
 		_error_code = 500;
+		closedir(dir);
 		return ("");
 	}
+	closedir(dir);
 	return (retval);
 }
 

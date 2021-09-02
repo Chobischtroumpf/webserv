@@ -9,6 +9,7 @@ void	ctrl_c(int signal)
 {	
 	if (signal == SIGINT)
 	{
+		DEBUG("CTRL_C")
 		for (std::list<SubServ>::iterator subserver = server->sub_serv.begin(); subserver != server->sub_serv.end(); subserver++)
 		{
 			for (std::list<Client *>::iterator client = (*subserver).getClientList().begin(); client != (*subserver).getClientList().end(); client++)
@@ -19,7 +20,6 @@ void	ctrl_c(int signal)
 			break;
 		}
 		server->keep_going = false;
-		system("leaks webserv");
 		exit(0);
 	}
 }

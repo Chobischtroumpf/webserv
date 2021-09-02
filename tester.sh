@@ -107,37 +107,68 @@ tree /tmp/www/
 
 echo -e $White
 echo -e $On_Green
-read -n 1 -r -s -p $'Press enter to continue...'
+read -n 1 -r -s -p $'Press enter to continue'
+echo -e $Color_Off
+
+clear
 
 echo "Building webserv ..."
 
 make re
 
-echo "Webserv is reading to be launched\n"
+echo "Webserv is reading to be launched!"
 
-read -n 1 -r -s -p $'Press enter to continue...\n'
+echo -e $On_Green
+read -n 1 -r -s -p $'Press enter to continue'
+echo -e $Color_Off
 
 ./webserv ./configs/conf-1.conf &
+
+sleep 3
+
+echo -e $On_Green
+read -n 1 -r -s -p $'Press enter to continue'
+echo -e $Color_Off
 
 echo;echo;echo
 echo -e $Blue
 echo "Let's do some tests"
 
-read -n 1 -r -s -p $'Press enter to continue...\n'
+echo -e $On_Green
+read -n 1 -r -s -p $'Press enter to continue'
+echo -e $Color_Off
 
-echo "Opening root location in the browser"
+echo -e $Blue
+echo "Opening root location in the browser (GET method)"
 
-open http://127.0.0.1:8080
+open http://127.0.0.1:8080/
 
 sleep 3
 
-echo "Trying other locations"
+echo -e $On_Green
+read -n 1 -r -s -p $'Press enter to continue'
+echo -e $Color_Off
 
-echo -e $Yellow
+echo "Let's try deleting a file (DELETE method)"
+sleep 1
+echo "Let's browse to example.html"
 
-echo "/default/"
+open http://127.0.0.1:8080/example.html
 
-curl http://127.0.0.1:8080/default/
+echo -e $On_Green
+read -n 1 -r -s -p $'Press enter to continue'
+echo -e $Color_Off
+
+echo "You can delete this file by following the link to delete.html"
+
+echo -e $On_Green
+read -n 1 -r -s -p $'Press enter to continue'
+echo -e $Color_Off
+
+echo "You can also try uploading a file (POST method)"
+
+open http://127.0.0.1:8080/upload.html
 
 
-pkill webserv
+echo ""
+#pkill webserv
