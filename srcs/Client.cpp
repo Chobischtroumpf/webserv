@@ -14,6 +14,7 @@ Client::Client()
 Client::Client(int sd, std::string address)
 {
 	this->socket = sd;
+	setsockopt(this->socket, SOL_SOCKET, SO_REUSEADDR,&this->option_buffer, sizeof(this->option_buffer));
 	setClientNonBlock();
 	this->client_address = address;
 	this->is_received = false;
@@ -42,6 +43,7 @@ int	Client::receiveRequest()
 	int read_ret;
 	char buffer[BUFFER_SIZE + 1];
 
+	usleep(1500);
 	bzero(buffer,BUFFER_SIZE + 1);
 	if ((read_ret = read(socket, buffer, BUFFER_SIZE)) <= 0)
 		return (-1);

@@ -82,9 +82,9 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 {
 	std::string filename;
 	std::string file_content;
+	DEBUG("POST")
 	if (request.getSplit())
 	{
-		DEBUG("POST")
 		std::list<std::string> parts = splitString(request.getBody(), request.getBoundary());	
 		for (std::list<std::string>::iterator i = parts.begin(); i != parts.end(); i++)
 		{
@@ -107,7 +107,7 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 	if (filename.empty())
 		filename = getFileDate();
 	std::string tmp_upload = server_config.root + ltrim(request.getLocation().upload_path, "./") + filename; 
-	if (isDir(request.getPathOnMachine()))
+	if (isDir(tmp_upload))
 	{
 		_error_code = 404;
 		setError(server_config);
@@ -133,6 +133,7 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 
 void	Response::deleteMethod(Request &request)
 {
+	DEBUG("DELETE")
 	if (!file_exists(request.getPathOnMachine()))
 		_error_code = 204;
 	else
