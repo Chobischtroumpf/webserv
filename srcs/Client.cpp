@@ -68,7 +68,8 @@ int	Client::receiveRequest()
 int	Client::sendRequest(Request &request)
 {
 	Response response(request);
-	send(socket, response.getResponse().c_str(),response.getResponse().size(), 0);
+	if (send(socket, response.getResponse().c_str(),response.getResponse().size(), 0) == -1)
+		return (-1);
 	return (0);
 }
 

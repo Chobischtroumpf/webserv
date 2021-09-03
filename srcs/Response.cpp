@@ -111,24 +111,27 @@ void	Response::postMethod(Request &request, Config::server &server_config)
 	{
 		_error_code = 404;
 		setError(server_config);
-		return ;
 	}
-	if ((fd = open(tmp_upload.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) == -1)
+	else if ((fd = open(tmp_upload.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0777)) == -1)
 	{
 		_error_code = 500;
 		setError(server_config);
 	}
 	else 
-	{	
+	{
+		int ret;
 		if (request.getSplit())
-			write(fd, file_content.c_str() , file_content.length() );
+			ret = write(fd, file_content.c_str() , file_content.length());
 		else
-			write(fd, request.getBody().c_str() , request.getBody().length());
+			ret = write(fd, request.getBody().c_str() , request.getBody().length());
+		if (ret == -1)
+		{
+			_error_code = 500;
+			setError(server_config);
+		}
 		close(fd); 
 		readFile(request.getPathOnMachine(), &_response_body);
 	}
-	(void)request;
-	(void)server_config;
 }
 
 void	Response::deleteMethod(Request &request)

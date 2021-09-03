@@ -117,14 +117,13 @@ std::string	ResponseHeader::getHeader(void)
 {
 	std::string header;
 	header = _http_version + " " + std::to_string(_status_code) + " " + _errors[_status_code] + "\r\n" 
-			 + "Content-Language: " + _content_language + "\r\n"
 			 + "Content-Length: " + std::to_string(_content_length) + "\r\n"
-			 + "Content-Location: " + _content_location + "\r\n"
-			 + "Content-Type: " + _content_type + "\r\n"
 			 + "Date: " + _date + "\r\n"
 			 + "Location: " + _location + "\r\n"
-			 + "Server: " + _server + "\r\n"
-			 + "Transfer-Encoding: " + _transfer_encoding + "\r\n\r\n";
+			 + "Server: " + _server + "\r\n";
+	if (!_location.empty())
+		header += "Location: " + _location + "\r\n";
+	header += "\r\n\r\n";
 	return (header);
 }
 
